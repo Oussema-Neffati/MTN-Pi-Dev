@@ -40,10 +40,6 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
 
     @Override
     public List<Utilisateur> getAll() {
-       //todo's
-        //creation req
-        //execution req
-        // matching entre le resultat et list Personne
         List<Utilisateur> utilisateurs = new ArrayList<>();
 
         String qry ="SELECT * FROM `utilisateur`";
