@@ -3,25 +3,25 @@ package tn.esprit.models;
 public class Utilisateur {
     private int id;
     private String nom, prenom, email, motDePasse;
-    private String Role;
+    private Role role;
     private boolean actif;
 
 
-    public Utilisateur(int id,String nom, String prenom, String email, String motDePasse, String role, boolean actif) {
+    public Utilisateur(int id,String nom, String prenom, String email, String motDePasse, Role role, boolean actif) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.motDePasse = motDePasse;
-        Role = role;
+        this.role = role;
         this.actif = actif;
     }
 
-    public Utilisateur(String nom, String prenom, String email, String motDePasse, String role, boolean actif) {
+    public Utilisateur(String nom, String prenom, String email, String motDePasse, Role role, boolean actif) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.motDePasse = motDePasse;
-        Role = role;
+        this.role = role;
         this.actif = actif;
     }
 
@@ -69,13 +69,9 @@ public class Utilisateur {
         this.motDePasse = motDePasse;
     }
 
-    public String getRole() {
-        return Role;
-    }
+    public Role getRole() { return role; }
 
-    public void setRole(String role) {
-        Role = role;
-    }
+    public void setRole(Role role) { this.role = role; }
 
     public boolean isActif() {
         return actif;
@@ -93,7 +89,7 @@ public class Utilisateur {
                 ", id=" + id +
                 ", motDePasse='" + motDePasse + '\'' +
                 ", email='" + email + '\'' +
-                ", Role='" + Role + '\'' +
+                ", Role='" + role + '\'' +
                 ", actif=" + actif +
                 '}';
     }

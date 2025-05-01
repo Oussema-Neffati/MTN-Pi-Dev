@@ -1,6 +1,7 @@
 package tn.esprit.services;
 
 import tn.esprit.interfaces.IService;
+import tn.esprit.models.Role;
 import tn.esprit.models.Utilisateur;
 import tn.esprit.utils.MyDataBase;
 
@@ -25,7 +26,7 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             pstm.setString(2, utilisateur.getPrenom());
             pstm.setString(3, utilisateur.getEmail());
             pstm.setString(4, utilisateur.getMotDePasse());
-            pstm.setString(5, utilisateur.getRole());
+            pstm.setString(5, utilisateur.getRole().name());
             pstm.setBoolean(6, utilisateur.isActif());
 
 
@@ -54,7 +55,7 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
              u.setPrenom(rs.getString("prenom"));
              u.setEmail(rs.getString("email"));
              u.setMotDePasse(rs.getString("mot_de_passe"));
-             u.setRole(rs.getString("role"));
+             u.setRole(Role.valueOf(rs.getString("role")));
              u.setActif(rs.getBoolean("actif"));
 
              utilisateurs.add(u);         }
@@ -77,7 +78,7 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             pstm.setString(2, utilisateur.getPrenom());
             pstm.setString(3, utilisateur.getEmail());
             pstm.setString(4, utilisateur.getMotDePasse());
-            pstm.setString(5, utilisateur.getRole());
+            pstm.setString(5, utilisateur.getRole().name());
             pstm.setBoolean(6, utilisateur.isActif());
             pstm.setInt(7, utilisateur.getId());
 

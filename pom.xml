@@ -22,17 +22,19 @@
         <version>8.0.33</version>
     </dependency>
 
-</dependencies>
+
     <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
     <dependency>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-controls</artifactId>
-        <version>22.0.1</version>
+        <version>22.0.2</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
     <dependency>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-fxml</artifactId>
-        <version>25-ea+12</version>
+        <version>22.0.2</version>
     </dependency>
+
+</dependencies>
 </project>
