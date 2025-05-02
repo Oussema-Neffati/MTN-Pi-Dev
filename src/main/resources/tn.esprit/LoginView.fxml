@@ -38,14 +38,17 @@
             </Label>
             <TextField fx:id="EmailTF" layoutX="82.0" layoutY="214.0" prefHeight="33.0" prefWidth="235.0" promptText="Email" />
             <TextField fx:id="passwordTF" layoutX="82.0" layoutY="270.0" prefHeight="34.0" prefWidth="235.0" promptText="password" />
-            <Button fx:id="loginB" layoutX="84.0" layoutY="325.0" mnemonicParsing="false" onAction="#login" prefHeight="34.0" prefWidth="231.0" text="Log in" textFill="ROYALBLUE">
+            <Button fx:id="loginB" layoutX="84.0" layoutY="325.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="231.0" text="Log in" textFill="ROYALBLUE">
+               <onAction>#login</onAction>
                <font>
                   <Font size="17.0" />
                </font>
             </Button>
             <Line endX="117.60003662109375" layoutX="196.0" layoutY="395.0" startX="-112.00001525878906" stroke="#ffffff36" />
             <Label alignment="BASELINE_LEFT" layoutX="84.0" layoutY="418.0" prefHeight="18.0" prefWidth="156.0" text="Vous n’avez pas de compte?" textFill="WHITE" />
-            <Hyperlink fx:id="signup" alignment="BASELINE_LEFT" layoutX="232.0" layoutY="414.0" onAction="#signup" text="Inscrivez-vous" textFill="#d94495" underline="true" />
+            <Hyperlink fx:id="signup" alignment="BASELINE_LEFT" layoutX="232.0" layoutY="414.0" text="Inscrivez-vous" textFill="#d94495" underline="true" >
+               <onAction>#signup</onAction>
+            </Hyperlink>
             <Label layoutX="113.0" layoutY="48.0" prefHeight="50.0" prefWidth="174.0" text="Bienvenue ! " textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="30.0" />
