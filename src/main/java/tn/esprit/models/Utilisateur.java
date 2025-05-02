@@ -1,15 +1,15 @@
 package tn.esprit.models;
 
 public class Utilisateur {
-    private int id;
-    private String nom, prenom, email, motDePasse;
+    private int id_user;
+    private String nom_user, prenom_user, email, motDePasse;
     private Role role;
     private boolean actif;
 
 
     public Utilisateur(int id,String nom, String prenom, String email, String motDePasse, Role role, boolean actif) {
-        this.nom = nom;
-        this.prenom = prenom;
+        this.nom_user = nom;
+        this.prenom_user = prenom;
         this.email = email;
         this.motDePasse = motDePasse;
         this.role = role;
@@ -17,8 +17,8 @@ public class Utilisateur {
     }
 
     public Utilisateur(String nom, String prenom, String email, String motDePasse, Role role, boolean actif) {
-        this.nom = nom;
-        this.prenom = prenom;
+        this.nom_user = nom;
+        this.prenom_user = prenom;
         this.email = email;
         this.motDePasse = motDePasse;
         this.role = role;
@@ -30,27 +30,27 @@ public class Utilisateur {
     }
 
     public int getId() {
-        return id;
+        return id_user;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id_user = id;
     }
 
     public String getNom() {
-        return nom;
+        return nom_user;
     }
 
     public void setNom(String nom) {
-        this.nom = nom;
+        this.nom_user = nom;
     }
 
     public String getPrenom() {
-        return prenom;
+        return prenom_user;
     }
 
     public void setPrenom(String prenom) {
-        this.prenom = prenom;
+        this.prenom_user = prenom;
     }
 
     public String getEmail() {
@@ -84,9 +84,9 @@ public class Utilisateur {
     @Override
     public String toString() {
         return "Utilisateur{" +
-                "nom='" + nom + '\'' +
-                ", prenom='" + prenom + '\'' +
-                ", id=" + id +
+                "nom='" + nom_user + '\'' +
+                ", prenom='" + prenom_user + '\'' +
+                ", id=" + id_user +
                 ", motDePasse='" + motDePasse + '\'' +
                 ", email='" + email + '\'' +
                 ", Role='" + role + '\'' +
