@@ -16,7 +16,7 @@
    <left>
       <AnchorPane prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="20.0" layoutY="144.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="7.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../../../projet/10782817_19197324.jpg" />
                </image>
@@ -39,17 +39,14 @@
             </Label>
             <TextField fx:id="NomTFs" layoutX="81.0" layoutY="132.0" prefHeight="34.0" prefWidth="111.0" promptText="Nom" />
             <TextField fx:id="passwordTFs" layoutX="81.0" layoutY="239.0" prefHeight="34.0" prefWidth="235.0" promptText="password" />
-            <Button fx:id="CreerCompte" layoutX="84.0" layoutY="350.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="231.0" text="Confirmer" textFill="ROYALBLUE">
-               <onAction>#CreerCompte</onAction>
+            <Button fx:id="CreerCompte" layoutX="84.0" layoutY="350.0" mnemonicParsing="false" onAction="#CreerCompte" prefHeight="34.0" prefWidth="231.0" text="Confirmer" textFill="ROYALBLUE">
                <font>
                   <Font size="17.0" />
                </font>
             </Button>
             <Line endX="117.60003662109375" layoutX="196.0" layoutY="413.0" startX="-112.00001525878906" stroke="#ffffff36" />
             <Label alignment="BASELINE_LEFT" layoutX="126.0" layoutY="430.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
-            <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="426.0" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" >
-               <onAction>#gologinpage</onAction>
-            </Hyperlink>
+            <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="426.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
             <TextField fx:id="EmailTFs" layoutX="81.0" layoutY="185.0" prefHeight="33.0" prefWidth="235.0" promptText="Email" />
             <TextField fx:id="PrenomTFs" layoutX="205.0" layoutY="132.0" prefHeight="34.0" prefWidth="111.0" promptText="Prenom" />
             <ComboBox fx:id="RoleCB" layoutX="81.0" layoutY="292.0" prefHeight="35.0" prefWidth="234.0" promptText="Roles" />
