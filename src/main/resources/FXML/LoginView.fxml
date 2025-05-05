@@ -17,7 +17,7 @@
          <children>
             <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="20.0" layoutY="144.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../../../projet/10782817_19197324.jpg" />
+                  <Image url="@../images/10782817_19197324.jpg" />
                </image>
             </ImageView>
             <Label layoutX="16.0" layoutY="45.0" prefHeight="86.0" prefWidth="262.0" text="Municipalité Tunisienne Electronique    " textAlignment="CENTER" textFill="ROYALBLUE" wrapText="true">
