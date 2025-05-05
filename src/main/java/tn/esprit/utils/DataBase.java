@@ -13,15 +13,19 @@ public class DataBase {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
-    private static Connection cnx;
+    private Connection cnx;
     private static final Logger LOGGER = Logger.getLogger(DataBase.class.getName());
 
     private DataBase() {
         try {
+            // Load MySQL JDBC driver explicitly
+            Class.forName("com.mysql.cj.jdbc.Driver");
             cnx = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             LOGGER.info("Connected to the database.");
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Connection failed: " + e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "MySQL JDBC Driver not found: " + e.getMessage(), e);
         }
     }
 
@@ -32,10 +36,24 @@ public class DataBase {
         return instance;
     }
 
-    public static Connection getCnx() {
-        if (cnx == null) {
-            LOGGER.warning("Database connection is not established.");
+    public Connection Cnx() {
+        try {
+            if (cnx == null || cnx.isClosed()) {
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    cnx = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                    LOGGER.info("Reconnected to the database.");
+                } catch (SQLException | ClassNotFoundException e) {
+                    LOGGER.log(Level.SEVERE, "Reconnection failed: " + e.getMessage(), e);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error checking connection: " + e.getMessage(), e);
         }
         return cnx;
+    }
+
+    public static Connection getCnx() {
+        return getInstance().Cnx(); // Fixed: Changed getCnx() to Cnx()
     }
 }
