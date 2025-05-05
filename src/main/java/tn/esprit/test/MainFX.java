@@ -12,7 +12,7 @@ import static javafx.application.Application.launch;
 public class MainFX extends Application {
     public void start(Stage stage) {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(MainFX.class.getResource("/tn.esprit/LoginView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainFX.class.getResource("/FXML/LoginView.fxml"));
         Scene scene = null;
         try {
             scene = new Scene(fxmlLoader.load());
