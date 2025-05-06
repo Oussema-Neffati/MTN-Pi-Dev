@@ -10,7 +10,7 @@ import tn.esprit.models.Role;
 import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceUtilisateur;
 
-public class SignupView {
+public class SignupViewController {
     @FXML
     private Button CreerCompte;
 

@@ -9,13 +9,12 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <AnchorPane prefHeight="71.0" prefWidth="931.0" style="-fx-background-image: FFFFFF;" BorderPane.alignment="CENTER">
          <children>
             <TextField layoutX="248.0" layoutY="18.0" prefHeight="36.0" prefWidth="246.0" promptText="Chercher" style="-fx-background-radius: 6;" />
-            <Label alignment="CENTER" layoutX="69.0" layoutY="16.0" prefHeight="46.0" prefWidth="82.0" text="MTN" textFill="#db4495">
+            <Label alignment="CENTER" layoutX="69.0" layoutY="16.0" prefHeight="46.0" prefWidth="82.0" text="MTE" textFill="#db4495">
                <font>
                   <Font name="Abril Fatface" size="27.0" />
                </font>
