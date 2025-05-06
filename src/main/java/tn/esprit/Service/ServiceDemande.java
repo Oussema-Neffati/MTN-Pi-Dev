@@ -32,7 +32,6 @@ public class ServiceDemande implements IServiceDoc<Demande> {
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected > 0) {
-                // Récupérer l'ID généré automatiquement
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         demande.setId_demande(generatedKeys.getInt(1));
@@ -110,7 +109,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         return demandes;
     }
 
-    // Méthode pour récupérer une demande spécifique par son ID
+
     public Demande getDemandeById(int id_demande) throws SQLException {
         String sql = "SELECT * FROM demande WHERE id_demande = ?";
         try (PreparedStatement preparedStatement = cnx.prepareStatement(sql)) {
@@ -131,7 +130,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         return null;
     }
 
-    // Récupérer toutes les demandes d'un utilisateur spécifique
+
     public ObservableList<Demande> getDemandesByUser(int idUser) throws SQLException {
         ObservableList<Demande> demandes = FXCollections.observableArrayList();
         String sql = "SELECT * FROM demande WHERE id_user = ?";
@@ -154,11 +153,10 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         return demandes;
     }
 
-    // Méthode pour récupérer et définir automatiquement le nom de l'utilisateur
+
     public void setUserNameInDemande(Demande demande) throws SQLException {
         Utilisateur utilisateur = getUtilisateurById(demande.getId_user());
         if (utilisateur != null) {
-            // On considère ici que le nom est une combinaison du nom et prénom
             demande.setNom(utilisateur.getNomUser() + " " + utilisateur.getPrenomUser());
         }
     }
@@ -175,7 +173,6 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     utilisateur.setPrenomUser(resultSet.getString("prenom"));
                     utilisateur.setEmail(resultSet.getString("email"));
                     utilisateur.setMotDePasse(resultSet.getString("mot_de_passe"));
-                    // Récupérer le rôle
                     utilisateur.setRole(Utilisateur.Role.valueOf(resultSet.getString("role")));
                     utilisateur.setActif(resultSet.getBoolean("actif"));
                     utilisateur.setDateCreation(resultSet.getTimestamp("date_creation").toLocalDateTime());
