@@ -1,117 +1,211 @@
 package tn.esprit.controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import tn.esprit.models.Demande;
-import tn.esprit.Service.ServiceDemande;
+import javafx.scene.input.KeyEvent;
 
-import java.sql.SQLException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class DemandeController {
+public class DemandeController implements Initializable {
 
     @FXML
     private TextField idUserField;
+
     @FXML
     private TextField nomField;
+
     @FXML
     private TextField typeDocumentField;
+
     @FXML
     private TextField adresseField;
+
     @FXML
     private TextField prixField;
 
-    private final ServiceDemande serviceDemande = new ServiceDemande();
-
     @FXML
-    private void handleSubmit(ActionEvent event) {
-        String idUserText = idUserField.getText();
-        String nom = nomField.getText();
-        String type = typeDocumentField.getText();
-        String adresse = adresseField.getText();
-        String prixText = prixField.getText();
+    private Button mapButton;
 
-        if (!validateInputs(idUserText, nom, type, adresse, prixText)) {
-            return;
+    private Map mapController;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Initialiser le contrôleur de carte
+        mapController = new Map();
+        mapController.setLinkedAddressField(adresseField);
+
+        // Définir un événement sur le bouton de carte
+        if (mapButton != null) {
+            mapButton.setOnAction(event -> handleOpenMap());
         }
 
-        try {
-            int idUser = Integer.parseInt(idUserText);
-            float prix = Float.parseFloat(prixText);
-
-            Demande demande = new Demande();
-            demande.setId_user(idUser);
-            demande.setNom(nom);
-            demande.setType(type);
-            demande.setAdresse(adresse);
-            demande.setPrice(prix);
-
-            serviceDemande.ajouter(demande);
-
-            clearFields();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Demande ajoutée avec succès ! ID: " + demande.getId_demande());
-
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Format numérique invalide !");
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur BD", "Erreur lors de l'ajout : " + e.getMessage());
-        }
+        // Configurer le contrôle de saisie pour le champ CIN
+        setupCINValidation();
     }
 
-    @FXML
-    private void handleFetchUserInfo(ActionEvent event) {
-        String idUserText = idUserField.getText();
+    /**
+     * Configure la validation en temps réel du champ CIN
+     */
+    private void setupCINValidation() {
+        // Filtrer les caractères lors de la saisie
+        idUserField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            String character = event.getCharacter();
 
-        if (idUserText.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Champ manquant", "Veuillez saisir l'ID utilisateur !");
-            return;
-        }
-
-        try {
-            int idUser = Integer.parseInt(idUserText);
-            Demande tempDemande = new Demande();
-            tempDemande.setId_user(idUser);
-
-            serviceDemande.setUserNameInDemande(tempDemande);
-
-            if (tempDemande.getNom() != null && !tempDemande.getNom().isEmpty()) {
-                nomField.setText(tempDemande.getNom());
-            } else {
-                showAlert(Alert.AlertType.WARNING, "Utilisateur introuvable", "Aucun utilisateur trouvé avec cet ID !");
+            // Vérifier si le caractère n'est pas un chiffre
+            if (!character.matches("[0-9]")) {
+                event.consume(); // Bloquer la saisie
+                return;
             }
 
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Format d'ID utilisateur invalide !");
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur BD", "Erreur lors de la récupération : " + e.getMessage());
-        }
+            // Vérifier que le premier caractère est soit 0 soit 1
+            if (idUserField.getText().isEmpty() && !character.matches("[01]")) {
+                event.consume(); // Bloquer la saisie
+                return;
+            }
+
+            // Limiter à 8 chiffres
+            if (idUserField.getText().length() >= 8) {
+                event.consume(); // Bloquer la saisie
+            }
+        });
+
+        // Ajouter un écouteur pour la validation complète lors de la perte de focus
+        idUserField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Quand le champ perd le focus
+                validateCIN();
+            }
+        });
     }
 
-    private boolean validateInputs(String idUser, String nom, String type, String adresse, String prix) {
-        if (idUser.isEmpty() || nom.isEmpty() || type.isEmpty() || adresse.isEmpty() || prix.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Champs manquants", "Tous les champs sont obligatoires !");
+    /**
+     * Valide le format de la CIN
+     * @return true si le format est valide, false sinon
+     */
+    private boolean validateCIN() {
+        String cin = idUserField.getText();
+
+        // Vérifier si la CIN est vide
+        if (cin.isEmpty()) {
             return false;
         }
 
-        try {
-            Integer.parseInt(idUser);
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Format invalide", "L'ID utilisateur doit être un nombre !");
+        // Vérifier si la CIN a exactement 8 chiffres
+        if (cin.length() != 8) {
+            showAlert("Erreur de saisie", "La CIN doit contenir exactement 8 chiffres.");
             return false;
         }
 
-        try {
-            Float.parseFloat(prix);
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Format invalide", "Le prix doit être un nombre !");
+        // Vérifier si la CIN commence par 0 ou 1
+        char firstChar = cin.charAt(0);
+        if (firstChar != '0' && firstChar != '1') {
+            showAlert("Erreur de saisie", "La CIN doit commencer par 0 ou 1.");
             return false;
         }
 
         return true;
     }
 
-    private void clearFields() {
+    /**
+     * Gère le chargement des informations utilisateur à partir de la CIN
+     */
+    @FXML
+    public void handleFetchUserInfo() {
+        String cin = idUserField.getText();
+
+        // Vérifier si la CIN est valide
+        if (!validateCIN()) {
+            return;
+        }
+
+        // TODO: Ici, ajouter le code pour récupérer les informations de l'utilisateur
+        // depuis la base de données en utilisant la CIN fournie
+
+        // Exemple temporaire (à remplacer par une vraie récupération de données)
+        if ("12345678".equals(cin)) {
+            nomField.setText("Oussema Neffati");
+            adresseField.setText("Tunis, Tunisie");
+        } else {
+            showAlert("Information", "Aucun utilisateur trouvé avec cette CIN.");
+        }
+    }
+
+    /**
+     * Ouvre la fenêtre de carte pour sélectionner une adresse
+     */
+    @FXML
+    public void handleOpenMap() {
+        try {
+            System.out.println("Opening map...");
+            // Vérifier que le champ d'adresse est correctement lié
+            if (adresseField == null) {
+                System.err.println("adresseField is null");
+                showAlert("Erreur", "Champ d'adresse non initialisé");
+                return;
+            }
+
+            // S'assurer que le contrôleur de carte est correctement configuré
+            if (mapController == null) {
+                mapController = new Map();
+                mapController.setLinkedAddressField(adresseField);
+            }
+
+            mapController.openMap();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Problème lors de l'ouverture de la carte: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gère la soumission du formulaire de demande
+     */
+    @FXML
+    public void handleSubmit() {
+        // Vérifier si la CIN est valide
+        if (!validateCIN()) {
+            return;
+        }
+
+        // Vérifier si tous les champs obligatoires sont remplis
+        if (nomField.getText().isEmpty() ||
+                typeDocumentField.getText().isEmpty() ||
+                adresseField.getText().isEmpty() ||
+                prixField.getText().isEmpty()) {
+
+            showAlert("Erreur", "Veuillez remplir tous les champs obligatoires.");
+            return;
+        }
+
+        // Vérifier si le prix est un nombre valide
+        try {
+            double prix = Double.parseDouble(prixField.getText());
+            if (prix <= 0) {
+                showAlert("Erreur", "Le prix doit être un nombre positif.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Erreur", "Le prix doit être un nombre valide.");
+            return;
+        }
+
+        // TODO: Ajouter le code pour enregistrer la demande dans la base de données
+
+        // Afficher un message de confirmation
+        showAlert("Succès", "Votre demande a été soumise avec succès!");
+
+        // Réinitialiser le formulaire
+        resetForm();
+    }
+
+    /**
+     * Réinitialise tous les champs du formulaire
+     */
+    @FXML
+    public void resetForm() {
         idUserField.clear();
         nomField.clear();
         typeDocumentField.clear();
@@ -119,11 +213,15 @@ public class DemandeController {
         prixField.clear();
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
+    /**
+     * Affiche une boîte de dialogue d'alerte
+     */
+    private void showAlert(String title, String message) {
+        Alert.AlertType type = title.equals("Succès") ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR;
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }
