@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,45 +13,54 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <AnchorPane prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
-         <children>
-            <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="7.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../projet/10782817_19197324.jpg" />
-               </image>
-            </ImageView>
-            <Label layoutX="16.0" layoutY="45.0" prefHeight="86.0" prefWidth="262.0" text="Municipalité Tunisienne Electronique    " textAlignment="CENTER" textFill="ROYALBLUE" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="23.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-   </left>
-   <right>
-      <AnchorPane prefHeight="574.0" prefWidth="400.0" style="-fx-background-color: #4169E1;" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="96.0" layoutY="47.0" prefHeight="50.0" prefWidth="200.0" text="Créer un compte" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font size="27.0" />
-               </font>
-            </Label>
-            <TextField fx:id="NomTFs" layoutX="81.0" layoutY="132.0" prefHeight="34.0" prefWidth="111.0" promptText="Nom" />
-            <TextField fx:id="passwordTFs" layoutX="81.0" layoutY="239.0" prefHeight="34.0" prefWidth="235.0" promptText="password" />
-            <Button fx:id="CreerCompte" layoutX="84.0" layoutY="350.0" mnemonicParsing="false" onAction="#CreerCompte" prefHeight="34.0" prefWidth="231.0" text="Confirmer" textFill="ROYALBLUE">
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Button>
-            <Line endX="117.60003662109375" layoutX="196.0" layoutY="413.0" startX="-112.00001525878906" stroke="#ffffff36" />
-            <Label alignment="BASELINE_LEFT" layoutX="126.0" layoutY="430.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
-            <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="426.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
-            <TextField fx:id="EmailTFs" layoutX="81.0" layoutY="185.0" prefHeight="33.0" prefWidth="235.0" promptText="Email" />
-            <TextField fx:id="PrenomTFs" layoutX="205.0" layoutY="132.0" prefHeight="34.0" prefWidth="111.0" promptText="Prenom" />
-            <ComboBox fx:id="RoleCB" layoutX="81.0" layoutY="292.0" prefHeight="35.0" prefWidth="234.0" promptText="Roles" />
-         </children>
-      </AnchorPane>
-   </right>
-</BorderPane>
+<?import javafx.scene.shape.Line?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controllers.SignupViewController"
+            prefHeight="400.0" prefWidth="600.0" >
+
+
+
+    <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" >
+        <left>
+            <AnchorPane prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+                <children>
+                    <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="7.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/10782817_19197324.jpg" />
+                        </image>
+                    </ImageView>
+                    <Label layoutX="16.0" layoutY="45.0" prefHeight="86.0" prefWidth="262.0" text="Municipalité Tunisienne Electronique    " textAlignment="CENTER" textFill="ROYALBLUE" wrapText="true">
+                        <font>
+                            <Font name="System Bold" size="23.0" />
+                        </font>
+                    </Label>
+                </children>
+            </AnchorPane>
+        </left>
+        <right>
+            <AnchorPane prefHeight="574.0" prefWidth="400.0" style="-fx-background-color: #4169E1;" BorderPane.alignment="CENTER">
+                <children>
+                    <Label layoutX="96.0" layoutY="47.0" prefHeight="50.0" prefWidth="200.0" text="Créer un compte" textAlignment="CENTER" textFill="WHITE">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                    <TextField fx:id="NomTFs" layoutX="81.0" layoutY="132.0" prefHeight="34.0" prefWidth="111.0" promptText="Nom" />
+                    <PasswordField fx:id="passwordTFs" layoutX="81.0" layoutY="239.0" prefHeight="34.0" prefWidth="235.0" promptText="password" />
+                    <Button fx:id="CreerCompte" layoutX="84.0" layoutY="350.0" mnemonicParsing="false" onAction="#CreerCompte" prefHeight="34.0" prefWidth="231.0" text="Confirmer" textFill="ROYALBLUE">
+                        <font>
+                            <Font size="17.0" />
+                        </font>
+                    </Button>
+                    <Line endX="117.60003662109375" layoutX="196.0" layoutY="413.0" startX="-112.00001525878906" stroke="#ffffff36" />
+                    <Label alignment="BASELINE_LEFT" layoutX="126.0" layoutY="430.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
+                    <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="426.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
+                    <TextField fx:id="EmailTFs" layoutX="81.0" layoutY="185.0" prefHeight="33.0" prefWidth="235.0" promptText="Email" />
+                    <TextField fx:id="PrenomTFs" layoutX="205.0" layoutY="132.0" prefHeight="34.0" prefWidth="111.0" promptText="Prenom" />
+                    <ComboBox fx:id="RoleCB" layoutX="81.0" layoutY="292.0" prefHeight="35.0" prefWidth="234.0" promptText="Roles" />
+                </children>
+            </AnchorPane>
+        </right>
+    </BorderPane>
+</AnchorPane>
