@@ -152,7 +152,7 @@ public class UserProfileController {
                 serviceUtilisateur.update(citoyen);
 
                 // Mettre à jour les données spécifiques au citoyen
-                String qry = "UPDATE `citoyen` SET `cin`=?, `adresse`=?, `telephone`=? WHERE `id_user`=?";
+                String qry = "UPDATE `utilisateur` SET `cin`=?, `adresse`=?, `telephone`=? WHERE `id_user`=?";
                 try {
                     PreparedStatement pstm = serviceUtilisateur.getCnx().prepareStatement(qry);
                     pstm.setString(1, citoyen.getCin());
@@ -185,7 +185,7 @@ public class UserProfileController {
                 serviceUtilisateur.update(employe);
 
                 // Mettre à jour les données spécifiques à l'employé
-                String qry = "UPDATE `employe` SET `poste`=?, `departement`=? WHERE `id_user`=?";
+                String qry = "UPDATE `utilisateur` SET `poste`=?, `departement`=? WHERE `id_user`=?";
                 try {
                     PreparedStatement pstm = serviceUtilisateur.getCnx().prepareStatement(qry);
                     pstm.setString(1, employe.getPoste());

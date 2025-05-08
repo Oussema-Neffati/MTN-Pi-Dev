@@ -279,7 +279,7 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             int userId = user.getId();
 
             // Insérer les données spécifiques au citoyen
-            String qry = "INSERT INTO `citoyen`(`id_user`, `cin`, `adresse`, `telephone`) VALUES (?,?,?,?)";
+            String qry = "INSERT INTO `utilisateur`(`id_user`, `cin`, `adresse`, `telephone`) VALUES (?,?,?,?)";
             try {
                 PreparedStatement pstm = cnx.prepareStatement(qry);
                 pstm.setInt(1, userId);
@@ -305,7 +305,7 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             int userId = user.getId();
 
             // Insérer les données spécifiques à l'employé
-            String qry = "INSERT INTO `employe`(`id_user`, `poste`, `date_embauche`, `departement`) VALUES (?,?,?,?)";
+            String qry = "INSERT INTO `utilisateur`(`id_user`, `poste`, `date_embauche`, `departement`) VALUES (?,?,?,?)";
             try {
                 PreparedStatement pstm = cnx.prepareStatement(qry);
                 pstm.setInt(1, userId);

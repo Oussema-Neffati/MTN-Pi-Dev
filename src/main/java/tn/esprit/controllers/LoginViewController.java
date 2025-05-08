@@ -123,11 +123,14 @@ public class LoginViewController {
         Utilisateur user = serviceUtilisateur.authenticate(email, password);
 
         if (user != null) {
-            // Stocker l'utilisateur et naviguer...
+            // Stocker l'utilisateur dans la session
+            SessionManager.getInstance().setCurrentUser(user);
 
             // Journaliser la connexion réussie
             logUtils.logAuthEvent(email, true, "Connexion " + user.getRole().name());
 
+            // Naviguer vers l'interface principale
+            NavigationUtils.loadView(event, "/FXML/Interface1.fxml", "Municipalité Tunisienne Electronique");
         } else {
             // Essayer de déterminer la cause de l'échec
             Utilisateur inactiveUser = serviceUtilisateur.findByEmail(email);
