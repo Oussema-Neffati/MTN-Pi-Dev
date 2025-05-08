@@ -27,15 +27,50 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
      */
     @Override
     public void add(Utilisateur utilisateur) {
-        String qry = "INSERT INTO `utilisateur`(`nom`, `prenom`, `email`, `mot_de_passe`, `role`, `actif`) VALUES (?,?,?,?,?,?)";
+        // Mettre à jour la requête avec les bons noms de colonnes
+        String qry = "INSERT INTO `utilisateur`(`id_user`, `nom_user`, `prenom_user`, `email`, `motDePasse`, `role`, `actif`, " +
+                "`cin`, `adresse`, `telephone`, `poste`, `date_embauche`, `departement`) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
-            pstm.setString(1, utilisateur.getNom());
-            pstm.setString(2, utilisateur.getPrenom());
-            pstm.setString(3, utilisateur.getEmail());
-            pstm.setString(4, utilisateur.getMotDePasse());
-            pstm.setString(5, utilisateur.getRole().name());
-            pstm.setBoolean(6, utilisateur.isActif());
+            pstm.setInt(1, utilisateur.getId()); // id_user
+            pstm.setString(2, utilisateur.getNom()); // nom_user
+            pstm.setString(3, utilisateur.getPrenom()); // prenom_user
+            pstm.setString(4, utilisateur.getEmail());
+            pstm.setString(5, utilisateur.getMotDePasse());
+            pstm.setString(6, utilisateur.getRole().name());
+            pstm.setBoolean(7, utilisateur.isActif());
+
+            // Champs spécifiques selon le rôle
+            if (utilisateur.getRole() == Role.CITOYEN) {
+                Citoyen citoyen = (Citoyen) utilisateur;
+                pstm.setString(8, citoyen.getCin());
+                pstm.setString(9, citoyen.getAdresse());
+                pstm.setString(10, citoyen.getTelephone());
+                pstm.setNull(11, java.sql.Types.VARCHAR);
+                pstm.setNull(12, java.sql.Types.DATE);
+                pstm.setNull(13, java.sql.Types.VARCHAR);
+            } else if (utilisateur.getRole() == Role.EMPLOYE) {
+                Employe employe = (Employe) utilisateur;
+                pstm.setNull(8, java.sql.Types.VARCHAR);
+                pstm.setNull(9, java.sql.Types.VARCHAR);
+                pstm.setNull(10, java.sql.Types.VARCHAR);
+                pstm.setString(11, employe.getPoste());
+                if (employe.getDateEmbauche() != null) {
+                    pstm.setDate(12, java.sql.Date.valueOf(employe.getDateEmbauche()));
+                } else {
+                    pstm.setNull(12, java.sql.Types.DATE);
+                }
+                pstm.setString(13, employe.getDepartement());
+            } else {
+                // Pour ADMIN
+                pstm.setNull(8, java.sql.Types.VARCHAR);
+                pstm.setNull(9, java.sql.Types.VARCHAR);
+                pstm.setNull(10, java.sql.Types.VARCHAR);
+                pstm.setNull(11, java.sql.Types.VARCHAR);
+                pstm.setNull(12, java.sql.Types.DATE);
+                pstm.setNull(13, java.sql.Types.VARCHAR);
+            }
 
             pstm.executeUpdate();
         } catch (SQLException e) {
@@ -53,13 +88,35 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             ResultSet rs = stm.executeQuery(qry);
 
             while (rs.next()) {
-                Utilisateur u = new Utilisateur();
-                u.setId(rs.getInt("id"));
-                u.setNom(rs.getString("nom"));
-                u.setPrenom(rs.getString("prenom"));
+                Utilisateur u;
+                Role role = Role.valueOf(rs.getString("role"));
+
+                if (role == Role.CITOYEN) {
+                    Citoyen citoyen = new Citoyen();
+                    citoyen.setCin(rs.getString("cin"));
+                    citoyen.setAdresse(rs.getString("adresse"));
+                    citoyen.setTelephone(rs.getString("telephone"));
+                    u = citoyen;
+                } else if (role == Role.EMPLOYE) {
+                    Employe employe = new Employe();
+                    employe.setPoste(rs.getString("poste"));
+                    Date dateEmbauche = rs.getDate("date_embauche");
+                    if (dateEmbauche != null) {
+                        employe.setDateEmbauche(dateEmbauche.toLocalDate());
+                    }
+                    employe.setDepartement(rs.getString("departement"));
+                    u = employe;
+                } else {
+                    u = new Utilisateur();
+                }
+
+                // Utiliser les bons noms de colonnes
+                u.setId(rs.getInt("id_user"));
+                u.setNom(rs.getString("nom_user"));
+                u.setPrenom(rs.getString("prenom_user"));
                 u.setEmail(rs.getString("email"));
-                u.setMotDePasse(rs.getString("mot_de_passe"));
-                u.setRole(Role.valueOf(rs.getString("role")));
+                u.setMotDePasse(rs.getString("motDePasse"));
+                u.setRole(role);
                 u.setActif(rs.getBoolean("actif"));
 
                 utilisateurs.add(u);
@@ -73,7 +130,10 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
 
     @Override
     public void update(Utilisateur utilisateur) {
-        String qry = "UPDATE `utilisateur` SET `nom`=?, `prenom`=?, `email`=?, `mot_de_passe`=?, `role`=?, `actif`=? WHERE `id`=?";
+        // Mettre à jour la requête avec les bons noms de colonnes
+        String qry = "UPDATE `utilisateur` SET `nom_user`=?, `prenom_user`=?, `email`=?, `motDePasse`=?, `role`=?, `actif`=?, " +
+                "`cin`=?, `adresse`=?, `telephone`=?, `poste`=?, `date_embauche`=?, `departement`=? WHERE `id_user`=?";
+
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setString(1, utilisateur.getNom());
@@ -82,8 +142,39 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             pstm.setString(4, utilisateur.getMotDePasse());
             pstm.setString(5, utilisateur.getRole().name());
             pstm.setBoolean(6, utilisateur.isActif());
-            pstm.setInt(7, utilisateur.getId());
 
+            // Champs spécifiques selon le rôle
+            if (utilisateur.getRole() == Role.CITOYEN) {
+                Citoyen citoyen = (Citoyen) utilisateur;
+                pstm.setString(7, citoyen.getCin());
+                pstm.setString(8, citoyen.getAdresse());
+                pstm.setString(9, citoyen.getTelephone());
+                pstm.setNull(10, java.sql.Types.VARCHAR);
+                pstm.setNull(11, java.sql.Types.DATE);
+                pstm.setNull(12, java.sql.Types.VARCHAR);
+            } else if (utilisateur.getRole() == Role.EMPLOYE) {
+                Employe employe = (Employe) utilisateur;
+                pstm.setNull(7, java.sql.Types.VARCHAR);
+                pstm.setNull(8, java.sql.Types.VARCHAR);
+                pstm.setNull(9, java.sql.Types.VARCHAR);
+                pstm.setString(10, employe.getPoste());
+                if (employe.getDateEmbauche() != null) {
+                    pstm.setDate(11, java.sql.Date.valueOf(employe.getDateEmbauche()));
+                } else {
+                    pstm.setNull(11, java.sql.Types.DATE);
+                }
+                pstm.setString(12, employe.getDepartement());
+            } else {
+                // Pour ADMIN
+                pstm.setNull(7, java.sql.Types.VARCHAR);
+                pstm.setNull(8, java.sql.Types.VARCHAR);
+                pstm.setNull(9, java.sql.Types.VARCHAR);
+                pstm.setNull(10, java.sql.Types.VARCHAR);
+                pstm.setNull(11, java.sql.Types.DATE);
+                pstm.setNull(12, java.sql.Types.VARCHAR);
+            }
+
+            pstm.setInt(13, utilisateur.getId());
             pstm.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -92,7 +183,8 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
 
     @Override
     public void delete(Utilisateur utilisateur) {
-        String qry = "DELETE FROM `utilisateur` WHERE `id`=?";
+        // Mettre à jour la requête avec le bon nom de colonne pour l'id
+        String qry = "DELETE FROM `utilisateur` WHERE `id_user`=?";
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setInt(1, utilisateur.getId());
@@ -103,7 +195,7 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
         }
     }
 
-    // Dans ServiceUtilisateur.java
+    // Méthode findByEmail modifiée
     public Utilisateur findByEmail(String email) {
         String qry = "SELECT * FROM `utilisateur` WHERE `email` = ?";
         try {
@@ -112,14 +204,37 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
-                Utilisateur u = new Utilisateur();
-                u.setId(rs.getInt("id"));
-                u.setNom(rs.getString("nom"));
-                u.setPrenom(rs.getString("prenom"));
+                Utilisateur u;
+                Role role = Role.valueOf(rs.getString("role"));
+
+                if (role == Role.CITOYEN) {
+                    Citoyen citoyen = new Citoyen();
+                    citoyen.setCin(rs.getString("cin"));
+                    citoyen.setAdresse(rs.getString("adresse"));
+                    citoyen.setTelephone(rs.getString("telephone"));
+                    u = citoyen;
+                } else if (role == Role.EMPLOYE) {
+                    Employe employe = new Employe();
+                    employe.setPoste(rs.getString("poste"));
+                    Date dateEmbauche = rs.getDate("date_embauche");
+                    if (dateEmbauche != null) {
+                        employe.setDateEmbauche(dateEmbauche.toLocalDate());
+                    }
+                    employe.setDepartement(rs.getString("departement"));
+                    u = employe;
+                } else {
+                    u = new Utilisateur();
+                }
+
+                // Utiliser les bons noms de colonnes
+                u.setId(rs.getInt("id_user"));
+                u.setNom(rs.getString("nom_user"));
+                u.setPrenom(rs.getString("prenom_user"));
                 u.setEmail(rs.getString("email"));
-                u.setMotDePasse(rs.getString("mot_de_passe"));
-                u.setRole(Role.valueOf(rs.getString("role")));
+                u.setMotDePasse(rs.getString("motDePasse"));
+                u.setRole(role);
                 u.setActif(rs.getBoolean("actif"));
+
                 return u;
             }
         } catch (SQLException e) {
@@ -137,9 +252,9 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
         return null;
     }
 
-    // Méthode pour changer le statut actif d'un utilisateur
+    // Méthode toggleActive modifiée
     public boolean toggleActive(int userId) {
-        String qry = "UPDATE `utilisateur` SET `actif` = NOT `actif` WHERE `id` = ?";
+        String qry = "UPDATE `utilisateur` SET `actif` = NOT `actif` WHERE `id_user` = ?";
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setInt(1, userId);
@@ -205,116 +320,63 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
         }
     }
 
-    // Méthode pour récupérer un citoyen par ID
+    // Méthode getCitoyenById modifiée
     public Citoyen getCitoyenById(int id) {
-        Utilisateur user = null;
-        Citoyen citoyen = null;
-
-        // D'abord récupérer l'utilisateur de base
-        String qry1 = "SELECT * FROM `utilisateur` WHERE `id` = ?";
+        String qry = "SELECT * FROM `utilisateur` WHERE `id_user` = ? AND `role` = 'CITOYEN'";
         try {
-            PreparedStatement pstm = cnx.prepareStatement(qry1);
+            PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setInt(1, id);
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
-                user = new Utilisateur();
-                user.setId(rs.getInt("id"));
-                user.setNom(rs.getString("nom"));
-                user.setPrenom(rs.getString("prenom"));
-                user.setEmail(rs.getString("email"));
-                user.setMotDePasse(rs.getString("mot_de_passe"));
-                user.setRole(Role.valueOf(rs.getString("role")));
-                user.setActif(rs.getBoolean("actif"));
+                Citoyen citoyen = new Citoyen();
+                citoyen.setId(rs.getInt("id_user"));
+                citoyen.setNom(rs.getString("nom_user"));
+                citoyen.setPrenom(rs.getString("prenom_user"));
+                citoyen.setEmail(rs.getString("email"));
+                citoyen.setMotDePasse(rs.getString("motDePasse"));
+                citoyen.setRole(Role.CITOYEN);
+                citoyen.setActif(rs.getBoolean("actif"));
+                citoyen.setCin(rs.getString("cin"));
+                citoyen.setAdresse(rs.getString("adresse"));
+                citoyen.setTelephone(rs.getString("telephone"));
+                return citoyen;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
-        // Si l'utilisateur existe et est un citoyen, récupérer les données spécifiques
-        if (user != null && user.getRole() == Role.CITOYEN) {
-            String qry2 = "SELECT * FROM `citoyen` WHERE `id_user` = ?";
-            try {
-                PreparedStatement pstm = cnx.prepareStatement(qry2);
-                pstm.setInt(1, id);
-                ResultSet rs = pstm.executeQuery();
-
-                if (rs.next()) {
-                    citoyen = new Citoyen();
-                    citoyen.setId(user.getId());
-                    citoyen.setNom(user.getNom());
-                    citoyen.setPrenom(user.getPrenom());
-                    citoyen.setEmail(user.getEmail());
-                    citoyen.setMotDePasse(user.getMotDePasse());
-                    citoyen.setRole(user.getRole());
-                    citoyen.setActif(user.isActif());
-
-                    citoyen.setCin(rs.getString("cin"));
-                    citoyen.setAdresse(rs.getString("adresse"));
-                    citoyen.setTelephone(rs.getString("telephone"));
-                }
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        return citoyen;
+        return null;
     }
 
-    // Méthode pour récupérer un employé par ID
+    // Méthode getEmployeById modifiée
     public Employe getEmployeById(int id) {
-        Utilisateur user = null;
-        Employe employe = null;
-
-        // D'abord récupérer l'utilisateur de base
-        String qry1 = "SELECT * FROM `utilisateur` WHERE `id` = ?";
+        String qry = "SELECT * FROM `utilisateur` WHERE `id_user` = ? AND `role` = 'EMPLOYE'";
         try {
-            PreparedStatement pstm = cnx.prepareStatement(qry1);
+            PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setInt(1, id);
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
-                user = new Utilisateur();
-                user.setId(rs.getInt("id"));
-                user.setNom(rs.getString("nom"));
-                user.setPrenom(rs.getString("prenom"));
-                user.setEmail(rs.getString("email"));
-                user.setMotDePasse(rs.getString("mot_de_passe"));
-                user.setRole(Role.valueOf(rs.getString("role")));
-                user.setActif(rs.getBoolean("actif"));
+                Employe employe = new Employe();
+                employe.setId(rs.getInt("id_user"));
+                employe.setNom(rs.getString("nom_user"));
+                employe.setPrenom(rs.getString("prenom_user"));
+                employe.setEmail(rs.getString("email"));
+                employe.setMotDePasse(rs.getString("motDePasse"));
+                employe.setRole(Role.EMPLOYE);
+                employe.setActif(rs.getBoolean("actif"));
+                employe.setPoste(rs.getString("poste"));
+                Date dateEmbauche = rs.getDate("date_embauche");
+                if (dateEmbauche != null) {
+                    employe.setDateEmbauche(dateEmbauche.toLocalDate());
+                }
+                employe.setDepartement(rs.getString("departement"));
+                return employe;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
-        // Si l'utilisateur existe et est un employé, récupérer les données spécifiques
-        if (user != null && user.getRole() == Role.EMPLOYE) {
-            String qry2 = "SELECT * FROM `employe` WHERE `id_user` = ?";
-            try {
-                PreparedStatement pstm = cnx.prepareStatement(qry2);
-                pstm.setInt(1, id);
-                ResultSet rs = pstm.executeQuery();
-
-                if (rs.next()) {
-                    employe = new Employe();
-                    employe.setId(user.getId());
-                    employe.setNom(user.getNom());
-                    employe.setPrenom(user.getPrenom());
-                    employe.setEmail(user.getEmail());
-                    employe.setMotDePasse(user.getMotDePasse());
-                    employe.setRole(user.getRole());
-                    employe.setActif(user.isActif());
-
-                    employe.setPoste(rs.getString("poste"));
-                    employe.setDateEmbauche(rs.getDate("date_embauche").toLocalDate());
-                    employe.setDepartement(rs.getString("departement"));
-                }
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        return employe;
+        return null;
     }
 
     // Méthode pour récupérer tous les citoyens
