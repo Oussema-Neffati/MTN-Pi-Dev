@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.DemandeController" prefHeight="678.0" prefWidth="931.0">
+<AnchorPane prefHeight="678.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.DemandeController">
     <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="931.0">
         <top>
             <AnchorPane prefHeight="71.0" prefWidth="931.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
@@ -23,7 +24,7 @@
                             <Font name="Abril Fatface" size="27.0" />
                         </font>
                     </Label>
-                    <Label layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" text="Oussema Neffati" textFill="#817e7e">
+                    <Label layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" text="Citoyen" textFill="#817e7e">
                         <font>
                             <Font size="15.0" />
                         </font>
@@ -49,7 +50,7 @@
         <left>
             <AnchorPane prefHeight="607.0" prefWidth="228.0" style="-fx-background-color: #4169E1; -fx-background-radius: 0px 50px 0px 0px;" BorderPane.alignment="CENTER">
                 <children>
-                    <Button alignment="TOP_LEFT" layoutX="56.0" layoutY="96.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #4169E1;" text="Demandes" textFill="WHITE">
+                    <Button alignment="TOP_LEFT" layoutX="56.0" layoutY="96.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #4169E1;" text="Demande" textFill="#db4495">
                         <font>
                             <Font name="System Bold" size="18.0" />
                         </font>
@@ -111,10 +112,10 @@
                             <!-- Section de formulaire à gauche -->
                             <VBox alignment="TOP_LEFT" prefHeight="607.0" prefWidth="450.0" spacing="20.0">
                                 <padding>
-                                    <Insets top="30.0" right="20.0" bottom="30.0" left="30.0" />
+                                    <Insets bottom="30.0" left="30.0" right="20.0" top="30.0" />
                                 </padding>
                                 <children>
-                                    <Label text="Formulaire de Demande" textFill="#4169E1">
+                                    <Label prefHeight="35.0" prefWidth="313.0" text="Formulaire de Demande" textFill="#4169E1">
                                         <font>
                                             <Font name="System Bold" size="24.0" />
                                         </font>
@@ -123,49 +124,50 @@
                                         </VBox.margin>
                                     </Label>
 
-                                    <!-- Champs alignés verticalement -->
+                                          <!-- Champs alignés verticalement -->
                                     <HBox alignment="CENTER_LEFT" spacing="10.0">
                                         <children>
-                                            <Label text="CIN:" prefWidth="120.0">
+                                            <Label prefWidth="120.0" text="CIN:">
                                                 <font>
                                                     <Font size="14.0" />
                                                 </font>
                                             </Label>
-                                            <TextField fx:id="idUserField" prefWidth="280.0" promptText="8 chiffres (0 ou 1)" />
+                                            <TextField fx:id="idUserField" prefHeight="25.0" prefWidth="191.0" promptText="8 chiffres (premier chiffre 0 ou 1)" />
+                                            <Button mnemonicParsing="false" onAction="#handleFetchUserInfo" prefHeight="25.0" prefWidth="82.0" style="-fx-background-color: #4169E1; -fx-text-fill: white;" text="Appliquer" />
                                         </children>
                                     </HBox>
 
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
                                         <children>
-                                            <Label text="Nom complet:" prefWidth="120.0">
+                                            <Label prefWidth="120.0" text="Nom complet:">
                                                 <font>
                                                     <Font size="14.0" />
                                                 </font>
                                             </Label>
-                                            <TextField fx:id="nomField" prefWidth="280.0" />
+                                            <TextField fx:id="nomField" prefHeight="25.0" prefWidth="281.0" />
                                         </children>
                                     </HBox>
 
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
                                         <children>
-                                            <Label text="Type doc:" prefWidth="120.0">
+                                            <Label prefWidth="120.0" text="Type document:">
                                                 <font>
                                                     <Font size="14.0" />
                                                 </font>
                                             </Label>
-                                            <TextField fx:id="typeDocumentField" prefWidth="280.0" />
+                                            <ComboBox fx:id="typeDocumentCombo" onAction="#handleTypeDocumentChange" prefHeight="25.0" prefWidth="280.0" />
                                         </children>
                                     </HBox>
 
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
                                         <children>
-                                            <Label text="Adresse:" prefWidth="120.0">
+                                            <Label prefWidth="120.0" text="Adresse:">
                                                 <font>
                                                     <Font size="14.0" />
                                                 </font>
                                             </Label>
-                                            <TextField fx:id="adresseField" prefWidth="200.0" />
-                                            <Button fx:id="mapButton" mnemonicParsing="false" text="Carte" style="-fx-background-color: #4169E1; -fx-text-fill: white;">
+                                            <TextField fx:id="adresseField" prefHeight="25.0" prefWidth="213.0" />
+                                            <Button fx:id="mapButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #4169E1; -fx-text-fill: white;" text="Carte">
                                                 <font>
                                                     <Font size="12.0" />
                                                 </font>
@@ -173,42 +175,29 @@
                                         </children>
                                     </HBox>
 
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
                                         <children>
-                                            <Label text="Prix (TND):" prefWidth="120.0">
+                                            <Label prefWidth="120.0" text="Prix (TND):">
                                                 <font>
                                                     <Font size="14.0" />
                                                 </font>
                                             </Label>
-                                            <TextField fx:id="prixField" prefWidth="280.0" />
+                                            <TextField fx:id="prixField" editable="false" prefHeight="25.0" prefWidth="280.0" style="-fx-background-color: #f0f0f0;" />
                                         </children>
                                     </HBox>
 
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                        <children>
-                                            <Button mnemonicParsing="false" onAction="#handleFetchUserInfo" text="Récupérer infos" prefWidth="150.0" style="-fx-background-color: #4169E1; -fx-text-fill: white;">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Button>
-                                        </children>
-                                        <VBox.margin>
-                                            <Insets top="10.0" />
-                                        </VBox.margin>
-                                    </HBox>
-
-                                    <!-- Boutons d'action à gauche -->
+                                          <!-- Boutons d'action à gauche -->
                                     <HBox alignment="CENTER_LEFT" spacing="20.0">
                                         <VBox.margin>
                                             <Insets top="30.0" />
                                         </VBox.margin>
                                         <children>
-                                            <Button mnemonicParsing="false" onAction="#handleSubmit" text="Soumettre" prefWidth="130.0" style="-fx-background-color: #4169E1; -fx-text-fill: white;">
+                                            <Button mnemonicParsing="false" onAction="#handleSubmit" prefWidth="130.0" style="-fx-background-color: #4169E1; -fx-text-fill: white;" text="Soumettre">
                                                 <font>
                                                     <Font name="System Bold" size="14.0" />
                                                 </font>
                                             </Button>
-                                            <Button mnemonicParsing="false" onAction="#resetForm" text="Annuler" prefWidth="130.0" style="-fx-background-color: #666666; -fx-text-fill: white;">
+                                            <Button mnemonicParsing="false" onAction="#resetForm" prefWidth="130.0" style="-fx-background-color: #666666; -fx-text-fill: white;" text="Annuler">
                                                 <font>
                                                     <Font name="System Bold" size="14.0" />
                                                 </font>
@@ -221,7 +210,7 @@
                             <!-- Section d'image à droite -->
                             <VBox alignment="BOTTOM_RIGHT" prefHeight="607.0" prefWidth="253.0">
                                 <padding>
-                                    <Insets top="20.0" right="20.0" bottom="30.0" left="0.0" />
+                                    <Insets bottom="30.0" left="0.0" right="20.0" top="20.0" />
                                 </padding>
                                 <children>
                                     <ImageView fitHeight="240.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true">

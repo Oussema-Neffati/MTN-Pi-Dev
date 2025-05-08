@@ -1,13 +1,18 @@
 package tn.esprit.controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class DemandeController implements Initializable {
@@ -19,7 +24,7 @@ public class DemandeController implements Initializable {
     private TextField nomField;
 
     @FXML
-    private TextField typeDocumentField;
+    private ComboBox<String> typeDocumentCombo;
 
     @FXML
     private TextField adresseField;
@@ -30,12 +35,15 @@ public class DemandeController implements Initializable {
     @FXML
     private Button mapButton;
 
-    private Map mapController;
+    private tn.esprit.controllers.Map mapController;
+
+    // Map pour stocker les types de documents et leurs prix associés
+    private HashMap<String, Double> documentPrices;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialiser le contrôleur de carte
-        mapController = new Map();
+        mapController = new tn.esprit.controllers.Map();
         mapController.setLinkedAddressField(adresseField);
 
         // Définir un événement sur le bouton de carte
@@ -45,6 +53,50 @@ public class DemandeController implements Initializable {
 
         // Configurer le contrôle de saisie pour le champ CIN
         setupCINValidation();
+
+        // Initialiser les types de documents et leurs prix
+        initializeDocumentTypes();
+
+        // Configurer le champ de prix comme non éditable
+        prixField.setEditable(false);
+    }
+
+    /**
+     * Initialise les types de documents dans le ComboBox et leurs prix associés
+     */
+    private void initializeDocumentTypes() {
+        // Créer la map des prix pour chaque type de document
+        documentPrices = new HashMap<>();
+        documentPrices.put("Plans urbanisme", 75.00);
+        documentPrices.put("Registre état civil", 25.00);
+        documentPrices.put("Autorisation construction", 150.00);
+        documentPrices.put("Règlements municipalité", 50.00);
+        documentPrices.put("Légalisation d'un papier", 15.00);
+
+        // Créer la liste des types de documents pour le ComboBox
+        ObservableList<String> documentTypes = FXCollections.observableArrayList(documentPrices.keySet());
+
+        // Configurer le ComboBox
+        typeDocumentCombo.setItems(documentTypes);
+    }
+
+    /**
+     * Gère le changement de sélection dans le ComboBox des types de documents
+     */
+    @FXML
+    public void handleTypeDocumentChange() {
+        String selectedType = typeDocumentCombo.getValue();
+
+        if (selectedType != null && documentPrices.containsKey(selectedType)) {
+            // Récupérer le prix associé au type sélectionné
+            Double price = documentPrices.get(selectedType);
+
+            // Afficher le prix dans le champ de prix
+            prixField.setText(String.format("%.2f", price));
+        } else {
+            // Effacer le champ de prix si aucun type n'est sélectionné
+            prixField.clear();
+        }
     }
 
     /**
@@ -149,7 +201,7 @@ public class DemandeController implements Initializable {
 
             // S'assurer que le contrôleur de carte est correctement configuré
             if (mapController == null) {
-                mapController = new Map();
+                mapController = new tn.esprit.controllers.Map();
                 mapController.setLinkedAddressField(adresseField);
             }
 
@@ -172,7 +224,7 @@ public class DemandeController implements Initializable {
 
         // Vérifier si tous les champs obligatoires sont remplis
         if (nomField.getText().isEmpty() ||
-                typeDocumentField.getText().isEmpty() ||
+                typeDocumentCombo.getValue() == null ||
                 adresseField.getText().isEmpty() ||
                 prixField.getText().isEmpty()) {
 
@@ -180,17 +232,8 @@ public class DemandeController implements Initializable {
             return;
         }
 
-        // Vérifier si le prix est un nombre valide
-        try {
-            double prix = Double.parseDouble(prixField.getText());
-            if (prix <= 0) {
-                showAlert("Erreur", "Le prix doit être un nombre positif.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            showAlert("Erreur", "Le prix doit être un nombre valide.");
-            return;
-        }
+        // Vérification du prix déjà effectuée par le système car le champ n'est pas modifiable
+        // et est automatiquement défini en fonction du type de document
 
         // TODO: Ajouter le code pour enregistrer la demande dans la base de données
 
@@ -208,7 +251,7 @@ public class DemandeController implements Initializable {
     public void resetForm() {
         idUserField.clear();
         nomField.clear();
-        typeDocumentField.clear();
+        typeDocumentCombo.setValue(null);
         adresseField.clear();
         prixField.clear();
     }
