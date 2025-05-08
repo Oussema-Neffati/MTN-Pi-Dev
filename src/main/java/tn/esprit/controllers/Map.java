@@ -37,6 +37,8 @@ public class Map {
         mapStage.setTitle("Sélectionner une adresse");
 
         WebView webView = new WebView();
+        // Enable hardware acceleration
+        webView.setContextMenuEnabled(false);
         WebEngine webEngine = webView.getEngine();
 
         // Créer un pont entre JavaScript et Java
@@ -120,6 +122,7 @@ public class Map {
                 "<html>\n" +
                 "<head>\n" +
                 "    <title>Sélection d'adresse</title>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
                 "    <meta http-equiv=\"Content-Security-Policy\" content=\"default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;\">\n" +
                 "    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css\" />\n" +
                 "    <style>\n" +
@@ -128,6 +131,8 @@ public class Map {
                 "        #address-panel { padding: 10px; background-color: #f8f8f8; }\n" +
                 "        #address { width: 70%; padding: 8px; margin-right: 10px; }\n" +
                 "        button { padding: 8px 15px; background-color: #4169E1; color: white; border: none; cursor: pointer; }\n" +
+                "        .leaflet-container { cursor: grab; }\n" +
+                "        .leaflet-dragging .leaflet-container { cursor: grabbing; }\n" +
                 "    </style>\n" +
                 "</head>\n" +
                 "<body>\n" +
@@ -135,6 +140,7 @@ public class Map {
                 "    <div id=\"address-panel\">\n" +
                 "        <input type=\"text\" id=\"address\" placeholder=\"Adresse sélectionnée\" readonly />\n" +
                 "        <button onclick=\"confirmSelection()\">Confirmer</button>\n" +
+                "        <button onclick=\"searchByAddress()\">Rechercher</button>\n" +
                 "    </div>\n" +
                 "    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js\"></script>\n" +
                 "    <script>\n" +
@@ -142,41 +148,124 @@ public class Map {
                 "        let selectedAddress = '';\n" +
                 "        let lat = 36.8065; // Coordonnées de Tunis\n" +
                 "        let lng = 10.1815;\n" +
+                "        let geocodeTimeout;\n" +
                 "        \n" +
-                "        // Attendre que la page soit complètement chargée\n" +
-                "        window.onload = function() {\n" +
+                "        // Fonction d'initialisation de la carte\n" +
+                "        function initMap() {\n" +
                 "            try {\n" +
-                "                // Initialisation de la carte centrée sur la Tunisie\n" +
-                "                map = L.map('map').setView([lat, lng], 10);\n" +
+                "                console.log('Initializing map...');\n" +
                 "                \n" +
-                "                // Ajouter la couche OpenStreetMap avec l'URL directe\n" +
-                "                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {\n" +
-                "                    attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'\n" +
+                "                // Initialisation de la carte centrée sur la Tunisie\n" +
+                "                map = L.map('map', {\n" +
+                "                    center: [lat, lng],\n" +
+                "                    zoom: 10,\n" +
+                "                    zoomControl: true,\n" +
+                "                    dragging: true,\n" +
+                "                    touchZoom: true,\n" +
+                "                    doubleClickZoom: true,\n" +
+                "                    scrollWheelZoom: true,\n" +
+                "                    boxZoom: true,\n" +
+                "                    keyboard: true,\n" +
+                "                    preferCanvas: true // Use canvas for smoother rendering\n" +
+                "                });\n" +
+                "                \n" +
+                "                // Ajouter la couche OpenStreetMap avec optimisation de tuiles\n" +
+                "                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n" +
+                "                    attribution: '© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors',\n" +
+                "                    maxZoom: 19,\n" +
+                "                    updateWhenIdle: true,\n" +
+                "                    keepBuffer: 2\n" +
                 "                }).addTo(map);\n" +
+                "                \n" +
+                "                // Vérifier que la carte est bien créée et accessible\n" +
+                "                console.log('Map created:', map);\n" +
+                "                console.log('Map dragging enabled:', map.dragging.enabled());\n" +
                 "                \n" +
                 "                // Événement de clic sur la carte\n" +
                 "                map.on('click', async function(e) {\n" +
+                "                    console.log('Map clicked at:', e.latlng);\n" +
+                "                    \n" +
                 "                    if (marker) map.removeLayer(marker); // Supprimer l'ancien marqueur\n" +
                 "                    \n" +
                 "                    // Créer un nouveau marqueur\n" +
                 "                    marker = L.marker(e.latlng, {draggable: true}).addTo(map);\n" +
                 "                    \n" +
-                "                    // Récupérer l'adresse pour ces coordonnées\n" +
-                "                    selectedAddress = await reverseGeocode(e.latlng.lat, e.latlng.lng);\n" +
-                "                    document.getElementById('address').value = selectedAddress;\n" +
+                "                    // Debounce reverse geocoding\n" +
+                "                    clearTimeout(geocodeTimeout);\n" +
+                "                    geocodeTimeout = setTimeout(async () => {\n" +
+                "                        selectedAddress = await reverseGeocode(e.latlng.lat, e.latlng.lng);\n" +
+                "                        document.getElementById('address').value = selectedAddress;\n" +
+                "                    }, 300);\n" +
                 "                    \n" +
                 "                    // Mettre à jour l'adresse si le marqueur est déplacé\n" +
                 "                    marker.on('dragend', async function() {\n" +
                 "                        const position = marker.getLatLng();\n" +
-                "                        selectedAddress = await reverseGeocode(position.lat, position.lng);\n" +
-                "                        document.getElementById('address').value = selectedAddress;\n" +
+                "                        console.log('Marker dragged to:', position);\n" +
+                "                        clearTimeout(geocodeTimeout);\n" +
+                "                        geocodeTimeout = setTimeout(async () => {\n" +
+                "                            selectedAddress = await reverseGeocode(position.lat, position.lng);\n" +
+                "                            document.getElementById('address').value = selectedAddress;\n" +
+                "                        }, 300);\n" +
                 "                    });\n" +
                 "                });\n" +
-                "                console.log('Map initialized successfully!');\n" +
+                "                \n" +
+                "                // Ajouter des journaux pour les événements de déplacement\n" +
+                "                map.on('dragstart', function() {\n" +
+                "                    console.log('Map drag started');\n" +
+                "                });\n" +
+                "                \n" +
+                "                map.on('dragend', function() {\n" +
+                "                    console.log('Map drag ended');\n" +
+                "                });\n" +
+                "                \n" +
+                "                console.log('Map initialization complete!');\n" +
                 "            } catch (error) {\n" +
                 "                console.error('Error initializing map:', error);\n" +
+                "                alert('Erreur lors de l\\'initialisation de la carte: ' + error.message);\n" +
                 "            }\n" +
-                "        };\n" +
+                "        }\n" +
+                "        \n" +
+                "        // Fonction pour rechercher une adresse\n" +
+                "        function searchByAddress() {\n" +
+                "            const address = prompt('Entrez une adresse à rechercher:');\n" +
+                "            if (!address) return;\n" +
+                "            \n" +
+                "            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {\n" +
+                "                headers: {\n" +
+                "                    'User-Agent': 'JavaFX Application'\n" +
+                "                }\n" +
+                "            })\n" +
+                "            .then(response => response.json())\n" +
+                "            .then(data => {\n" +
+                "                if (data && data.length > 0) {\n" +
+                "                    const result = data[0];\n" +
+                "                    const position = [parseFloat(result.lat), parseFloat(result.lon)];\n" +
+                "                    \n" +
+                "                    map.setView(position, 16);\n" +
+                "                    \n" +
+                "                    if (marker) map.removeLayer(marker);\n" +
+                "                    marker = L.marker(position, {draggable: true}).addTo(map);\n" +
+                "                    \n" +
+                "                    selectedAddress = result.display_name;\n" +
+                "                    document.getElementById('address').value = selectedAddress;\n" +
+                "                    \n" +
+                "                    marker.on('dragend', async function() {\n" +
+                "                        const newPos = marker.getLatLng();\n" +
+                "                        clearTimeout(geocodeTimeout);\n" +
+                "                        geocodeTimeout = setTimeout(async () => {\n" +
+                "                            selectedAddress = await reverseGeocode(newPos.lat, newPos.lng);\n" +
+                "                            document.getElementById('address').value = selectedAddress;\n" +
+                "                        }, 300);\n" +
+                "                    });\n" +
+                "                } else {\n" +
+                "                    alert('Aucun résultat trouvé pour cette adresse');\n" +
+                "                }\n" +
+                "            })\n" +
+                "            .catch(error => {\n" +
+                "                console.error('Erreur de recherche:', error);\n" +
+                "                alert('Erreur lors de la recherche');\n" +
+                "            });\n" +
+                "        }\n" +
                 "        \n" +
                 "        // Fonction pour reverse géocoder (coordonnées -> adresse)\n" +
                 "        async function reverseGeocode(lat, lng) {\n" +
@@ -187,7 +276,7 @@ public class Map {
                 "                    }\n" +
                 "                });\n" +
                 "                const data = await response.json();\n" +
-                "                return data.display_name;\n" +
+                "                return data.display_name || 'Adresse non trouvée';\n" +
                 "            } catch (error) {\n" +
                 "                console.error('Erreur de géocodage:', error);\n" +
                 "                return 'Adresse non trouvée';\n" +
@@ -212,6 +301,9 @@ public class Map {
                 "                alert('Veuillez sélectionner une adresse sur la carte');\n" +
                 "            }\n" +
                 "        }\n" +
+                "        \n" +
+                "        // Exécuter l'initialisation de la carte une fois la page chargée\n" +
+                "        window.onload = initMap;\n" +
                 "    </script>\n" +
                 "</body>\n" +
                 "</html>";

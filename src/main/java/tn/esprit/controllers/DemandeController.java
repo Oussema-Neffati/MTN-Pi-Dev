@@ -9,8 +9,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import tn.esprit.Service.ServiceDemande;
+import tn.esprit.models.Demande;
+import tn.esprit.utils.DataBase;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -36,12 +40,16 @@ public class DemandeController implements Initializable {
     private Button mapButton;
 
     private tn.esprit.controllers.Map mapController;
+    private ServiceDemande serviceDemande;
 
     // Map pour stocker les types de documents et leurs prix associés
     private HashMap<String, Double> documentPrices;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialiser le service de demande
+        serviceDemande = new ServiceDemande();
+
         // Initialiser le contrôleur de carte
         mapController = new tn.esprit.controllers.Map();
         mapController.setLinkedAddressField(adresseField);
@@ -53,6 +61,12 @@ public class DemandeController implements Initializable {
 
         // Configurer le contrôle de saisie pour le champ CIN
         setupCINValidation();
+
+        // Configurer le contrôle de saisie pour le champ nom
+        setupNomValidation();
+
+        // Rendre le champ adresse non éditable
+        adresseField.setEditable(false);
 
         // Initialiser les types de documents et leurs prix
         initializeDocumentTypes();
@@ -134,6 +148,51 @@ public class DemandeController implements Initializable {
     }
 
     /**
+     * Configure la validation en temps réel du champ nom
+     */
+    private void setupNomValidation() {
+        // Filtrer les caractères lors de la saisie
+        nomField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            String character = event.getCharacter();
+
+            // Vérifier si le caractère est une lettre ou un espace
+            if (!character.matches("[a-zA-Z\\s]")) {
+                event.consume(); // Bloquer la saisie de chiffres et caractères spéciaux
+                return;
+            }
+        });
+
+        // Ajouter un écouteur pour la validation complète lors de la perte de focus
+        nomField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Quand le champ perd le focus
+                validateNom();
+            }
+        });
+    }
+
+    /**
+     * Valide le format du nom
+     * @return true si le format est valide, false sinon
+     */
+    private boolean validateNom() {
+        String nom = nomField.getText().trim();
+
+        // Vérifier si le nom est vide
+        if (nom.isEmpty()) {
+            showAlert("Erreur de saisie", "Le champ nom ne peut pas être vide.");
+            return false;
+        }
+
+        // Vérifier si le nom contient uniquement des lettres et des espaces
+        if (!nom.matches("[a-zA-Z\\s]+")) {
+            showAlert("Erreur de saisie", "Le nom ne doit contenir que des lettres et des espaces.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Valide le format de la CIN
      * @return true si le format est valide, false sinon
      */
@@ -179,7 +238,7 @@ public class DemandeController implements Initializable {
         // Exemple temporaire (à remplacer par une vraie récupération de données)
         if ("12345678".equals(cin)) {
             nomField.setText("Oussema Neffati");
-            adresseField.setText("Tunis, Tunisie");
+            adresseField.setText("Tunis, Tunisie"); // Défini via la carte uniquement
         } else {
             showAlert("Information", "Aucun utilisateur trouvé avec cette CIN.");
         }
@@ -222,26 +281,36 @@ public class DemandeController implements Initializable {
             return;
         }
 
+        // Vérifier si le nom est valide
+        if (!validateNom()) {
+            return;
+        }
+
         // Vérifier si tous les champs obligatoires sont remplis
         if (nomField.getText().isEmpty() ||
                 typeDocumentCombo.getValue() == null ||
                 adresseField.getText().isEmpty() ||
                 prixField.getText().isEmpty()) {
-
             showAlert("Erreur", "Veuillez remplir tous les champs obligatoires.");
             return;
         }
 
-        // Vérification du prix déjà effectuée par le système car le champ n'est pas modifiable
-        // et est automatiquement défini en fonction du type de document
+        // Créer une nouvelle demande
+        Demande demande = new Demande();
+        demande.setId_user(Integer.parseInt(idUserField.getText())); // Conversion de la CIN en int
+        demande.setNom(nomField.getText());
+        demande.setAdresse(adresseField.getText());
+        demande.setType(typeDocumentCombo.getValue());
+        demande.setPrice(Float.parseFloat(prixField.getText()));
 
-        // TODO: Ajouter le code pour enregistrer la demande dans la base de données
-
-        // Afficher un message de confirmation
-        showAlert("Succès", "Votre demande a été soumise avec succès!");
-
-        // Réinitialiser le formulaire
-        resetForm();
+        try {
+            serviceDemande.ajouter(demande);
+            showAlert("Succès", "Votre demande a été soumise avec succès!");
+            resetForm();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Erreur lors de l'enregistrement dans la base de données : " + e.getMessage());
+        }
     }
 
     /**
