@@ -27,7 +27,7 @@ public class ValidationUtils {
         return Pattern.compile(CIN_REGEX).matcher(cin).matches();
     }
 
-    // Méthode pour valider un mot de passe (au moins 8 caractères, une majuscule, une minuscule et un chiffre)
+    // Méthode pour valider un mot de passe
     public static boolean isValidPassword(String password) {
         return password.length() >= 8 &&
                 Pattern.compile("[A-Z]").matcher(password).find() &&

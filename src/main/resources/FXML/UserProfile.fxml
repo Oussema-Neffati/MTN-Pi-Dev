@@ -41,12 +41,12 @@
     <left>
         <AnchorPane prefHeight="607.0" prefWidth="228.0" style="-fx-background-color: #4169E1; -fx-background-radius: 0px 50px 0px 0px;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="backButton" layoutX="56.0" layoutY="520.0" mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #DB4495;" text="Retour" textFill="WHITE">
+                <Button fx:id="backButton" layoutX="36.0" layoutY="520.0" mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #DB4495;" text="Retour" textFill="WHITE">
                     <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Button>
-                <Label layoutX="77.0" layoutY="580.0" prefHeight="31.0" prefWidth="74.0" text="Version 1.0.1" textFill="WHITE" />
+                <Label layoutX="73.0" layoutY="571.0" prefHeight="31.0" prefWidth="74.0" text="Version 1.0.1" textFill="WHITE" />
             </children>
         </AnchorPane>
     </left>
@@ -67,7 +67,7 @@
                         </Label>
                         <Separator prefWidth="200.0" />
                         <Label text="Nom" />
-                        <TextField fx:id="nomField" promptText="Nom" />
+                        <TextField fx:id="nomField" prefHeight="5.0" prefWidth="399.0" promptText="Nom" />
                         <Label text="Prénom" />
                         <TextField fx:id="prenomField" promptText="Prénom" />
                         <Label text="Email" />
@@ -100,8 +100,14 @@
                         </VBox>
                     </children>
                 </VBox>
-                <Button fx:id="saveButton" layoutX="532.0" layoutY="612.0" mnemonicParsing="false" onAction="#saveProfile" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4169E1;" text="Enregistrer" textFill="WHITE" />
-                <Button fx:id="changePasswordButton" layoutX="339.0" layoutY="612.0" mnemonicParsing="false" onAction="#changePassword" prefHeight="30.0" prefWidth="180.0" style="-fx-background-color: #4169E1;" text="Changer le mot de passe" textFill="WHITE" />
+                <Button fx:id="saveButton" layoutX="532.0" layoutY="603.0" mnemonicParsing="false" onAction="#saveProfile" prefHeight="39.0" prefWidth="122.0" style="-fx-background-color: #4169E1;" text="Enregistrer" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font></Button>
+                <Button fx:id="changePasswordButton" layoutX="327.0" layoutY="603.0" mnemonicParsing="false" onAction="#changePassword" prefHeight="40.0" prefWidth="192.0" style="-fx-background-color: #4169E1;" text="Changer le mot de passe" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
             </children>
         </AnchorPane>
     </center>

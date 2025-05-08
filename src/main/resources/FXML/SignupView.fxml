@@ -44,7 +44,7 @@
                 <TextField fx:id="PrenomTFs" layoutX="205.0" layoutY="90.0" prefHeight="34.0" prefWidth="111.0" promptText="Prenom" />
                 <TextField fx:id="EmailTFs" layoutX="81.0" layoutY="135.0" prefHeight="33.0" prefWidth="235.0" promptText="Email" />
                 <PasswordField fx:id="passwordTFs" layoutX="81.0" layoutY="180.0" prefHeight="34.0" prefWidth="235.0" promptText="Mot de passe" />
-                <ComboBox fx:id="RoleCB" layoutX="81.0" layoutY="225.0"  prefHeight="35.0" prefWidth="234.0" promptText="Rôle" />
+                <ComboBox fx:id="RoleCB" layoutX="81.0" layoutY="225.0" prefHeight="35.0" prefWidth="234.0" promptText="Rôle" />
 
                 <!-- Champs pour Citoyen -->
                 <VBox fx:id="citoyenFields" layoutX="81.0" layoutY="270.0" prefHeight="120.0" prefWidth="235.0" spacing="10.0" visible="false">
@@ -69,9 +69,9 @@
                         <Font size="17.0" />
                     </font>
                 </Button>
-                <Line endX="117.60003662109375" layoutX="196.0" layoutY="445.0" startX="-112.00001525878906" stroke="#ffffff36" />
-                <Label alignment="BASELINE_LEFT" layoutX="126.0" layoutY="460.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
-                <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="456.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
+                <Line endX="117.60003662109375" layoutX="196.0" layoutY="449.0" startX="-112.00001525878906" stroke="#ffffff36" />
+                <Label alignment="BASELINE_LEFT" layoutX="125.0" layoutY="466.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
+                <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="462.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
             </children>
         </AnchorPane>
     </right>

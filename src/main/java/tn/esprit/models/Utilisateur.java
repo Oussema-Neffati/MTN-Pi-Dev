@@ -2,6 +2,8 @@ package tn.esprit.models;
 
 import java.util.regex.Pattern;
 
+import static tn.esprit.utils.ValidationUtils.isValidEmail;
+
 public class Utilisateur {
     private int id_user;
     private String nom_user, prenom_user, email, motDePasse;
@@ -95,11 +97,7 @@ public class Utilisateur {
                 ", actif=" + actif +
                 '}';
     }
-    public static boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        return pattern.matcher(email).matches();
-    }
+
 
     // Méthode pour valider les champs obligatoires
     public boolean validateRequiredFields() {

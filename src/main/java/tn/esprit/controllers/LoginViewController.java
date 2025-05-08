@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import tn.esprit.models.Role;
 import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceUtilisateur;
 import tn.esprit.utils.NavigationUtils;
@@ -108,13 +109,37 @@ public class LoginViewController {
 
         // Cas spécial pour l'administrateur
         if (email.equals("admin@mairie.tn") && password.equals("admin123")) {
-            // Créer et stocker l'utilisateur admin...
+            // Créer et stocker l'utilisateur admin
+            Utilisateur admin = new Utilisateur();
+            admin.setId(1);
+            admin.setNom("Admin");
+            admin.setPrenom("Admin");
+            admin.setEmail("admin@mairie.tn");
+            admin.setMotDePasse("admin123");
+            admin.setRole(Role.ADMIN);
+            admin.setActif(true);
+
+            // Stocker dans la session
+            SessionManager.getInstance().setCurrentUser(admin);
 
             // Journaliser la connexion réussie
             logUtils.logAuthEvent(email, true, "Connexion administrateur");
 
-            // Naviguer vers le dashboard admin
-            NavigationUtils.loadView(event, "/FXML/AdminDashboard.fxml", "Administration - Gestion des utilisateurs");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/AdminDashboard.fxml"));
+                Parent root = loader.load();
+
+                Scene scene = new Scene(root);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(scene);
+                stage.setTitle("Administration - Gestion des utilisateurs");
+                stage.show();
+            } catch (IOException e) {
+                System.err.println("Erreur de chargement: " + e.getMessage());
+                e.printStackTrace(); // Ajouter cette ligne pour voir l'erreur complète
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Impossible de charger le dashboard administrateur.");
+            }
             return;
         }
 

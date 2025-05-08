@@ -22,9 +22,6 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
         cnx = MyDataBase.getInstance().getCnx();
     }
 
-    /**
-     * Opérations CRUD de base
-     */
     @Override
     public void add(Utilisateur utilisateur) {
         // Mettre à jour la requête avec les bons noms de colonnes
