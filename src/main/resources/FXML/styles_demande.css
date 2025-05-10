@@ -1,0 +1,26 @@
+/* src/main/resources/tn/esprit/views/styles.css */
+.text-field, .combo-box {
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+.label {
+    -fx-font-weight: bold;
+}
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: #45a049;
+}
+.grid-pane {
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 10;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 5;
+}
