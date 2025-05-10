@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import tn.esprit.models.Citoyen;
 import tn.esprit.models.Employe;
 import tn.esprit.models.Role;
-import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceUtilisateur;
 import tn.esprit.utils.ValidationUtils;
 
@@ -57,13 +56,13 @@ public class SignupViewController {
     private TextField telephoneField;
 
     @FXML
-    private TextField posteField;
+    private ComboBox<String> posteField;
 
     @FXML
     private DatePicker dateEmbaucheField;
 
     @FXML
-    private TextField departementField;
+    private ComboBox<String> departementField;
 
     @FXML
     void initialize() {
@@ -79,6 +78,41 @@ public class SignupViewController {
         // Écouter les changements de rôle
         RoleCB.setOnAction(event -> {
             updateFieldsVisibility(RoleCB.getValue());
+        });
+
+        // Initialiser les options des ComboBox pour les employés
+        posteField.getItems().addAll(
+                "Secrétaire Général",
+                "Chargé de Communication",
+                "Agent d'État Civil",
+                "Responsable des Services Techniques",
+                "Agent d'Accueil",
+                "Comptable",
+                "Responsable des Travaux Publics"
+        );
+
+        departementField.getItems().addAll(
+                "État Civil",
+                "Urbanisme",
+                "Services Sociaux",
+                "Services Techniques",
+                "Administration",
+                "Travaux Publics",
+                "Hygiène et Sécurité"
+        );
+
+        // Ajouter un TextFormatter pour limiter le CIN à 8 chiffres
+        cinField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!ValidationUtils.isValidCINInput(newValue)) {
+                cinField.setText(oldValue);
+            }
+        });
+
+        // Limiter le champ téléphone à 8 chiffres
+        telephoneField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*") || newValue.length() > 8) {
+                telephoneField.setText(oldValue);
+            }
         });
     }
 
@@ -171,7 +205,7 @@ public class SignupViewController {
             // Valider le CIN
             if (!ValidationUtils.isValidCIN(cinField.getText())) {
                 showAlert(Alert.AlertType.ERROR, "CIN invalide",
-                        "Le CIN doit contenir 8 chiffres.");
+                        "Le CIN doit contenir exactement 8 chiffres.");
                 return;
             }
 
@@ -193,14 +227,38 @@ public class SignupViewController {
             citoyen.setTelephone(telephoneField.getText());
             citoyen.setActif(true); // Les citoyens sont activés par défaut
 
-            serviceUtilisateur.addCitoyen(citoyen);
+            serviceUtilisateur.add(citoyen);
 
             showAlert(Alert.AlertType.INFORMATION, "Inscription réussie",
                     "Votre compte citoyen a été créé avec succès. Vous pouvez maintenant vous connecter.");
 
         } else if (selectedRole == Role.EMPLOYE) {
-            // Suite du code pour les employés...
-            // (similaire à ce qui a été présenté précédemment)
+            // Valider les champs spécifiques à l'employé
+            if (posteField.getValue() == null ||
+                    departementField.getValue() == null ||
+                    dateEmbaucheField.getValue() == null) {
+
+                showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
+                        "Veuillez remplir tous les champs spécifiques à l'employé.");
+                return;
+            }
+
+            // Créer et ajouter l'employé
+            Employe employe = new Employe();
+            employe.setNom(NomTFs.getText());
+            employe.setPrenom(PrenomTFs.getText());
+            employe.setEmail(EmailTFs.getText());
+            employe.setMotDePasse(passwordTFs.getText());
+            employe.setPoste(posteField.getValue());
+            employe.setDepartement(departementField.getValue());
+            employe.setDateEmbauche(dateEmbaucheField.getValue());
+            employe.setActif(false); // Les employés doivent être activés par un administrateur
+
+            serviceUtilisateur.add(employe);
+
+            showAlert(Alert.AlertType.INFORMATION, "Inscription réussie",
+                    "Votre compte employé a été créé avec succès. " +
+                            "Un administrateur devra activer votre compte avant que vous puissiez vous connecter.");
         }
 
         // Retourner à la page de connexion

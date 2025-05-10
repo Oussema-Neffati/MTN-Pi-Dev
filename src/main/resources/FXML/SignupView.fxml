@@ -15,11 +15,11 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/22.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.SignupViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="561.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.SignupViewController">
    <left>
-      <AnchorPane prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="600.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="7.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="7.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/10782817_19197324.jpg" />
                </image>
@@ -58,20 +58,20 @@
             <!-- Champs pour Employé -->
             <VBox fx:id="employeFields" layoutX="81.0" layoutY="270.0" prefHeight="120.0" prefWidth="235.0" spacing="10.0" visible="false">
                <children>
-                  <TextField fx:id="posteField" prefHeight="33.0" prefWidth="235.0" promptText="Poste" />
+                  <ComboBox fx:id="posteField" prefHeight="33.0" prefWidth="235.0" promptText="Poste" />
                   <DatePicker fx:id="dateEmbaucheField" prefHeight="33.0" prefWidth="235.0" promptText="Date d'embauche" />
-                  <TextField fx:id="departementField" prefHeight="33.0" prefWidth="235.0" promptText="Département" />
+                  <ComboBox fx:id="departementField" prefHeight="33.0" prefWidth="235.0" promptText="Département" />
                </children>
             </VBox>
 
-            <Button fx:id="CreerCompte" layoutX="84.0" layoutY="400.0" mnemonicParsing="false" onAction="#CreerCompte" prefHeight="34.0" prefWidth="231.0" text="Confirmer" textFill="ROYALBLUE">
+            <Button fx:id="CreerCompte" layoutX="83.0" layoutY="424.0" mnemonicParsing="false" onAction="#CreerCompte" prefHeight="34.0" prefWidth="231.0" text="Confirmer" textFill="ROYALBLUE">
                <font>
                   <Font size="17.0" />
                </font>
             </Button>
-            <Line endX="117.60003662109375" layoutX="196.0" layoutY="445.0" startX="-112.00001525878906" stroke="#ffffff36" />
-            <Label alignment="BASELINE_LEFT" layoutX="126.0" layoutY="460.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
-            <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="456.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
+            <Line endX="117.60003662109375" layoutX="196.0" layoutY="506.0" startX="-112.00001525878906" stroke="#ffffff36" />
+            <Label alignment="BASELINE_LEFT" layoutX="126.0" layoutY="521.0" prefHeight="18.0" prefWidth="102.0" text="Déjà inscrit ?" textFill="WHITE" />
+            <Hyperlink fx:id="gologinpage" alignment="BASELINE_LEFT" layoutX="202.0" layoutY="517.0" onAction="#gologinpage" prefHeight="24.0" prefWidth="104.0" text="Connectez-vous" textFill="#d94495" underline="true" />
          </children>
       </AnchorPane>
    </right>

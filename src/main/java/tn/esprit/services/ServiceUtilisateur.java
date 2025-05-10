@@ -24,49 +24,49 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
 
     @Override
     public void add(Utilisateur utilisateur) {
-        // Mettre à jour la requête avec les bons noms de colonnes
-        String qry = "INSERT INTO `utilisateur`(`id_user`, `nom_user`, `prenom_user`, `email`, `motDePasse`, `role`, `actif`, " +
+        String qry = "INSERT INTO `utilisateur`(" +
+                "`nom_user`, `prenom_user`, `email`, `motDePasse`, `role`, `actif`, " +
                 "`cin`, `adresse`, `telephone`, `poste`, `date_embauche`, `departement`) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
-            pstm.setInt(1, utilisateur.getId()); // id_user
-            pstm.setString(2, utilisateur.getNom()); // nom_user
-            pstm.setString(3, utilisateur.getPrenom()); // prenom_user
-            pstm.setString(4, utilisateur.getEmail());
-            pstm.setString(5, utilisateur.getMotDePasse());
-            pstm.setString(6, utilisateur.getRole().name());
-            pstm.setBoolean(7, utilisateur.isActif());
+            pstm.setString(1, utilisateur.getNom());
+            pstm.setString(2, utilisateur.getPrenom());
+            pstm.setString(3, utilisateur.getEmail());
+            pstm.setString(4, utilisateur.getMotDePasse());
+            pstm.setString(5, utilisateur.getRole().name());
+            pstm.setBoolean(6, utilisateur.isActif());
 
             // Champs spécifiques selon le rôle
             if (utilisateur.getRole() == Role.CITOYEN) {
                 Citoyen citoyen = (Citoyen) utilisateur;
-                pstm.setString(8, citoyen.getCin());
-                pstm.setString(9, citoyen.getAdresse());
-                pstm.setString(10, citoyen.getTelephone());
-                pstm.setNull(11, java.sql.Types.VARCHAR);
-                pstm.setNull(12, java.sql.Types.DATE);
-                pstm.setNull(13, java.sql.Types.VARCHAR);
+                pstm.setString(7, citoyen.getCin());
+                pstm.setString(8, citoyen.getAdresse());
+                pstm.setString(9, citoyen.getTelephone());
+                pstm.setNull(10, java.sql.Types.VARCHAR);
+                pstm.setNull(11, java.sql.Types.DATE);
+                pstm.setNull(12, java.sql.Types.VARCHAR);
             } else if (utilisateur.getRole() == Role.EMPLOYE) {
                 Employe employe = (Employe) utilisateur;
+                pstm.setNull(7, java.sql.Types.VARCHAR);
                 pstm.setNull(8, java.sql.Types.VARCHAR);
                 pstm.setNull(9, java.sql.Types.VARCHAR);
-                pstm.setNull(10, java.sql.Types.VARCHAR);
-                pstm.setString(11, employe.getPoste());
+                pstm.setString(10, employe.getPoste());
                 if (employe.getDateEmbauche() != null) {
-                    pstm.setDate(12, java.sql.Date.valueOf(employe.getDateEmbauche()));
+                    pstm.setDate(11, java.sql.Date.valueOf(employe.getDateEmbauche()));
                 } else {
-                    pstm.setNull(12, java.sql.Types.DATE);
+                    pstm.setNull(11, java.sql.Types.DATE);
                 }
-                pstm.setString(13, employe.getDepartement());
+                pstm.setString(12, employe.getDepartement());
             } else {
                 // Pour ADMIN
+                pstm.setNull(7, java.sql.Types.VARCHAR);
                 pstm.setNull(8, java.sql.Types.VARCHAR);
                 pstm.setNull(9, java.sql.Types.VARCHAR);
                 pstm.setNull(10, java.sql.Types.VARCHAR);
-                pstm.setNull(11, java.sql.Types.VARCHAR);
-                pstm.setNull(12, java.sql.Types.DATE);
-                pstm.setNull(13, java.sql.Types.VARCHAR);
+                pstm.setNull(11, java.sql.Types.DATE);
+                pstm.setNull(12, java.sql.Types.VARCHAR);
             }
 
             pstm.executeUpdate();
@@ -264,58 +264,6 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
     }
 
     // Dans ServiceUtilisateur.java
-
-    // Méthode pour ajouter un citoyen
-    public void addCitoyen(Citoyen citoyen) {
-        // D'abord ajouter l'utilisateur de base
-        add(citoyen);
-
-        // Récupérer l'ID généré
-        Utilisateur user = findByEmail(citoyen.getEmail());
-        if (user != null) {
-            int userId = user.getId();
-
-            // Insérer les données spécifiques au citoyen
-            String qry = "INSERT INTO `utilisateur`(`id_user`, `cin`, `adresse`, `telephone`) VALUES (?,?,?,?)";
-            try {
-                PreparedStatement pstm = cnx.prepareStatement(qry);
-                pstm.setInt(1, userId);
-                pstm.setString(2, citoyen.getCin());
-                pstm.setString(3, citoyen.getAdresse());
-                pstm.setString(4, citoyen.getTelephone());
-
-                pstm.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    // Méthode pour ajouter un employé
-    public void addEmploye(Employe employe) {
-        // D'abord ajouter l'utilisateur de base
-        add(employe);
-
-        // Récupérer l'ID généré
-        Utilisateur user = findByEmail(employe.getEmail());
-        if (user != null) {
-            int userId = user.getId();
-
-            // Insérer les données spécifiques à l'employé
-            String qry = "INSERT INTO `utilisateur`(`id_user`, `poste`, `date_embauche`, `departement`) VALUES (?,?,?,?)";
-            try {
-                PreparedStatement pstm = cnx.prepareStatement(qry);
-                pstm.setInt(1, userId);
-                pstm.setString(2, employe.getPoste());
-                pstm.setDate(3, java.sql.Date.valueOf(employe.getDateEmbauche()));
-                pstm.setString(4, employe.getDepartement());
-
-                pstm.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
 
     // Méthode getCitoyenById modifiée
     public Citoyen getCitoyenById(int id) {

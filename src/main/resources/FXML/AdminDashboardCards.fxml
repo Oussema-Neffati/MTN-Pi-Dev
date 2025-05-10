@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.AdminDashboardCardsController">
+    <top>
+        <AnchorPane prefHeight="71.0" prefWidth="931.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+            <children>
+                <!-- Logo et titre -->
+                <Label alignment="CENTER" layoutX="69.0" layoutY="16.0" prefHeight="46.0" prefWidth="82.0" text="MTE" textFill="#db4495">
+                    <font>
+                        <Font name="Abril Fatface" size="27.0" />
+                    </font>
+                </Label>
+                <ImageView fitHeight="27.0" fitWidth="26.0" layoutX="50.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/drapeau-du-gouvernement (2).png" />
+                    </image>
+                </ImageView>
+
+                <!-- Barre de recherche -->
+                <TextField fx:id="searchField" layoutX="287.0" layoutY="23.0" prefHeight="33.0" prefWidth="300.0" promptText="Rechercher par nom, prénom ou email..." style="-fx-background-radius: 6; -fx-background-color: #F5F5F5;" />
+                <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="557.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/output-onlinepngtools (3).png" />
+                    </image>
+                </ImageView>
+
+                <!-- Informations admin -->
+                <Label layoutX="805.0" layoutY="22.0" prefHeight="27.0" prefWidth="57.0" text="Admin" textFill="#817e7e">
+                    <font>
+                        <Font size="15.0" />
+                    </font>
+                </Label>
+                <ImageView fitHeight="32.0" fitWidth="24.0" layoutX="868.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/output-onlinepngtools (4).png" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+    </top>
+    <left>
+        <AnchorPane prefHeight="607.0" prefWidth="228.0" style="-fx-background-color: #4169E1; -fx-background-radius: 0px 50px 0px 0px;" BorderPane.alignment="CENTER">
+            <children>
+                <!-- Titre dashboard -->
+                <Label layoutX="40.0" layoutY="30.0" prefHeight="40.0" prefWidth="160.0" text="Administration" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+
+                <!-- Section Gestion -->
+                <Label layoutX="40.0" layoutY="85.0" text="GESTION" textFill="#A8C6FA">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+
+                <!-- Bouton Utilisateurs -->
+                <Button alignment="TOP_LEFT" layoutX="35.0" layoutY="115.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #4169E1; -fx-background-radius: 8;" text="Utilisateurs" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Button>
+                <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="10.0" layoutY="118.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/panneau-du-tableau-de-bord.png" />
+                    </image>
+                </ImageView>
+
+                <!-- Section Statistiques -->
+                <Label layoutX="40.0" layoutY="180.0" text="STATISTIQUES" textFill="#A8C6FA">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+
+                <!-- Bouton Rapports -->
+                <Button alignment="TOP_LEFT" layoutX="35.0" layoutY="210.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #4169E1;" text="Rapports" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Button>
+                <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="10.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/tableau-de-reservation (3).png" />
+                    </image>
+                </ImageView>
+
+                <!-- Bouton Logs -->
+                <Button alignment="TOP_LEFT" layoutX="35.0" layoutY="260.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #4169E1;" text="Logs" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Button>
+                <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="10.0" layoutY="264.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/historique-vertical-du-rectangle.png" />
+                    </image>
+                </ImageView>
+
+                <!-- Déconnexion -->
+                <Button alignment="TOP_LEFT" layoutX="54.0" layoutY="522.0" mnemonicParsing="false" onAction="#retourLogin" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: #DB4495; -fx-background-radius: 15;" text="   Déconnexion" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                </Button>
+
+                <!-- Version -->
+                <Label layoutX="77.0" layoutY="563.0" prefHeight="31.0" prefWidth="74.0" text="Version 1.0.1" textFill="WHITE" />
+            </children>
+        </AnchorPane>
+    </left>
+    <center>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+            <children>
+                <!-- Statistiques globales -->
+                <AnchorPane layoutX="20.0" layoutY="20.0" prefHeight="100.0" prefWidth="682.0">
+                    <children>
+                        <StackPane layoutX="0.0" layoutY="0.0" prefHeight="90.0" prefWidth="160.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10;">
+                            <children>
+                                <VBox alignment="CENTER" spacing="5.0">
+                                    <children>
+                                        <Label text="Total Utilisateurs" textFill="#757575">
+                                            <font>
+                                                <Font size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="lblTotalUsers" text="0" textFill="#333333">
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+                        <StackPane layoutX="170.0" layoutY="0.0" prefHeight="90.0" prefWidth="160.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10;">
+                            <children>
+                                <VBox alignment="CENTER" spacing="5.0">
+                                    <children>
+                                        <Label text="Citoyens" textFill="#757575">
+                                            <font>
+                                                <Font size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="lblCitoyens" text="0" textFill="#4169E1">
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+                        <StackPane layoutX="340.0" layoutY="0.0" prefHeight="90.0" prefWidth="160.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10;">
+                            <children>
+                                <VBox alignment="CENTER" spacing="5.0">
+                                    <children>
+                                        <Label text="Employés" textFill="#757575">
+                                            <font>
+                                                <Font size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="lblEmployes" text="0" textFill="#51CF66">
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+                        <StackPane layoutX="510.0" layoutY="0.0" prefHeight="90.0" prefWidth="160.0" style="-fx-background-color: #F8F9FA; -fx-background-radius: 10;">
+                            <children>
+                                <VBox alignment="CENTER" spacing="5.0">
+                                    <children>
+                                        <Label text="Comptes Inactifs" textFill="#757575">
+                                            <font>
+                                                <Font size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="lblInactifs" text="0" textFill="#FF6B6B">
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+                    </children>
+                </AnchorPane>
+
+                <!-- Actions buttons -->
+                <Button fx:id="btnAddUser" layoutX="541.0" layoutY="127.0" mnemonicParsing="false" onAction="#addNewUser" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #4169E1; -fx-background-radius: 8; -fx-text-fill: white;" text="Ajouter Utilisateur">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+
+                <!-- ScrollPane pour les cards -->
+                <ScrollPane fx:id="scrollPane" fitToWidth="true" layoutX="20.0" layoutY="180.0" prefHeight="380.0" prefWidth="682.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <content>
+                        <FlowPane fx:id="cardsContainer" hgap="15.0" prefHeight="360.0" prefWidth="660.0" style="-fx-background-color: transparent;" vgap="15.0">
+                            <!-- Les cards seront ajoutées dynamiquement ici -->
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+            </children>
+        </AnchorPane>
+    </center>
+</BorderPane>

@@ -13,6 +13,7 @@ import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceUtilisateur;
 import tn.esprit.utils.NavigationUtils;
 import tn.esprit.utils.SessionManager;
+import tn.esprit.utils.ValidationUtils;
 import tn.esprit.utils.logUtils;
 
 import java.io.IOException;
@@ -105,7 +106,12 @@ public class LoginViewController {
         String email = EmailTF.getText();
         String password = passwordTF.getText();
 
-        // Validation des champs...
+        // Validation des champs
+        if (ValidationUtils.isNullOrEmpty(email) || ValidationUtils.isNullOrEmpty(password)) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
+                    "Veuillez remplir tous les champs.");
+            return;
+        }
 
         // Cas spécial pour l'administrateur
         if (email.equals("admin@mairie.tn") && password.equals("admin123")) {
@@ -126,7 +132,8 @@ public class LoginViewController {
             logUtils.logAuthEvent(email, true, "Connexion administrateur");
 
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/AdminDashboard.fxml"));
+                // Naviguer vers le nouveau dashboard avec cards
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/AdminDashboardCards.fxml"));
                 Parent root = loader.load();
 
                 Scene scene = new Scene(root);
@@ -136,12 +143,13 @@ public class LoginViewController {
                 stage.show();
             } catch (IOException e) {
                 System.err.println("Erreur de chargement: " + e.getMessage());
-                e.printStackTrace(); // Ajouter cette ligne pour voir l'erreur complète
+                e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Erreur",
                         "Impossible de charger le dashboard administrateur.");
             }
             return;
         }
+
 
         // Pour les autres utilisateurs
         ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
