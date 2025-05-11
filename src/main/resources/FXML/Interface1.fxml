@@ -93,7 +93,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-opacity: 0.8;" text="   Évènements">
+                        <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-opacity: 0.8;" text="   Calendrier">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -159,7 +159,7 @@
       </AnchorPane>
    </left>
    <center>
-      <AnchorPane prefHeight="720.0" prefWidth="920.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="720.0" prefWidth="920.0" style="-fx-background-color: #f8f9fa;" BorderPane.alignment="CENTER">
          <children>
             <ScrollPane fitToWidth="true" layoutX="0.0" layoutY="0.0" prefHeight="720.0" prefWidth="920.0" style="-fx-background-color: transparent; -fx-background: transparent;">
                <content>
@@ -183,88 +183,149 @@
                         <!-- Statistiques cards -->
                         <HBox alignment="CENTER" spacing="30.0">
                            <children>
-                              <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);">
+                              <AnchorPane prefHeight="140.0" prefWidth="270.0" style="-fx-background-color: linear-gradient(to bottom, #4169E1, #315AC0); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                                  <children>
-                                    <VBox alignment="CENTER" layoutX="15.0" layoutY="15.0" spacing="5.0">
+                                    <VBox alignment="CENTER" layoutX="15.0" layoutY="15.0" spacing="8.0">
                                        <children>
-                                          <Label text="Demandes Active" textFill="#6c757d">
+                                          <Label text="Demandes Actives" textFill="#ffffff">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="15" textFill="#ffffff">
+                                             <font>
+                                                <Font name="System Bold" size="34.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="En cours de traitement" textFill="#ffffff" opacity="0.9">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Label>
-                                          <Label text="15" textFill="#333333">
-                                             <font>
-                                                <Font name="System Bold" size="28.0" />
-                                             </font>
-                                          </Label>
-                                          <Label text="En cours de traitement" textFill="#4169E1">
-                                             <font>
-                                                <Font size="11.0" />
-                                             </font>
-                                          </Label>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="180.0" layoutY="15.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="200.0" layoutY="15.0" opacity="0.3" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../images/output-onlinepngtools (5).png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);">
+                              <AnchorPane prefHeight="140.0" prefWidth="270.0" style="-fx-background-color: linear-gradient(to bottom, #51CF66, #3FA55A); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                                  <children>
-                                    <VBox alignment="CENTER" layoutX="15.0" layoutY="15.0" spacing="5.0">
+                                    <VBox alignment="CENTER" layoutX="15.0" layoutY="15.0" spacing="8.0">
                                        <children>
-                                          <Label text="Réservations" textFill="#6c757d">
+                                          <Label text="Réservations" textFill="#ffffff">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="8" textFill="#ffffff">
+                                             <font>
+                                                <Font name="System Bold" size="34.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="Ce mois" textFill="#ffffff" opacity="0.9">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Label>
-                                          <Label text="8" textFill="#333333">
-                                             <font>
-                                                <Font name="System Bold" size="28.0" />
-                                             </font>
-                                          </Label>
-                                          <Label text="Ce mois" textFill="#51CF66">
-                                             <font>
-                                                <Font size="11.0" />
-                                             </font>
-                                          </Label>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="180.0" layoutY="15.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="200.0" layoutY="15.0" opacity="0.3" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../images/tableau-de-reservation (3).png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);">
+                              <AnchorPane prefHeight="140.0" prefWidth="270.0" style="-fx-background-color: linear-gradient(to bottom, #FF6B6B, #E65A5A); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                                  <children>
-                                    <VBox alignment="CENTER" layoutX="15.0" layoutY="15.0" spacing="5.0">
+                                    <VBox alignment="CENTER" layoutX="15.0" layoutY="15.0" spacing="8.0">
                                        <children>
-                                          <Label text="Événements" textFill="#6c757d">
+                                          <Label text="Événements" textFill="#ffffff">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="3" textFill="#ffffff">
+                                             <font>
+                                                <Font name="System Bold" size="34.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="À venir" textFill="#ffffff" opacity="0.9">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Label>
-                                          <Label text="3" textFill="#333333">
-                                             <font>
-                                                <Font name="System Bold" size="28.0" />
-                                             </font>
-                                          </Label>
-                                          <Label text="À venir" textFill="#FF6B6B">
-                                             <font>
-                                                <Font size="11.0" />
-                                             </font>
-                                          </Label>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="180.0" layoutY="15.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="200.0" layoutY="15.0" opacity="0.3" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../images/etoile-du-calendrier.png" />
                                        </image>
                                     </ImageView>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </HBox>
+
+                        <!-- Calendrier et Événements -->
+                        <HBox alignment="CENTER" spacing="30.0">
+                           <children>
+                              <!-- Calendrier -->
+                              <AnchorPane prefHeight="400.0" prefWidth="500.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 2);">
+                                 <children>
+                                    <VBox layoutX="20.0" layoutY="20.0" spacing="15.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="150.0">
+                                             <children>
+                                                <Label text="Calendrier" textFill="#333333">
+                                                   <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <HBox spacing="15.0" alignment="CENTER">
+                                                   <children>
+                                                      <Button onAction="#previousMonth" style="-fx-background-color: transparent; -fx-text-fill: #4169E1; -fx-font-size: 18px; -fx-font-weight: bold;" text="‹" />
+                                                      <Label fx:id="monthYearLabel" text="Mai 2025" textFill="#333333">
+                                                         <font>
+                                                            <Font name="System Bold" size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Button onAction="#nextMonth" style="-fx-background-color: transparent; -fx-text-fill: #4169E1; -fx-font-size: 18px; -fx-font-weight: bold;" text="›" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <GridPane fx:id="calendarGrid" alignment="CENTER" hgap="5.0" vgap="5.0">
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+
+                              <!-- Événements du jour -->
+                              <AnchorPane prefHeight="400.0" prefWidth="350.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 2);">
+                                 <children>
+                                    <VBox layoutX="20.0" layoutY="20.0" spacing="15.0">
+                                       <children>
+                                          <Label text="Événements" textFill="#333333">
+                                             <font>
+                                                <Font name="System Bold" size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <ScrollPane fitToWidth="true" prefHeight="320.0" prefWidth="310.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                                             <content>
+                                                <Label fx:id="todayEventsLabel" text="Chargement des événements..." textFill="#495057" wrapText="true">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </content>
+                                          </ScrollPane>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </AnchorPane>
                            </children>
@@ -280,19 +341,19 @@
                               </Label>
                               <HBox alignment="CENTER" spacing="20.0">
                                  <children>
-                                    <Button prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #4169E1; -fx-background-radius: 8; -fx-text-fill: white;" text="Nouvelle Demande">
+                                    <Button prefHeight="55.0" prefWidth="220.0" style="-fx-background-color: #4169E1; -fx-background-radius: 10; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);" text="Nouvelle Demande">
                                        <font>
-                                          <Font name="System Bold" size="15.0" />
+                                          <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #51CF66; -fx-background-radius: 8; -fx-text-fill: white;" text="Consulter mes demandes">
+                                    <Button prefHeight="55.0" prefWidth="220.0" style="-fx-background-color: #51CF66; -fx-background-radius: 10; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);" text="Consulter mes demandes">
                                        <font>
-                                          <Font name="System Bold" size="15.0" />
+                                          <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #17a2b8; -fx-background-radius: 8; -fx-text-fill: white;" text="Gérer mes réservations">
+                                    <Button prefHeight="55.0" prefWidth="220.0" style="-fx-background-color: #17a2b8; -fx-background-radius: 10; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);" text="Gérer mes réservations">
                                        <font>
-                                          <Font name="System Bold" size="15.0" />
+                                          <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Button>
                                  </children>
@@ -310,7 +371,7 @@
                               </Label>
                               <VBox spacing="10.0" prefWidth="800.0">
                                  <children>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="800.0" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="800.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 10;">
                                        <children>
                                           <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -338,7 +399,7 @@
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="800.0" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="800.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 10;">
                                        <children>
                                           <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -360,6 +421,34 @@
                                              </children>
                                           </VBox>
                                           <Label layoutX="720.0" text="Confirmée" textFill="#51CF66">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="800.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 10;">
+                                       <children>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../images/etoile-du-calendrier.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox spacing="2.0">
+                                             <children>
+                                                <Label text="Événement - Fête nationale" textFill="#333333">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Dans 25 jours" textFill="#6c757d">
+                                                   <font>
+                                                      <Font size="12.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                          <Label layoutX="720.0" text="Programmée" textFill="#FF6B6B">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>

@@ -72,6 +72,9 @@ public class AdminDashboardCardsController {
             filterUsers(newValue);
         });
 
+        // Configurer le cardsContainer pour être responsive
+        cardsContainer.prefWrapLengthProperty().bind(scrollPane.widthProperty().subtract(40));
+
         // Charger les données initiales
         refreshCards();
     }
@@ -109,9 +112,6 @@ public class AdminDashboardCardsController {
     private void displayUsers(List<Utilisateur> users) {
         cardsContainer.getChildren().clear();
 
-        // S'assurer que le FlowPane est correctement configuré
-        cardsContainer.setPrefWrapLength(940.0);
-
         for (Utilisateur user : users) {
             if (user.getRole() != Role.ADMIN) { // Ne pas afficher les admins
                 AnchorPane card = createUserCard(user);
@@ -121,8 +121,9 @@ public class AdminDashboardCardsController {
     }
 
     private AnchorPane createUserCard(Utilisateur user) {
+        // Augmenter la largeur des cards pour une meilleure lisibilité
         AnchorPane card = new AnchorPane();
-        card.setPrefSize(310.0, 200.0);
+        card.setPrefSize(350.0, 200.0);
         card.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 10; " +
                 "-fx-border-color: #E0E0E0; -fx-border-width: 1; -fx-border-radius: 10; " +
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);");
@@ -191,36 +192,30 @@ public class AdminDashboardCardsController {
             }
         }
 
-        // Conteneur des boutons
-        HBox buttonBox = new HBox(6);
+        // Conteneur des boutons - Ajuster la largeur pour meilleure lisibilité
+        HBox buttonBox = new HBox(8);
         buttonBox.setLayoutX(15);
         buttonBox.setLayoutY(150);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
         // Bouton toggle actif/inactif
         Button toggleButton = new Button(user.isActif() ? "Désactiver" : "Activer");
-        toggleButton.setPrefSize(85, 32);
+        toggleButton.setPrefSize(100, 32);
         toggleButton.setStyle(user.isActif()
                 ? "-fx-background-color: #FF6B6B; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;"
                 : "-fx-background-color: #51CF66; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;");
         toggleButton.setFont(Font.font("System", FontWeight.BOLD, 11));
         toggleButton.setOnAction(event -> toggleUserStatus(user));
 
-        // Bouton modifier
-        Button editButton = new Button("Modifier");
-        editButton.setPrefSize(75, 32);
-        editButton.setStyle("-fx-background-color: #4169E1; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;");
-        editButton.setFont(Font.font("System", FontWeight.BOLD, 11));
-        editButton.setOnAction(event -> editUser(user));
-
         // Bouton supprimer
         Button deleteButton = new Button("Supprimer");
-        deleteButton.setPrefSize(83, 32);
+        deleteButton.setPrefSize(95, 32);
         deleteButton.setStyle("-fx-background-color: #DB4495; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;");
         deleteButton.setFont(Font.font("System", FontWeight.BOLD, 11));
         deleteButton.setOnAction(event -> deleteUser(user));
 
-        buttonBox.getChildren().addAll(toggleButton, editButton, deleteButton);
+        // Ajouter seulement les boutons activer/désactiver et supprimer
+        buttonBox.getChildren().addAll(toggleButton, deleteButton);
 
         // Ajouter tous les éléments à la card
         card.getChildren().addAll(
@@ -287,11 +282,6 @@ public class AdminDashboardCardsController {
             serviceUtilisateur.update(user);
             refreshCards();
         }
-    }
-
-    private void editUser(Utilisateur user) {
-        showAlert(Alert.AlertType.INFORMATION, "Information",
-                "Fonctionnalité de modification en cours de développement.");
     }
 
     private void deleteUser(Utilisateur user) {
