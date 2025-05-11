@@ -3,6 +3,7 @@ package tn.esprit.services;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import tn.esprit.interfaces.IServiceDoc;
+import tn.esprit.models.Citoyen;
 import tn.esprit.models.Demande;
 import tn.esprit.models.Role;
 import tn.esprit.models.Utilisateur;
@@ -30,23 +31,31 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         if (demande == null) {
             throw new IllegalArgumentException("La demande ne peut pas être null");
         }
-        
+
         if (demande.getId_user() <= 0) {
             throw new IllegalArgumentException("L'ID utilisateur doit être un nombre positif");
         }
-        
+
+        if (demande.getCin() == null || demande.getCin().trim().isEmpty()) {
+            throw new IllegalArgumentException("Le CIN ne peut pas être vide");
+        }
+
+        if (!demande.getCin().matches("[01][0-9]{7}")) {
+            throw new IllegalArgumentException("Le CIN doit être composé de 8 chiffres et commencer par 0 ou 1");
+        }
+
         if (demande.getNom() == null || demande.getNom().trim().isEmpty()) {
             throw new IllegalArgumentException("Le nom ne peut pas être vide");
         }
-        
+
         if (demande.getAdresse() == null || demande.getAdresse().trim().isEmpty()) {
             throw new IllegalArgumentException("L'adresse ne peut pas être vide");
         }
-        
+
         if (demande.getType() == null || demande.getType().trim().isEmpty()) {
             throw new IllegalArgumentException("Le type de demande ne peut pas être vide");
         }
-        
+
         if (demande.getPrice() < 0) {
             throw new IllegalArgumentException("Le prix ne peut pas être négatif");
         }
@@ -60,26 +69,27 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         } catch (IllegalArgumentException e) {
             throw new SQLException("Validation de la demande échouée: " + e.getMessage(), e);
         }
-        
+
         Connection localCnx = null;
         PreparedStatement preparedStatement = null;
-        
+
         try {
             // Ouvrir une transaction locale
             localCnx = MyDataBase.getInstance().getCnx();
             localCnx.setAutoCommit(false);
-            
-            String sql = "INSERT INTO demande (id_user, nom, adresse, type, price) VALUES (?, ?, ?, ?, ?)";
+
+            String sql = "INSERT INTO demande (id_user, cin, nom, adresse, type, price) VALUES (?, ?, ?, ?, ?, ?)";
             preparedStatement = localCnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            
+
             preparedStatement.setInt(1, demande.getId_user());
-            preparedStatement.setString(2, demande.getNom());
-            preparedStatement.setString(3, demande.getAdresse());
-            preparedStatement.setString(4, demande.getType());
-            preparedStatement.setFloat(5, demande.getPrice());
-            
+            preparedStatement.setString(2, demande.getCin());
+            preparedStatement.setString(3, demande.getNom());
+            preparedStatement.setString(4, demande.getAdresse());
+            preparedStatement.setString(5, demande.getType());
+            preparedStatement.setFloat(6, demande.getPrice());
+
             int rowsAffected = preparedStatement.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
@@ -103,7 +113,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     System.err.println("Erreur lors du rollback : " + ex.getMessage());
                 }
             }
-            
+
             String errorCode = "DB-INSERT-" + (e.getErrorCode() != 0 ? e.getErrorCode() : "UNKNOWN");
             System.err.println(errorCode + ": Erreur lors de l'ajout de la demande : " + e.getMessage());
             throw new SQLException("Erreur d'ajout de demande [" + errorCode + "]: " + e.getMessage(), e);
@@ -116,7 +126,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     System.err.println("Erreur lors de la fermeture du statement : " + e.getMessage());
                 }
             }
-            
+
             // Rétablir l'autocommit
             if (localCnx != null) {
                 try {
@@ -136,31 +146,32 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         } catch (IllegalArgumentException e) {
             throw new SQLException("Validation de la demande échouée: " + e.getMessage(), e);
         }
-        
+
         if (demande.getId_demande() <= 0) {
             throw new SQLException("L'ID de la demande doit être un nombre positif pour la modification");
         }
-        
+
         Connection localCnx = null;
         PreparedStatement preparedStatement = null;
-        
+
         try {
             // Ouvrir une transaction locale
             localCnx = MyDataBase.getInstance().getCnx();
             localCnx.setAutoCommit(false);
-            
-            String sql = "UPDATE demande SET id_user = ?, nom = ?, adresse = ?, type = ?, price = ? WHERE id_demande = ?";
+
+            String sql = "UPDATE demande SET id_user = ?, cin = ?, nom = ?, adresse = ?, type = ?, price = ? WHERE id_demande = ?";
             preparedStatement = localCnx.prepareStatement(sql);
-            
+
             preparedStatement.setInt(1, demande.getId_user());
-            preparedStatement.setString(2, demande.getNom());
-            preparedStatement.setString(3, demande.getAdresse());
-            preparedStatement.setString(4, demande.getType());
-            preparedStatement.setFloat(5, demande.getPrice());
-            preparedStatement.setInt(6, demande.getId_demande());
-            
+            preparedStatement.setString(2, demande.getCin());
+            preparedStatement.setString(3, demande.getNom());
+            preparedStatement.setString(4, demande.getAdresse());
+            preparedStatement.setString(5, demande.getType());
+            preparedStatement.setFloat(6, demande.getPrice());
+            preparedStatement.setInt(7, demande.getId_demande());
+
             int rowsAffected = preparedStatement.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 // Commit de la transaction
                 localCnx.commit();
@@ -179,7 +190,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     System.err.println("Erreur lors du rollback : " + ex.getMessage());
                 }
             }
-            
+
             String errorCode = "DB-UPDATE-" + (e.getErrorCode() != 0 ? e.getErrorCode() : "UNKNOWN");
             System.err.println(errorCode + ": Erreur lors de la modification de la demande : " + e.getMessage());
             throw new SQLException("Erreur de modification de demande [" + errorCode + "]: " + e.getMessage(), e);
@@ -192,7 +203,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     System.err.println("Erreur lors de la fermeture du statement : " + e.getMessage());
                 }
             }
-            
+
             // Rétablir l'autocommit
             if (localCnx != null) {
                 try {
@@ -203,26 +214,27 @@ public class ServiceDemande implements IServiceDoc<Demande> {
             }
         }
     }
+
     @Override
     public void supprimer(int id_demande) throws SQLException {
         if (id_demande <= 0) {
             throw new SQLException("L'ID de la demande doit être un nombre positif pour la suppression");
         }
-        
+
         Connection localCnx = null;
         PreparedStatement preparedStatement = null;
-        
+
         try {
             // Ouvrir une transaction locale
             localCnx = MyDataBase.getInstance().getCnx();
             localCnx.setAutoCommit(false);
-            
+
             String sql = "DELETE FROM demande WHERE id_demande = ?";
             preparedStatement = localCnx.prepareStatement(sql);
             preparedStatement.setInt(1, id_demande);
-            
+
             int rowsAffected = preparedStatement.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 // Commit de la transaction
                 localCnx.commit();
@@ -241,7 +253,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     System.err.println("Erreur lors du rollback : " + ex.getMessage());
                 }
             }
-            
+
             String errorCode = "DB-DELETE-" + (e.getErrorCode() != 0 ? e.getErrorCode() : "UNKNOWN");
             System.err.println(errorCode + ": Erreur lors de la suppression de la demande : " + e.getMessage());
             throw new SQLException("Erreur de suppression de demande [" + errorCode + "]: " + e.getMessage(), e);
@@ -254,7 +266,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     System.err.println("Erreur lors de la fermeture du statement : " + e.getMessage());
                 }
             }
-            
+
             // Rétablir l'autocommit
             if (localCnx != null) {
                 try {
@@ -278,6 +290,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                 Demande d = new Demande();
                 d.setId_demande(rs.getInt("id_demande"));
                 d.setId_user(rs.getInt("id_user"));
+                d.setCin(rs.getString("cin"));
                 d.setNom(rs.getString("nom"));
                 d.setAdresse(rs.getString("adresse"));
                 d.setType(rs.getString("type"));
@@ -288,7 +301,6 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         return demandes;
     }
 
-
     public Demande getDemandeById(int id_demande) throws SQLException {
         String sql = "SELECT * FROM demande WHERE id_demande = ?";
         try (PreparedStatement preparedStatement = cnx.prepareStatement(sql)) {
@@ -298,6 +310,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     Demande d = new Demande();
                     d.setId_demande(rs.getInt("id_demande"));
                     d.setId_user(rs.getInt("id_user"));
+                    d.setCin(rs.getString("cin"));
                     d.setNom(rs.getString("nom"));
                     d.setAdresse(rs.getString("adresse"));
                     d.setType(rs.getString("type"));
@@ -308,7 +321,6 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         }
         return null;
     }
-
 
     public ObservableList<Demande> getDemandesByUser(int idUser) throws SQLException {
         ObservableList<Demande> demandes = FXCollections.observableArrayList();
@@ -321,6 +333,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     Demande d = new Demande();
                     d.setId_demande(rs.getInt("id_demande"));
                     d.setId_user(rs.getInt("id_user"));
+                    d.setCin(rs.getString("cin"));
                     d.setNom(rs.getString("nom"));
                     d.setAdresse(rs.getString("adresse"));
                     d.setType(rs.getString("type"));
@@ -332,7 +345,6 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         return demandes;
     }
 
-
     /**
      * Met à jour le nom dans la demande en se basant sur l'utilisateur associé
      * @param demande La demande à mettre à jour
@@ -343,7 +355,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         if (demande == null) {
             throw new IllegalArgumentException("La demande ne peut pas être null");
         }
-        
+
         Utilisateur utilisateur = getUtilisateurById(demande.getId_user());
         if (utilisateur != null) {
             demande.setNom(utilisateur.getNom() + " " + utilisateur.getPrenom());
@@ -351,6 +363,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
             System.err.println("Attention: Utilisateur avec ID " + demande.getId_user() + " non trouvé");
         }
     }
+
     /**
      * Récupère un utilisateur par son ID
      * @param idUser L'ID de l'utilisateur à récupérer
@@ -361,7 +374,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
         if (idUser <= 0) {
             throw new IllegalArgumentException("L'ID utilisateur doit être un nombre positif");
         }
-        
+
         String sql = "SELECT * FROM utilisateur WHERE id_user = ?";
         try (PreparedStatement preparedStatement = cnx.prepareStatement(sql)) {
             preparedStatement.setInt(1, idUser);
@@ -373,7 +386,7 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                     utilisateur.setPrenom(resultSet.getString("prenom_user"));
                     utilisateur.setEmail(resultSet.getString("email"));
                     utilisateur.setMotDePasse(resultSet.getString("motDePasse"));
-                    
+
                     // Gestion sécurisée de l'enum Role
                     String roleStr = resultSet.getString("role");
                     try {
@@ -388,16 +401,16 @@ public class ServiceDemande implements IServiceDoc<Demande> {
                         // Valeur par défaut en cas d'erreur
                         utilisateur.setRole(Role.CITOYEN);
                     }
-                    
+
                     utilisateur.setActif(resultSet.getBoolean("actif"));
-                    
+
                     // Gestion sécurisée de la date de création
                     Timestamp dateCreation = resultSet.getTimestamp("date_creation");
                     if (dateCreation != null) {
                         // Si vous avez une méthode pour définir la date de création, utilisez-la ici
                         // utilisateur.setDateCreation(dateCreation.toLocalDateTime());
                     }
-                    
+
                     return utilisateur;
                 }
             }
@@ -405,6 +418,35 @@ public class ServiceDemande implements IServiceDoc<Demande> {
             String errorCode = "DB-SELECT-" + (e.getErrorCode() != 0 ? e.getErrorCode() : "UNKNOWN");
             System.err.println(errorCode + ": Erreur lors de la récupération de l'utilisateur : " + e.getMessage());
             throw new SQLException("Erreur de récupération d'utilisateur [" + errorCode + "]: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public Citoyen getCitoyenByDemandeId(int idDemande) throws SQLException {
+        if (idDemande <= 0) {
+            throw new IllegalArgumentException("L'ID de la demande doit être un nombre positif");
+        }
+
+        String sql = "SELECT u.nom_user, u.prenom_user, c.cin " +
+                "FROM demande d " +
+                "JOIN utilisateur u ON d.id_user = u.id_user " +
+                "LEFT JOIN citoyen c ON u.id_user = c.id_user " +
+                "WHERE d.id_demande = ?";
+        try (PreparedStatement preparedStatement = cnx.prepareStatement(sql)) {
+            preparedStatement.setInt(1, idDemande);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    Citoyen citoyen = new Citoyen();
+                    citoyen.setNom(rs.getString("nom_user"));
+                    citoyen.setPrenom(rs.getString("prenom_user"));
+                    citoyen.setCin(rs.getString("cin") != null ? rs.getString("cin") : "N/A");
+                    return citoyen;
+                }
+            }
+        } catch (SQLException e) {
+            String errorCode = "DB-SELECT-CITOYEN-" + (e.getErrorCode() != 0 ? e.getErrorCode() : "UNKNOWN");
+            System.err.println(errorCode + ": Erreur lors de la récupération du citoyen : " + e.getMessage());
+            throw new SQLException("Erreur de récupération du citoyen [" + errorCode + "]: " + e.getMessage(), e);
         }
         return null;
     }

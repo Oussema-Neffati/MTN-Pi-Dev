@@ -26,6 +26,9 @@ public class Citoyen extends Utilisateur {
         this.telephone = telephone;
     }
 
+    public Citoyen(int i, String number, String doe, String john) {
+    }
+
     public String getCin() {
         return cin;
     }

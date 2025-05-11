@@ -11,11 +11,11 @@ import javafx.stage.Stage;
 import tn.esprit.models.Role;
 import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceUtilisateur;
-import tn.esprit.utils.NavigationUtils;
 import tn.esprit.utils.SessionManager;
 import tn.esprit.utils.logUtils;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class LoginViewController {
 
@@ -43,7 +43,12 @@ public class LoginViewController {
     @FXML
     void signup(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/SignupView.fxml"));
+            URL fxmlUrl = getClass().getResource("resources/FXML/SignupView.fxml");
+            if (fxmlUrl == null) {
+                throw new IOException("Fichier FXML non trouvé: /FXML/SignupView.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
@@ -55,41 +60,7 @@ public class LoginViewController {
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
             showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'écran d'inscription.");
-        }
-    }
-
-    private void loadAdminDashboard(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/AdminDashboard.fxml"));
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Administration - Gestion des utilisateurs");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger le dashboard administrateur.");
-        }
-    }
-
-    private void loadMainInterface(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Interface1.fxml"));
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Municipalité Tunisienne Electronique");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'interface principale.");
+                    "Impossible de charger l'écran d'inscription. Détails: " + e.getMessage());
         }
     }
 
@@ -100,12 +71,17 @@ public class LoginViewController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     void login(ActionEvent event) {
         String email = EmailTF.getText();
         String password = passwordTF.getText();
 
-        // Validation des champs...
+        // Validation des champs
+        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez remplir tous les champs.");
+            return;
+        }
 
         // Cas spécial pour l'administrateur
         if (email.equals("admin@mairie.tn") && password.equals("admin123")) {
@@ -126,7 +102,12 @@ public class LoginViewController {
             logUtils.logAuthEvent(email, true, "Connexion administrateur");
 
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/AdminDashboard.fxml"));
+                URL fxmlUrl = getClass().getResource("/FXML/AdminDashboard.fxml");
+                if (fxmlUrl == null) {
+                    throw new IOException("Fichier FXML non trouvé: /FXML/AdminDashboard.fxml");
+                }
+
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
                 Parent root = loader.load();
 
                 Scene scene = new Scene(root);
@@ -136,9 +117,9 @@ public class LoginViewController {
                 stage.show();
             } catch (IOException e) {
                 System.err.println("Erreur de chargement: " + e.getMessage());
-                e.printStackTrace(); // Ajouter cette ligne pour voir l'erreur complète
+                e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "Impossible de charger le dashboard administrateur.");
+                        "Impossible de charger le dashboard administrateur. Détails: " + e.getMessage());
             }
             return;
         }
@@ -154,8 +135,46 @@ public class LoginViewController {
             // Journaliser la connexion réussie
             logUtils.logAuthEvent(email, true, "Connexion " + user.getRole().name());
 
-            // Naviguer vers l'interface principale
-            NavigationUtils.loadView(event, "/FXML/Interface1.fxml", "Municipalité Tunisienne Electronique");
+            // Rediriger l'utilisateur en fonction de son rôle
+            try {
+                String fxmlPath = "";
+                String title = "";
+
+                switch (user.getRole()) {
+                    case EMPLOYE:
+                        fxmlPath = "/FXML/EmployeeMunicipaliteDashboard.fxml";
+                        title = "Employé - Gestion des demandes";
+                        break;
+                    case CITOYEN:
+                        fxmlPath = "/FXML/Demande.fxml";
+                        title = "Citoyen - Mes services";
+                        break;
+                    default:
+                        fxmlPath = "/FXML/Interface1.fxml";
+                        title = "Municipalité Tunisienne Electronique";
+                        break;
+                }
+
+                URL fxmlUrl = getClass().getResource(fxmlPath);
+                if (fxmlUrl == null) {
+                    throw new IOException("Fichier FXML non trouvé: " + fxmlPath);
+                }
+
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                Parent root = loader.load();
+
+                Scene scene = new Scene(root);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(scene);
+                stage.setTitle(title);
+                stage.show();
+
+            } catch (IOException e) {
+                System.err.println("Erreur de chargement: " + e.getMessage());
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Impossible de charger l'interface. Détails: " + e.getMessage());
+            }
         } else {
             // Essayer de déterminer la cause de l'échec
             Utilisateur inactiveUser = serviceUtilisateur.findByEmail(email);

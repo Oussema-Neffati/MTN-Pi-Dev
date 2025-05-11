@@ -7,10 +7,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import tn.esprit.services.ServiceDemande;
+import tn.esprit.models.Citoyen;
 import tn.esprit.models.Demande;
+import tn.esprit.models.Utilisateur;
+import tn.esprit.utils.SessionManager;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -37,11 +43,18 @@ public class DemandeController implements Initializable {
     @FXML
     private Button mapButton;
 
+    @FXML
+    private Label currentUserLabel;
+
     private tn.esprit.controllers.Map mapController;
     private ServiceDemande serviceDemande;
 
     // Map pour stocker les types de documents et leurs prix associés
     private HashMap<String, Double> documentPrices;
+
+    // Indique si les champs utilisateur ont été préremplis
+    private boolean userFieldsPrefilled = false;
+    private Utilisateur currentUser;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,6 +84,64 @@ public class DemandeController implements Initializable {
 
         // Configurer le champ de prix comme non éditable
         prixField.setEditable(false);
+
+        // Style commun pour les champs non éditables
+        String readOnlyStyle = "-fx-background-color: #f0f0f0; -fx-opacity: 0.85;";
+        prixField.setStyle(readOnlyStyle);
+
+        // Préremplir les données de l'utilisateur
+        initializeUserData();
+    }
+
+    public void initializeUserData() {
+        currentUser = SessionManager.getInstance().getCurrentUser();
+
+        // Vérifier si un utilisateur est connecté et s'il est citoyen
+        if (currentUser != null && SessionManager.getInstance().isCitoyen()) {
+            try {
+                if (currentUser instanceof Citoyen) {
+                    Citoyen citoyen = (Citoyen) currentUser;
+
+                    // Préremplir le champ CIN
+                    String cin = citoyen.getCin() != null && !citoyen.getCin().isEmpty()
+                            ? citoyen.getCin()
+                            : String.valueOf(currentUser.getId());
+                    idUserField.setText(cin);
+                    idUserField.setEditable(false);
+                    idUserField.setStyle("-fx-background-color: #f0f0f0; -fx-opacity: 0.85;");
+
+                    // Préremplir le champ nom avec prénom et nom
+                    String nomComplet = (citoyen.getPrenom() != null ? citoyen.getPrenom() : "") + " "
+                            + (citoyen.getNom() != null ? citoyen.getNom() : "");
+                    nomComplet = nomComplet.trim();
+                    if (nomComplet.isEmpty()) {
+                        nomComplet = "Nom non disponible";
+                    }
+                    nomField.setText(nomComplet);
+                    nomField.setEditable(false);
+                    nomField.setStyle("-fx-background-color: #f0f0f0; -fx-opacity: 0.85;");
+
+                    // Mettre à jour le label en haut avec le nom complet
+                    if (currentUserLabel != null) {
+                        currentUserLabel.setText(nomComplet);
+                    }
+
+                    // Préremplir l'adresse si disponible
+                    if (citoyen.getAdresse() != null && !citoyen.getAdresse().isEmpty()) {
+                        adresseField.setText(citoyen.getAdresse());
+                    }
+
+                    userFieldsPrefilled = true;
+                } else {
+                    showAlert("Erreur", "L'utilisateur connecté n'est pas un citoyen.");
+                }
+            } catch (Exception e) {
+                showAlert("Erreur", "Impossible de charger les données utilisateur : " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            showAlert("Erreur", "Aucun utilisateur citoyen connecté.");
+        }
     }
 
     /**
@@ -117,6 +188,10 @@ public class DemandeController implements Initializable {
     private void setupCINValidation() {
         // Filtrer les caractères lors de la saisie
         idUserField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!idUserField.isEditable()) {
+                event.consume(); // Bloquer toute saisie si non éditable
+                return;
+            }
             String character = event.getCharacter();
 
             // Vérifier si le caractère n'est pas un chiffre
@@ -139,7 +214,7 @@ public class DemandeController implements Initializable {
 
         // Ajouter un écouteur pour la validation complète lors de la perte de focus
         idUserField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Quand le champ perd le focus
+            if (!newValue && idUserField.isEditable()) { // Valider uniquement si éditable
                 validateCIN();
             }
         });
@@ -151,6 +226,10 @@ public class DemandeController implements Initializable {
     private void setupNomValidation() {
         // Filtrer les caractères lors de la saisie
         nomField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!nomField.isEditable()) {
+                event.consume(); // Bloquer toute saisie si non éditable
+                return;
+            }
             String character = event.getCharacter();
 
             // Vérifier si le caractère est une lettre ou un espace
@@ -162,7 +241,7 @@ public class DemandeController implements Initializable {
 
         // Ajouter un écouteur pour la validation complète lors de la perte de focus
         nomField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Quand le champ perd le focus
+            if (!newValue && nomField.isEditable()) { // Valider uniquement si éditable
                 validateNom();
             }
         });
@@ -219,44 +298,18 @@ public class DemandeController implements Initializable {
     }
 
     /**
-     * Gère le chargement des informations utilisateur à partir de la CIN
-     */
-    @FXML
-    public void handleFetchUserInfo() {
-        String cin = idUserField.getText();
-
-        // Vérifier si la CIN est valide
-        if (!validateCIN()) {
-            return;
-        }
-
-        // TODO: Ici, ajouter le code pour récupérer les informations de l'utilisateur
-        // depuis la base de données en utilisant la CIN fournie
-
-        // Exemple temporaire (à remplacer par une vraie récupération de données)
-        if ("12345678".equals(cin)) {
-            nomField.setText("Oussema Neffati");
-            adresseField.setText("Tunis, Tunisie"); // Défini via la carte uniquement
-        } else {
-            showAlert("Information", "Aucun utilisateur trouvé avec cette CIN.");
-        }
-    }
-
-    /**
      * Ouvre la fenêtre de carte pour sélectionner une adresse
      */
     @FXML
     public void handleOpenMap() {
         try {
             System.out.println("Opening map...");
-            // Vérifier que le champ d'adresse est correctement lié
             if (adresseField == null) {
                 System.err.println("adresseField is null");
                 showAlert("Erreur", "Champ d'adresse non initialisé");
                 return;
             }
 
-            // S'assurer que le contrôleur de carte est correctement configuré
             if (mapController == null) {
                 mapController = new tn.esprit.controllers.Map();
                 mapController.setLinkedAddressField(adresseField);
@@ -274,12 +327,9 @@ public class DemandeController implements Initializable {
      */
     @FXML
     public void handleSubmit() {
-        // Vérifier si la CIN est valide
         if (!validateCIN()) {
             return;
         }
-
-        // Vérifier si le nom est valide
         if (!validateNom()) {
             return;
         }
@@ -293,21 +343,44 @@ public class DemandeController implements Initializable {
             return;
         }
 
-        // Créer une nouvelle demande
-        Demande demande = new Demande();
-        demande.setId_user(Integer.parseInt(idUserField.getText())); // Conversion de la CIN en int
-        demande.setNom(nomField.getText());
-        demande.setAdresse(adresseField.getText());
-        demande.setType(typeDocumentCombo.getValue());
-        demande.setPrice(Float.parseFloat(prixField.getText()));
-
         try {
+            // Vérifier que l'utilisateur est bien connecté
+            if (currentUser == null) {
+                showAlert("Erreur", "Aucun utilisateur connecté. Veuillez vous connecter.");
+                return;
+            }
+
+            // Créer une nouvelle demande
+            Demande demande = new Demande();
+            // Utiliser l'ID de l'utilisateur connecté
+            demande.setId_user(currentUser.getId());
+            demande.setCin(idUserField.getText());
+            demande.setNom(nomField.getText());
+            demande.setAdresse(adresseField.getText());
+            demande.setType(typeDocumentCombo.getValue());
+
+            // Convertir le prix de String à float
+            try {
+                demande.setPrice(Float.parseFloat(prixField.getText().replace(",", ".")));
+            } catch (NumberFormatException e) {
+                showAlert("Erreur", "Format de prix invalide");
+                return;
+            }
+
+            // Ajouter la demande à la base de données
             serviceDemande.ajouter(demande);
-            showAlert("Succès", "Votre demande a été soumise avec succès!");
+
+            // Afficher un message de succès avec l'ID de la demande créée
+            showAlert("Succès", "Votre demande a été soumise avec succès! ID de la demande: " + demande.getId_demande());
+
+            // Réinitialiser le formulaire après soumission
             resetForm();
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Erreur", "Erreur lors de l'enregistrement dans la base de données : " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Une erreur inattendue s'est produite : " + e.getMessage());
         }
     }
 
@@ -316,8 +389,11 @@ public class DemandeController implements Initializable {
      */
     @FXML
     public void resetForm() {
-        idUserField.clear();
-        nomField.clear();
+        if (!userFieldsPrefilled) {
+            idUserField.clear();
+            nomField.clear();
+        }
+
         typeDocumentCombo.setValue(null);
         adresseField.clear();
         prixField.clear();

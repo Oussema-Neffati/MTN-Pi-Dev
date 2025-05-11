@@ -1,0 +1,61 @@
+/* styles_employee.css */
+.demand-type-button {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+    -fx-padding: 10;
+}
+
+.demand-type-button:hover {
+    -fx-background-color: #F8F9FA;
+}
+
+.selected-type-button {
+    -fx-background-color: #E7F3FF;
+    -fx-border-color: #4169E1;
+}
+
+.type-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.count-label {
+    -fx-text-fill: #4169E1;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.document-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+}
+
+.document-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
+}
+
+.name-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.cin-label, .status-label {
+    -fx-text-fill: #757575;
+    -fx-font-size: 12px;
+}
+
+.empty-message {
+    -fx-text-fill: #757575;
+    -fx-font-size: 14px;
+}

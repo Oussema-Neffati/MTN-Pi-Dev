@@ -3,7 +3,8 @@ package tn.esprit.models;
 public class Demande {
     private int id_demande;
     private int id_user;
-    private String nom;     // nom associé à id_user
+    private String cin;
+    private String nom;
     private String adresse;
     private String type;
     private float price;
@@ -13,8 +14,9 @@ public class Demande {
     }
 
     // Constructeur avec paramètres
-    public Demande(int id_user, String nom, String adresse, String type, float price) {
+    public Demande(int id_user, String cin, String nom, String adresse, String type, float price) {
         this.id_user = id_user;
+        this.cin = cin;
         this.nom = nom;
         this.adresse = adresse;
         this.type = type;
@@ -22,9 +24,10 @@ public class Demande {
     }
 
     // Constructeur avec id_demande
-    public Demande(int id_demande, int id_user, String nom, String adresse, String type, float price) {
+    public Demande(int id_demande, int id_user, String cin, String nom, String adresse, String type, float price) {
         this.id_demande = id_demande;
         this.id_user = id_user;
+        this.cin = cin;
         this.nom = nom;
         this.adresse = adresse;
         this.type = type;
@@ -46,6 +49,14 @@ public class Demande {
 
     public void setId_user(int id_user) {
         this.id_user = id_user;
+    }
+
+    public String getCin() {
+        return cin;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
     }
 
     public String getNom() {
@@ -85,6 +96,7 @@ public class Demande {
         return "Demande{" +
                 "id_demande=" + id_demande +
                 ", id_user=" + id_user +
+                ", cin='" + cin + '\'' +
                 ", nom='" + nom + '\'' +
                 ", adresse='" + adresse + '\'' +
                 ", type='" + type + '\'' +

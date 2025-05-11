@@ -1,0 +1,98 @@
+/* src/main/resources/tn/esprit/views/styles.css */
+.root {
+    -fx-font-family: "Arial";
+    -fx-background-color: #f4f4f4;
+}
+
+.text-field, .combo-box {
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-background-color: #ffffff;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 2px;
+}
+
+.text-field:disabled, .text-field:readonly {
+    -fx-background-color: #f0f0f0;
+    -fx-opacity: 0.85;
+}
+
+.label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.button {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.button:hover {
+    -fx-background-color: #3658C1;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.button:pressed {
+    -fx-background-color: #2E4A9E;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0, 0, 1);
+}
+
+.grid-pane {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.hbox {
+    -fx-spacing: 10px;
+}
+
+.vbox {
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+}
+
+/* Style pour le conteneur principal */
+.border-pane {
+    -fx-background-color: #f4f4f4;
+}
+
+/* Style pour le bandeau supérieur */
+.top-hbox {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Style pour la barre latérale */
+.sidebar {
+    -fx-background-color: #4169E1;
+    -fx-background-radius: 0 50 0 0;
+}
+
+/* Style pour l'image dans la section droite */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}

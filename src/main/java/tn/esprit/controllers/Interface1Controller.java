@@ -99,4 +99,44 @@ public class Interface1Controller {
 
     // Méthodes pour gérer les autres boutons de l'interface principale
     // À implémenter selon vos besoins
+    
+    /**
+     * Gère le clic sur le bouton Demande pour naviguer vers l'interface de demande
+     * @param event L'événement de clic
+     */
+    @FXML
+    void handleDemande(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Demande.fxml"));
+            Parent root = loader.load();
+            
+            // Récupérer le contrôleur de la vue Demande pour initialiser les données
+            DemandeController demandeController = loader.getController();
+            
+            // Initialiser les champs avec les données de l'utilisateur connecté
+            demandeController.initializeUserData();
+            
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            
+            // S'assurer que la fenêtre est redimensionnable
+            stage.setResizable(true);
+            
+            // Définir une taille minimale pour éviter les problèmes d'affichage
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
+            
+            stage.setScene(scene);
+            stage.setTitle("Formulaire de Demande");
+            
+            // Maximiser la fenêtre pour qu'elle occupe tout l'écran
+            stage.setMaximized(true);
+            
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur de chargement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                    "Impossible de charger l'interface de demande.");
+        }
+    }
 }

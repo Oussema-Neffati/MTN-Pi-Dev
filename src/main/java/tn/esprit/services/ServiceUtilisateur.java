@@ -445,4 +445,22 @@ public class ServiceUtilisateur implements IService<Utilisateur> {
 
         return employes;
     }
+
+    public Citoyen getCitoyenByCin(String cin) throws SQLException {
+        String query = "SELECT * FROM utilisateur WHERE cin = ? AND role = 'CITOYEN'";
+        try (PreparedStatement pstm = cnx.prepareStatement(query)) {
+            pstm.setString(1, cin);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    Citoyen citoyen = new Citoyen();
+                    citoyen.setId(rs.getInt("id_user"));
+                    citoyen.setCin(rs.getString("cin"));
+                    citoyen.setNom(rs.getString("nom_user"));
+                    citoyen.setPrenom(rs.getString("prenom_user"));
+                    return citoyen;
+                }
+            }
+        }
+        return null;
+    }
 }
