@@ -27,11 +27,12 @@ public class ParticipationService {
      * @return true si l'ajout a réussi, false sinon
      */
     public boolean add(Participation participation) {
-        String query = "INSERT INTO participation (id_evenement, id_user, Statut) VALUES (?, ?, ?)";
+        String query = "INSERT INTO participation (id_evenement, id_user, Statut, nombreticket) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, participation.getIdEvenement());
             ps.setInt(2, participation.getId_user());
             ps.setString(3, participation.getStatut());
+            ps.setInt(4, participation.getNombreticket()); // Ajout de nombreticket
 
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
@@ -47,8 +48,6 @@ public class ParticipationService {
         }
         return false;
     }
-
-
 
     public boolean participationExists(int id_user, int idEvenement) {
         String query = "SELECT COUNT(*) FROM participation WHERE id_user = ? AND id_evenement = ?";
@@ -66,7 +65,6 @@ public class ParticipationService {
         return false;
     }
 
-
     public boolean updateStatut(int id_user, int idEvenement, String nouveauStatut) {
         String query = "UPDATE participation SET Statut = ? WHERE id_user = ? AND id_evenement = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -81,12 +79,26 @@ public class ParticipationService {
         return false;
     }
 
-
-    public ObservableList<Participation> getParticipationsByUser(int idCitoyenE) {
-        ObservableList<Participation> participations = FXCollections.observableArrayList();
-        String query = "SELECT * FROM participation WHERE id_citoyenE = ?";
+    // Ajout d'une méthode pour mettre à jour nombreticket si nécessaire
+    public boolean updateNombreticket(int id_user, int idEvenement, int nouveauNombreticket) {
+        String query = "UPDATE participation SET nombreticket = ? WHERE id_user = ? AND id_evenement = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, idCitoyenE);
+            ps.setInt(1, nouveauNombreticket);
+            ps.setInt(2, id_user);
+            ps.setInt(3, idEvenement);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la mise à jour du nombreticket d'une participation: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public ObservableList<Participation> getParticipationsByUser(int id_user) { // Correction : id_user au lieu de id_citoyenE
+        ObservableList<Participation> participations = FXCollections.observableArrayList();
+        String query = "SELECT * FROM participation WHERE id_user = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, id_user);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Participation participation = new Participation();
@@ -94,6 +106,7 @@ public class ParticipationService {
                 participation.setIdEvenement(rs.getInt("id_evenement"));
                 participation.setId_user(rs.getInt("id_user"));
                 participation.setStatut(rs.getString("Statut"));
+                participation.setNombreticket(rs.getInt("nombreticket")); // Ajout de nombreticket
                 participations.add(participation);
             }
         } catch (SQLException e) {
@@ -120,6 +133,7 @@ public class ParticipationService {
                 participation.setIdEvenement(rs.getInt("id_evenement"));
                 participation.setId_user(rs.getInt("id_user"));
                 participation.setStatut(rs.getString("Statut"));
+                participation.setNombreticket(rs.getInt("nombreticket")); // Ajout de nombreticket
                 participations.add(participation);
             }
         } catch (SQLException e) {

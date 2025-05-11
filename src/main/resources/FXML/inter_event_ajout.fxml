@@ -20,7 +20,7 @@
                         <Font name="Abril Fatface" size="27.0" />
                     </font>
                 </Label>
-                <Label fx:id="userNameLabel" layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0"  textFill="#817e7e">
+                <Label fx:id="userNameLabel" layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" textFill="#817e7e">
                     <font>
                         <Font size="15.0" />
                     </font>
@@ -71,7 +71,7 @@
                             <Image url="@../images/etoile-du-calendrier.png" />
                         </image>
                     </ImageView>
-                    <Button alignment="TOP_LEFT" layoutX="56.0" layoutY="193.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="151.0"  style="-fx-background-color: #4169E1;" text="Evènements" textFill="#db4495">
+                    <Button alignment="TOP_LEFT" layoutX="56.0" layoutY="193.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="151.0" style="-fx-background-color: #4169E1;" text="Evènements" textFill="#db4495">
                         <font>
                             <Font name="System Bold" size="18.0" />
                         </font>
@@ -150,12 +150,12 @@
                             <Font name="System Bold" size="19.0" />
                         </font>
                     </Label>
-                    <Button fx:id="retourButton" alignment="TOP_LEFT" layoutX="149.0" layoutY="464.0" mnemonicParsing="false" onAction="#onRetourButtonClick" prefHeight="46.0" prefWidth="125.0" style="-fx-background-color: #db4495;" text="  Retour" textAlignment="CENTER" textFill="WHITE">
+                    <Button fx:id="retourButton" alignment="TOP_LEFT" layoutX="149.0" layoutY="507.0" mnemonicParsing="false" onAction="#onRetourButtonClick" prefHeight="46.0" prefWidth="125.0" style="-fx-background-color: #db4495;" text="  Retour" textAlignment="CENTER" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="22.0" />
                         </font>
                     </Button>
-                    <Button fx:id="ajouterButton" alignment="TOP_LEFT" layoutX="440.0" layoutY="467.0" mnemonicParsing="false" onAction="#onAjouterButtonClick" prefHeight="40.0" prefWidth="122.0" style="-fx-background-color: #4169E1;" text="   Ajouter " textAlignment="CENTER" textFill="WHITE">
+                    <Button fx:id="ajouterButton" alignment="TOP_LEFT" layoutX="439.0" layoutY="510.0" mnemonicParsing="false" onAction="#onAjouterButtonClick" prefHeight="40.0" prefWidth="122.0" style="-fx-background-color: #4169E1;" text="   Ajouter " textAlignment="CENTER" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="18.0" />
                         </font>
@@ -166,6 +166,12 @@
                   </font>
                </Label>
                <TextField fx:id="prixField1" layoutX="321.0" layoutY="370.0" prefHeight="36.0" prefWidth="246.0" promptText="Prix" style="-fx-background-radius: 6;" />
+               <Label layoutX="103.0" layoutY="423.0" prefHeight="28.0" prefWidth="218.0" text="Nombre des places" textFill="ROYALBLUE">
+                  <font>
+                     <Font name="System Bold" size="19.0" />
+                  </font>
+               </Label>
+               <TextField fx:id="nombreplaceField11" layoutX="321.0" layoutY="419.0" prefHeight="36.0" prefWidth="246.0" promptText="Nombre des places" style="-fx-background-radius: 6;" />
                 </children>
             </AnchorPane>
         </center>

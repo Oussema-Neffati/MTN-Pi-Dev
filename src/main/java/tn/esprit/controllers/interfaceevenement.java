@@ -94,9 +94,11 @@ public class interfaceevenement {
             organisateurLabel.setPrefWidth(127);
             Label prixLabel = new Label(String.valueOf(evenement.getPrix()));
             prixLabel.setPrefWidth(134);
+            Label nombreplaceLabel = new Label(String.valueOf(evenement.getNombreplace()));
+            nombreplaceLabel.setPrefWidth(134);
 
 
-            eventRow.getChildren().addAll(nomLabel, lieuLabel, dateLabel, organisateurLabel,prixLabel);
+            eventRow.getChildren().addAll(nomLabel, lieuLabel, dateLabel, organisateurLabel,prixLabel,nombreplaceLabel);
 
             eventRow.setOnMouseClicked(event -> {
                 for (HBox child : eventVBox.getChildren().filtered(node -> node instanceof HBox).toArray(HBox[]::new)) {

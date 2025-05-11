@@ -22,6 +22,10 @@ import java.io.IOException;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.web.WebView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import tn.esprit.services.paiementStripe;
 import tn.esprit.utils.SessionManager;
 
@@ -85,7 +89,7 @@ public class inter_event_usr {
             VBox card = new VBox(15);
             card.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 15; -fx-background-radius: 15; -fx-border-color: #E0E0E0; -fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 3);");
             card.setPrefWidth(280); // Increased width for larger cards
-            card.setPrefHeight(200); // Increased height for better design
+            card.setPrefHeight(220); // Increased height for better design
 
             // Event details
             Label nomLabel = new Label(evenement.getNom());
@@ -96,6 +100,25 @@ public class inter_event_usr {
 
             Label lieuLabel = new Label("Lieu: " + evenement.getLieu());
             lieuLabel.setStyle("-fx-text-fill: #333333; -fx-font-size: 14;");
+
+            // Status indicator
+            HBox statusBox = new HBox(10);
+            Circle statusIndicator = new Circle(8);
+
+            Label availabilityLabel = new Label();
+
+            if (evenement.getNombreplace() > 0) {
+                statusIndicator.setFill(Color.GREEN);
+                availabilityLabel.setText("Disponible (" + evenement.getNombreplace() + " places)");
+                availabilityLabel.setStyle("-fx-text-fill: #178A17; -fx-font-size: 14; -fx-font-weight: bold;");
+            } else {
+                statusIndicator.setFill(Color.RED);
+                availabilityLabel.setText("Complet (0 place)");
+                availabilityLabel.setStyle("-fx-text-fill: #D13030; -fx-font-size: 14; -fx-font-weight: bold;");
+            }
+
+            statusBox.getChildren().addAll(statusIndicator, availabilityLabel);
+            HBox.setHgrow(availabilityLabel, Priority.ALWAYS);
 
             // Details button
             Button detailsBtn = new Button("Détails");
@@ -124,7 +147,7 @@ public class inter_event_usr {
                 }
             });
 
-            card.getChildren().addAll(nomLabel, dateLabel, lieuLabel, detailsBtn);
+            card.getChildren().addAll(nomLabel, dateLabel, lieuLabel, statusBox, detailsBtn);
             cardContainer.getChildren().add(card);
         }
 

@@ -29,6 +29,8 @@ public class inter_event_modif {
     @FXML
     private TextField organisateurField;
     @FXML
+    private TextField nombreplacesField; // Updated to nombreplacesField
+    @FXML
     private TextField prixField1;
     @FXML
     private Button modifierButton;
@@ -63,11 +65,9 @@ public class inter_event_modif {
             userNameLabel.setText(currentUser.getPrenom() + " " + currentUser.getNom());
         } else {
             userNameLabel.setText("Non connecté");
-            // Rediriger vers la page de connexion si aucun utilisateur n'est connecté
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
                 Parent root = loader.load();
-
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) userNameLabel.getScene().getWindow();
                 stage.setScene(scene);
@@ -90,6 +90,7 @@ public class inter_event_modif {
             lieuEvenementField.setText(evenementToModify.getLieu());
             organisateurField.setText(evenementToModify.getOrganisateur());
             prixField1.setText(String.valueOf(evenementToModify.getPrix()));
+            nombreplacesField.setText(String.valueOf(evenementToModify.getNombreplace())); // Updated to nombreplaces
 
             try {
                 LocalDate date = LocalDate.parse(evenementToModify.getDate(), dateFormatter);
@@ -112,8 +113,31 @@ public class inter_event_modif {
         String nom = nomEvenementField.getText().trim();
         String lieu = lieuEvenementField.getText().trim();
         String organisateur = organisateurField.getText().trim();
-        float prix = Float.parseFloat(prixField1.getText().trim());
+        float prix;
+        int nombreplaces;
         LocalDate date = dateEvenementPicker.getValue();
+
+        try {
+            prix = Float.parseFloat(prixField1.getText().trim());
+            if (prix < 0) {
+                showAlert(Alert.AlertType.WARNING, "Erreur de format", null, "Le prix doit être positif.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Erreur de format", null, "Le prix doit être un nombre valide.");
+            return;
+        }
+
+        try {
+            nombreplaces = Integer.parseInt(nombreplacesField.getText().trim());
+            if (nombreplaces <= 0) {
+                showAlert(Alert.AlertType.WARNING, "Erreur de format", null, "Le nombre de places doit être supérieur à 0.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Erreur de format", null, "Le nombre de places doit être un entier valide.");
+            return;
+        }
 
         if (nom.isEmpty() || lieu.isEmpty() || organisateur.isEmpty() || date == null) {
             showAlert(Alert.AlertType.WARNING, "Champs manquants", null, "Veuillez remplir tous les champs.");
@@ -126,6 +150,7 @@ public class inter_event_modif {
         evenementToModify.setOrganisateur(organisateur);
         evenementToModify.setDate(date.format(dateFormatter));
         evenementToModify.setPrix(prix);
+        evenementToModify.setNombreplace(nombreplaces); // Updated to nombreplaces
 
         try {
             evenementService.update(evenementToModify);
@@ -143,7 +168,7 @@ public class inter_event_modif {
         stage.setScene(new Scene(root));
         stage.setTitle("Municipalité Tunisienne Électronique");
         stage.show();
-        ((Stage) ((javafx.scene.control.Button) event.getSource()).getScene().getWindow()).close();
+        ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
     }
 
     @FXML
@@ -179,12 +204,12 @@ public class inter_event_modif {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     @FXML
     void showProfile(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/UserProfile.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -192,21 +217,16 @@ public class inter_event_modif {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert1(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger la page de profil.");
+            showAlert1(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la page de profil.");
         }
     }
 
     @FXML
     void logout(ActionEvent event) {
-        // Déconnecter l'utilisateur
         SessionManager.getInstance().clearSession();
-
-        // Rediriger vers la page de connexion
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -214,8 +234,7 @@ public class inter_event_modif {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert1(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'écran de connexion.");
+            showAlert1(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'écran de connexion.");
         }
     }
 

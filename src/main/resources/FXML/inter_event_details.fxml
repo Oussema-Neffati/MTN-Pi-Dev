@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,40 +14,40 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.inter_event_details">
+<AnchorPane prefHeight="678.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.inter_event_details">
     <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="931.0">
         <top>
-        <AnchorPane prefHeight="71.0" prefWidth="931.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
-            <children>
-                <TextField layoutX="248.0" layoutY="18.0" prefHeight="36.0" prefWidth="246.0" promptText="Chercher" style="-fx-background-radius: 6;" />
-                <Label alignment="CENTER" layoutX="69.0" layoutY="16.0" prefHeight="46.0" prefWidth="82.0" text="MTE" textFill="#db4495">
-                    <font>
-                        <Font name="Abril Fatface" size="27.0" />
-                    </font>
-                </Label>
-                <Label fx:id="userNameLabel" layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" textFill="#817e7e">
-                    <font>
-                        <Font size="15.0" />
-                    </font>
-                </Label>
-                <ImageView fitHeight="32.0" fitWidth="24.0" layoutX="868.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/output-onlinepngtools (4).png" />
-                    </image>
-                </ImageView>
-                <ImageView fitHeight="32.0" fitWidth="24.0" layoutX="508.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/output-onlinepngtools (3).png" />
-                    </image>
-                </ImageView>
-                <ImageView fitHeight="27.0" fitWidth="26.0" layoutX="50.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/drapeau-du-gouvernement (2).png" />
-                    </image>
-                </ImageView>
-            </children>
-        </AnchorPane>
-    </top>
+            <AnchorPane prefHeight="71.0" prefWidth="931.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+                <children>
+                    <TextField layoutX="248.0" layoutY="18.0" prefHeight="36.0" prefWidth="246.0" promptText="Chercher" style="-fx-background-radius: 6;" />
+                    <Label alignment="CENTER" layoutX="69.0" layoutY="16.0" prefHeight="46.0" prefWidth="82.0" text="MTE" textFill="#db4495">
+                        <font>
+                            <Font name="Abril Fatface" size="27.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="userNameLabel" layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" textFill="#817e7e">
+                        <font>
+                            <Font size="15.0" />
+                        </font>
+                    </Label>
+                    <ImageView fitHeight="32.0" fitWidth="24.0" layoutX="868.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/output-onlinepngtools (4).png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fitHeight="32.0" fitWidth="24.0" layoutX="508.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/output-onlinepngtools (3).png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fitHeight="27.0" fitWidth="26.0" layoutX="50.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/drapeau-du-gouvernement (2).png" />
+                        </image>
+                    </ImageView>
+                </children>
+            </AnchorPane>
+        </top>
         <left>
             <AnchorPane prefHeight="607.0" prefWidth="228.0" style="-fx-background-color: #4169E1; -fx-background-radius: 0px 50px 0px 0px;" BorderPane.alignment="CENTER">
                 <children>
@@ -114,54 +117,148 @@
             </AnchorPane>
         </left>
         <center>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="607.0" prefWidth="703.0" style="-fx-background-color: #F5F5F5;" BorderPane.alignment="CENTER">
                 <children>
-                    <VBox alignment="CENTER" layoutX="63.0" layoutY="89.0" prefHeight="400.0" prefWidth="600.0" spacing="20" style="-fx-background-color: #F5F5F5; -fx-padding: 20;">
+                    <AnchorPane layoutX="40.0" layoutY="21.0" prefHeight="558.0" prefWidth="622.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #EEEEEE; -fx-border-radius: 15; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                         <children>
-                            <Label text="Détails de l'événement" textAlignment="CENTER" textFill="#db4495">
-                                <font>
-                                    <Font name="System Bold" size="24.0" />
-                                </font>
-                            </Label>
-                            <Label fx:id="nomLabel" text="Nom d'événement: " textFill="#4169E1">
-                                <font>
-                                    <Font name="Arial Bold" size="16.0" />
-                                </font>
-                            </Label>
-                            <Label fx:id="lieuLabel" text="Lieu: " textFill="#4169E1">
+                            <VBox alignment="TOP_CENTER" layoutX="20.0" layoutY="20.0" prefHeight="543.0" prefWidth="600.0" spacing="15.0">
+                                <Label fx:id="eventNameLabel" alignment="CENTER" prefHeight="38.0" prefWidth="554.0" styleClass="event-title" textAlignment="CENTER" textFill="#db4495">
+                                    <font>
+                                        <Font name="System Bold" size="26.0" />
+                                    </font>
+                                </Label>
+
+                                <Separator prefWidth="550.0">
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" top="5.0" />
+                                    </VBox.margin>
+                                </Separator>
+
+                                <Label fx:id="eventDateLabel" prefHeight="30.0" prefWidth="550.0" textAlignment="CENTER" textFill="#333333">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/etoile-du-calendrier.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Label>
+
+                                <Label fx:id="eventLieuLabel" prefHeight="30.0" prefWidth="550.0" textAlignment="CENTER" textFill="#333333">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/plan.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Label>
+
+                                <Label fx:id="eventOrganisateurLabel" prefHeight="30.0" prefWidth="550.0" textAlignment="CENTER" textFill="#333333">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/utilisateur-du-cercle.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Label>
+
+                                <Label fx:id="eventPrixLabel" prefHeight="30.0" prefWidth="550.0" textAlignment="CENTER" textFill="#333333">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/parametres.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Label>
+
+                                <Label fx:id="eventPlacesLabel" prefHeight="30.0" prefWidth="550.0" textAlignment="CENTER" textFill="#333333">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/tableau-de-reservation (3).png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Label>
+
+                                <Separator prefWidth="550.0">
+                                    <VBox.margin>
+                                        <Insets bottom="15.0" top="10.0" />
+                                    </VBox.margin>
+                                </Separator>
+
+                                <Label fx:id="totalAmountLabel" alignment="CENTER" prefHeight="30.0" prefWidth="550.0" text="Montant total : 0.0" textFill="#4169E1">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <HBox alignment="CENTER" spacing="20.0">
+                                    <VBox.margin>
+                                        <Insets top="15.0" />
+                                    </VBox.margin>
+                                    <Button fx:id="payButton" onAction="#handlePayButton" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #4169E1; -fx-background-radius: 20;" text="Payer" textFill="WHITE">
+                                        <font>
+                                            <Font name="System Bold" size="18.0" />
+                                        </font>
+                                        <tooltip>
+                                            <Tooltip text="Procéder au paiement" />
+                                        </tooltip>
+                                    </Button>
+
+                                    <Button fx:id="cancelButton" onAction="#handleCancelButton" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #FF5555; -fx-background-radius: 20;" text="Annuler" textFill="WHITE">
+                                        <font>
+                                            <Font name="System Bold" size="18.0" />
+                                        </font>
+                                        <tooltip>
+                                            <Tooltip text="Annuler la commande" />
+                                        </tooltip>
+                                    </Button>
+
+                                    <Button fx:id="downloadTicketButton" onAction="#downloadTicket" prefHeight="40.0" prefWidth="194.0" style="-fx-background-color: #DB4495; -fx-background-radius: 20;" text="Télécharger PDF" textFill="WHITE" visible="false">
+                                        <font>
+                                            <Font name="System Bold" size="16.0" />
+                                        </font>
+                                        <tooltip>
+                                            <Tooltip text="Télécharger votre billet" />
+                                        </tooltip>
+                                    </Button>
+
+                                    <Button onAction="#goBack" prefHeight="40.0" prefWidth="99.0" style="-fx-background-color: transparent; -fx-border-color: #4169E1; -fx-border-radius: 20; -fx-border-width: 2;" text="Retour" textAlignment="CENTER" textFill="#4169E1">
+                                        <font>
+                                            <Font name="System Bold" size="16.0" />
+                                        </font>
+                                        <tooltip>
+                                            <Tooltip text="Retour à la liste des événements" />
+                                        </tooltip>
+                                    </Button>
+                                </HBox>
+                            </VBox>
+                            <Label layoutX="238.0" layoutY="1.0" prefHeight="26.0" prefWidth="177.0" text="Détail de l'événement" textFill="#4169E1">
                                 <font>
                                     <Font name="System Bold" size="16.0" />
                                 </font>
                             </Label>
-                            <Label fx:id="dateLabel" text="Date: " textFill="#4169E1">
-                                <font>
-                                    <Font name="Arial Bold" size="16.0" />
-                                </font>
-                            </Label>
-                            <Label fx:id="organisateurLabel" text="Organisateur: " textFill="#4169E1">
-                                <font>
-                                    <Font name="Arial Bold" size="16.0" />
-                                </font>
-                            </Label>
-                     <Label fx:id="prixLabel1" text="Prix :" textFill="#4169E1">
-                        <font>
-                           <Font name="Arial Bold" size="16.0" />
-                        </font>
-                     </Label>
-                            <HBox alignment="CENTER" spacing="20">
-                                <Button mnemonicParsing="false" onAction="#retourusr" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #4169E1; -fx-text-fill: white;" text="Retour">
-                                    <font>
-                                        <Font name="System Bold" size="14.0" />
-                                    </font>
-                                </Button>
-                                <Button mnemonicParsing="false" onAction="#handlePayerMaintenant" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #db4495; -fx-text-fill: white;" text="Payer maintenant">
-                                    <font>
-                                        <Font name="System Bold" size="14.0" />
-                                    </font>
-                                </Button>
-                            </HBox>
                         </children>
-                    </VBox>
+                    </AnchorPane>
                 </children>
             </AnchorPane>
         </center>

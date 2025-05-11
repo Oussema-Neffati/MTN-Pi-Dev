@@ -31,6 +31,9 @@ public class inter_event_ajout {
     private Label userNameLabel;
     @FXML
     private TextField prixField1;
+    @FXML
+    private TextField nombreplaceField11;
+
     private Button mapButton;
 
     private Evenementservice evenementService;
@@ -89,9 +92,10 @@ public class inter_event_ajout {
         LocalDate dateEvenement = dateEvenementPicker.getValue();
         String organisateur = organisateurField.getText();
         float prix=Float.parseFloat(prixField1.getText());
+        int nbrEvenement=Integer.parseInt(nombreplaceField11.getText());
 
         // Vérifie si tous les champs sont remplis
-        if (nomEvenement.isEmpty() || lieuEvenement.isEmpty() || dateEvenement == null || organisateur.isEmpty() || prix <= 0)
+        if (nomEvenement.isEmpty() || lieuEvenement.isEmpty() || dateEvenement == null || organisateur.isEmpty() || prix <= 0 || nbrEvenement <= 10)
         {
             // Affiche une alerte si un champ est vide
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -112,6 +116,7 @@ public class inter_event_ajout {
         evenement.setDate(dateFormatted);
         evenement.setOrganisateur(organisateur);
         evenement.setPrix(prix);
+        evenement.setNombreplace(nbrEvenement);
 
         // Ajoute l'événement à la base de données
         evenementService.create(evenement);
@@ -125,7 +130,8 @@ public class inter_event_ajout {
                 "Lieu : " + lieuEvenement + "\n" +
                 "Date : " + dateEvenement + "\n" +
                 "Organisateur : " + organisateur + "\n" +
-                "Prix : " + prix );
+                "Prix : " + prix +
+                "nombre des places" + nbrEvenement);
         alert.showAndWait();
 
         // Réinitialise les champs après l'ajout

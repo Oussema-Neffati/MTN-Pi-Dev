@@ -83,7 +83,7 @@ public class participation {
 
             // Essayer de trouver le nom d'utilisateur correspondant
             try {
-                Utilisateur user = ServiceUtilisateur.getCitoyenById(p.getIdCitoyenE());
+                Utilisateur user = ServiceUtilisateur.getCitoyenById(p.getId_user());
                 if (user != null && user.getNom().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
@@ -110,9 +110,9 @@ public class participation {
             idLabel.setPrefWidth(60);
 
             // Nom de l'utilisateur (on essaie de le récupérer depuis le service)
-            String userName = "Utilisateur " + participation.getIdCitoyenE();
+            String userName = "Utilisateur " + participation.getId_user();
             try {
-                Utilisateur user = ServiceUtilisateur.getCitoyenById(participation.getIdCitoyenE());
+                Utilisateur user = ServiceUtilisateur.getCitoyenById(participation.getId_user());
                 if (user != null) {
                     userName = user.getNom();
                 }
@@ -160,7 +160,7 @@ public class participation {
 
     private void updateParticipationStatus(Participation participation, String newStatus) {
         try {
-            participationService.updateStatut(participation.getIdCitoyenE(), participation.getIdEvenement(), newStatus);
+            participationService.updateStatut(participation.getId_user(), participation.getIdEvenement(), newStatus);
 
             // Rafraîchir l'affichage
             loadParticipations();

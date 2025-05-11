@@ -22,7 +22,7 @@
                             <Font name="Abril Fatface" size="27.0" />
                         </font>
                     </Label>
-                    <Label fx:id="userNameLabel" layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0"  textFill="#817e7e">
+                    <Label fx:id="userNameLabel" layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" textFill="#817e7e">
                         <font>
                             <Font size="15.0" />
                         </font>
@@ -73,7 +73,7 @@
                                 <Image url="@../images/etoile-du-calendrier.png" />
                             </image>
                         </ImageView>
-                        <Button alignment="TOP_LEFT" layoutX="56.0" layoutY="193.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="151.0"  style="-fx-background-color: #4169E1;" text="Evènements" textFill="#db4495">
+                        <Button alignment="TOP_LEFT" layoutX="56.0" layoutY="193.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="151.0" style="-fx-background-color: #4169E1;" text="Evènements" textFill="#db4495">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>
@@ -139,7 +139,7 @@
                             </font>
                         </Button>
                         <TextField fx:id="searchField" layoutX="83.0" layoutY="98.0" prefHeight="36.0" prefWidth="226.0" promptText="Rechercher un événement" style="-fx-background-radius: 6;" />
-                        <VBox fx:id="eventVBox" layoutX="83.0" layoutY="164.0" prefHeight="242.0" prefWidth="547.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 10;" />
+                        <VBox fx:id="eventVBox" layoutX="41.0" layoutY="164.0" prefHeight="242.0" prefWidth="626.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 10;" />
                         <Button alignment="CENTER" layoutX="84.0" layoutY="477.0" mnemonicParsing="false" onAction="#handleSupprimerEvenement" prefHeight="46.0" prefWidth="345.0" style="-fx-background-color: #4169E1; -fx-background-radius: 6;" text="Supprimer évenement" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="21.0" />
@@ -150,9 +150,9 @@
                                 <Font name="System Bold" size="21.0" />
                             </font>
                         </Button>
-                        <HBox layoutX="85.0" layoutY="136.0" prefHeight="26.0" prefWidth="544.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 5;">
+                        <HBox layoutX="37.0" layoutY="136.0" prefHeight="30.0" prefWidth="658.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 5;">
                             <children>
-                                <Label prefHeight="20.0" prefWidth="176.0" text="Nom d'événement" textFill="#db4495">
+                                <Label prefHeight="20.0" prefWidth="157.0" text="Nom d'événement" textFill="#db4495">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
@@ -162,7 +162,7 @@
                                         <Font name="System Bold" size="14.0" />
                                     </font>
                                 </Label>
-                                <Label prefHeight="20.0" prefWidth="135.0" text="Date" textFill="#db4495">
+                                <Label prefHeight="20.0" prefWidth="78.0" text="Date" textFill="#db4495">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
@@ -172,11 +172,16 @@
                                         <Font name="System Bold" size="14.0" />
                                     </font>
                                 </Label>
-                                <Label prefHeight="20.0" prefWidth="135.0" text="Prix" textFill="#db4495">
+                                <Label prefHeight="20.0" prefWidth="88.0" text="Prix" textFill="#db4495">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
                                 </Label>
+                        <Label prefHeight="20.0" prefWidth="182.0" text="Nombre des places" textFill="#db4495">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
                             </children>
                         </HBox>
                   <Button alignment="CENTER" layoutX="225.0" layoutY="529.0" mnemonicParsing="false" onAction="#handleVoirParticipation" prefHeight="46.0" prefWidth="208.0" style="-fx-background-color: #4169E1; -fx-background-radius: 6;" text="Voir Participation" textFill="WHITE">

@@ -7,24 +7,27 @@ public class Evenement {
     private String date;
     private String organisateur;
     private float prix;
+    private int nombreplace;
 
     public Evenement() {}
 
-    public Evenement(int id, String nom, String lieu, String date, String organisateur, float prix) {
+    public Evenement(int id, String nom, String lieu, String date, String organisateur, float prix, int nombreplace) {
         this.id = id;
         this.nom = nom;
         this.lieu = lieu;
         this.date = date;
         this.organisateur = organisateur;
         this.prix = prix;
+        this.nombreplace = nombreplace;
     }
 
-    public Evenement(String nom, String lieu, String date, String organisateur, float prix) {
+    public Evenement(String nom, String lieu, String date, String organisateur, float prix, int nombreplace) {
         this.nom = nom;
         this.lieu = lieu;
         this.date = date;
         this.organisateur = organisateur;
         this.prix = prix;
+        this.nombreplace = nombreplace;
     }
 
     public int getId() { return id; }
@@ -39,6 +42,8 @@ public class Evenement {
     public void setOrganisateur(String organisateur) { this.organisateur = organisateur; }
     public float getPrix() { return prix; }
     public void setPrix(float prix) { this.prix = prix; }
+    public int getNombreplace() { return nombreplace; }
+    public void setNombreplace(int nombreplace) { this.nombreplace = nombreplace; }
     @Override
     public String toString() {
         return "Evenement{" +
@@ -48,6 +53,7 @@ public class Evenement {
                 ", date='" + date + '\'' +
                 ", organisateur='" + organisateur + '\'' +
                 ", prix=" + prix +
+                ", nombreplace=" + nombreplace +
                 '}';
     }
 }
