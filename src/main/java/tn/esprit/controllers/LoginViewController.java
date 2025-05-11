@@ -12,11 +12,17 @@ import tn.esprit.models.Role;
 import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceUtilisateur;
 import tn.esprit.utils.NavigationUtils;
+import tn.esprit.utils.PreferencesUtils;
 import tn.esprit.utils.SessionManager;
 import tn.esprit.utils.ValidationUtils;
 import tn.esprit.utils.logUtils;
 
+import tn.esprit.services.GoogleSignInService;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+
 import java.io.IOException;
+import java.util.Optional;
 
 public class LoginViewController {
 
@@ -27,10 +33,16 @@ public class LoginViewController {
     private Button loginB;
 
     @FXML
-    private TextField passwordTF;
+    private PasswordField passwordTF;
 
     @FXML
     private Hyperlink signup;
+
+    @FXML
+    private CheckBox rememberMeCheckBox;
+
+    @FXML
+    private Hyperlink forgotPasswordLink;
 
     @FXML
     void initialize() {
@@ -39,6 +51,17 @@ public class LoginViewController {
 
         // Ajouter un gestionnaire d'événements au lien d'inscription
         signup.setOnAction(this::signup);
+
+        // Charger les identifiants sauvegardés si "Se souvenir de moi" était activé
+        loadSavedCredentials();
+    }
+
+    private void loadSavedCredentials() {
+        if (PreferencesUtils.isRememberMeChecked()) {
+            EmailTF.setText(PreferencesUtils.getSavedEmail());
+            passwordTF.setText(PreferencesUtils.getSavedPassword());
+            rememberMeCheckBox.setSelected(true);
+        }
     }
 
     @FXML
@@ -57,6 +80,24 @@ public class LoginViewController {
             System.err.println("Erreur de chargement: " + e.getMessage());
             showAlert(Alert.AlertType.ERROR, "Erreur",
                     "Impossible de charger l'écran d'inscription.");
+        }
+    }
+
+    @FXML
+    void handleForgotPassword(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/ForgotPasswordView.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Mot de passe oublié");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur de chargement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de charger l'écran de récupération de mot de passe.");
         }
     }
 
@@ -101,6 +142,7 @@ public class LoginViewController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     void login(ActionEvent event) {
         String email = EmailTF.getText();
@@ -111,6 +153,13 @@ public class LoginViewController {
             showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
                     "Veuillez remplir tous les champs.");
             return;
+        }
+
+        // Sauvegarder ou supprimer les identifiants selon la case à cocher
+        if (rememberMeCheckBox.isSelected()) {
+            PreferencesUtils.saveCredentials(email, password, true);
+        } else {
+            PreferencesUtils.clearSavedCredentials();
         }
 
         // Cas spécial pour l'administrateur
@@ -150,7 +199,6 @@ public class LoginViewController {
             return;
         }
 
-
         // Pour les autres utilisateurs
         ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
         Utilisateur user = serviceUtilisateur.authenticate(email, password);
@@ -177,6 +225,60 @@ public class LoginViewController {
                 showAlert(Alert.AlertType.ERROR, "Erreur d'authentification",
                         "Email ou mot de passe incorrect.");
             }
+        }
+    }
+
+    @FXML
+    private Button googleSignInButton;
+
+
+    @FXML
+    void googleSignIn(ActionEvent event) {
+        try {
+            String[] userInfo = GoogleSignInService.getUserInfo();
+            if (userInfo != null && userInfo.length >= 2) {
+                String email = userInfo[0];
+                String name = userInfo[1];
+
+                // Vérifier si l'utilisateur existe dans la base de données
+                ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
+                Utilisateur user = serviceUtilisateur.findByEmail(email);
+
+                if (user != null && user.isActif()) {
+                    // L'utilisateur existe, on le connecte
+                    SessionManager.getInstance().setCurrentUser(user);
+
+                    // Journaliser la connexion
+                    logUtils.logAuthEvent(email, true, "Connexion Google " + user.getRole().name());
+
+                    NavigationUtils.loadView(event, "/FXML/Interface1.fxml", "Municipalité Tunisienne Electronique");
+                } else {
+                    // L'utilisateur n'existe pas, on affiche une option pour créer un compte
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Compte non trouvé");
+                    alert.setHeaderText("Aucun compte associé à cet email Google");
+                    alert.setContentText("Voulez-vous créer un nouveau compte avec cet email ?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        // Rediriger vers le formulaire d'inscription avec l'email pré-rempli
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/SignupView.fxml"));
+                        Parent root = loader.load();
+
+                        SignupViewController controller = loader.getController();
+                        // Préremplir l'email
+                        controller.setEmailFromGoogle(email);
+
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.setScene(new Scene(root));
+                        stage.setTitle("Inscription");
+                        stage.show();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de se connecter avec Google: " + e.getMessage());
         }
     }
 }

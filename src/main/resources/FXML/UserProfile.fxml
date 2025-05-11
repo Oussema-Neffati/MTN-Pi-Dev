@@ -1,113 +1,314 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.UserProfileController">
+<?import java.net.URL?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.UserProfileController">
+    <stylesheets>
+        <URL value="@../CSS/profile-app.css" />
+    </stylesheets>
+
     <top>
-        <AnchorPane prefHeight="71.0" prefWidth="931.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="80.0" prefWidth="1200.0" style="-fx-background-color: #ffffff; -fx-border-width: 0 0 1 0; -fx-border-color: #e0e0e0;" BorderPane.alignment="CENTER">
             <children>
-                <Label alignment="CENTER" layoutX="69.0" layoutY="16.0" prefHeight="46.0" prefWidth="82.0" text="MTE" textFill="#db4495">
-                    <font>
-                        <Font name="Abril Fatface" size="27.0" />
-                    </font>
-                </Label>
-                <Label layoutX="745.0" layoutY="22.0" prefHeight="27.0" prefWidth="123.0" text="Mon Profil" textFill="#817e7e">
-                    <font>
-                        <Font size="15.0" />
-                    </font>
-                </Label>
-                <ImageView fitHeight="32.0" fitWidth="24.0" layoutX="868.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/output-onlinepngtools (4).png" />
-                    </image>
-                </ImageView>
-                <ImageView fitHeight="27.0" fitWidth="26.0" layoutX="50.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/drapeau-du-gouvernement (2).png" />
-                    </image>
-                </ImageView>
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="20.0" spacing="15.0">
+                    <children>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/drapeau-du-gouvernement (2).png" />
+                            </image>
+                        </ImageView>
+                        <Label text="MTE" textFill="#db4495">
+                            <font>
+                                <Font name="System Bold" size="32.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" layoutX="950.0" layoutY="20.0" spacing="20.0">
+                    <children>
+                        <Label text="Mon Profil" textFill="#495057">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/output-onlinepngtools (4).png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
             </children>
         </AnchorPane>
     </top>
     <left>
-        <AnchorPane prefHeight="607.0" prefWidth="228.0" style="-fx-background-color: #4169E1; -fx-background-radius: 0px 50px 0px 0px;" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="720.0" prefWidth="280.0" style="-fx-background-color: #4169E1;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="backButton" layoutX="36.0" layoutY="520.0" mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #DB4495;" text="Retour" textFill="WHITE">
+                <VBox layoutX="30.0" layoutY="40.0" prefHeight="640.0" prefWidth="220.0" spacing="20.0">
+                    <children>
+                        <Label text="Navigation" textFill="#ffffff">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+                        <VBox spacing="10.0">
+                            <children>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: #315bb5; -fx-background-radius: 8; -fx-text-fill: white;" text="   Profil">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-opacity: 0.8;" text="   Sécurité">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-opacity: 0.8;" text="   Notifications">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                        </VBox>
+                        <Button fx:id="backButton" layoutY="540.0" mnemonicParsing="false" onAction="#goBack" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: #DB4495; -fx-background-radius: 8; -fx-text-fill: white;" text="Retour à l'accueil">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </VBox>
+                <Label layoutX="30.0" layoutY="670.0" text="Version 1.0.1" textFill="#ffffff">
                     <font>
-                        <Font name="System Bold" size="18.0" />
+                        <Font size="13.0" />
                     </font>
-                </Button>
-                <Label layoutX="73.0" layoutY="571.0" prefHeight="31.0" prefWidth="74.0" text="Version 1.0.1" textFill="WHITE" />
+                </Label>
             </children>
         </AnchorPane>
     </left>
     <center>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="720.0" prefWidth="920.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
             <children>
-                <Label layoutX="238.0" layoutY="23.0" text="Mon Profil" textFill="#4169e1">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
-                </Label>
-                <VBox layoutX="101.0" layoutY="85.0" prefHeight="299.0" prefWidth="399.0" spacing="10.0">
-                    <children>
-                        <Label text="Informations personnelles" textFill="#4169e1">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Separator prefWidth="200.0" />
-                        <Label text="Nom" />
-                        <TextField fx:id="nomField" prefHeight="5.0" prefWidth="399.0" promptText="Nom" />
-                        <Label text="Prénom" />
-                        <TextField fx:id="prenomField" promptText="Prénom" />
-                        <Label text="Email" />
-                        <TextField fx:id="emailField" editable="false" promptText="Email" />
-                        <Label text="Rôle" />
-                        <TextField fx:id="roleField" editable="false" promptText="Rôle" />
-
-                        <!-- Champs pour Citoyen -->
-                        <VBox fx:id="citoyenFields" spacing="5.0">
+                <ScrollPane fitToWidth="true" layoutX="0.0" layoutY="0.0" prefHeight="720.0" prefWidth="920.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <content>
+                        <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="900.0" spacing="30.0">
                             <children>
-                                <Label text="CIN" />
-                                <TextField fx:id="cinField" promptText="CIN" />
-                                <Label text="Adresse" />
-                                <TextField fx:id="adresseField" promptText="Adresse" />
-                                <Label text="Téléphone" />
-                                <TextField fx:id="telephoneField" promptText="Téléphone" />
+                                <VBox alignment="CENTER" spacing="10.0">
+                                    <children>
+                                        <Label text="Informations Personnelles" textFill="#333333">
+                                            <font>
+                                                <Font name="System Bold" size="32.0" />
+                                            </font>
+                                        </Label>
+                                        <Label text="Gérez et modifiez vos informations personnelles" textFill="#6c757d">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+
+                                <VBox alignment="CENTER" spacing="25.0">
+                                    <children>
+                                        <HBox spacing="30.0" alignment="CENTER">
+                                            <children>
+                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                    <children>
+                                                        <Label text="Nom" textFill="#495057">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <TextField fx:id="nomField" prefHeight="44.0" promptText="Votre nom" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </TextField>
+                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                    <children>
+                                                        <Label text="Prénom" textFill="#495057">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <TextField fx:id="prenomField" prefHeight="44.0" promptText="Votre prénom" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </TextField>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+
+                                        <HBox spacing="30.0" alignment="CENTER">
+                                            <children>
+                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                    <children>
+                                                        <Label text="Adresse Email" textFill="#495057">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <TextField fx:id="emailField" editable="false" prefHeight="44.0" promptText="Email" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15; -fx-background-color: #f8f9fa;">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </TextField>
+                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                    <children>
+                                                        <Label text="Rôle" textFill="#495057">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <TextField fx:id="roleField" editable="false" prefHeight="44.0" promptText="Rôle" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15; -fx-background-color: #f8f9fa;">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </TextField>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+
+                                        <!-- Conteneur pour les champs spécifiques aux rôles -->
+                                        <StackPane prefHeight="180.0" prefWidth="830.0">
+                                            <children>
+                                                <!-- Champs pour Citoyen -->
+                                                <VBox fx:id="citoyenFields" spacing="25.0" visible="false">
+                                                    <children>
+                                                        <HBox spacing="30.0" alignment="CENTER">
+                                                            <children>
+                                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                                    <children>
+                                                                        <Label text="CIN" textFill="#495057">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                        <TextField fx:id="cinField" prefHeight="44.0" promptText="Votre CIN" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                        </TextField>
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                                    <children>
+                                                                        <Label text="Téléphone" textFill="#495057">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                        <TextField fx:id="telephoneField" prefHeight="44.0" promptText="Votre numéro de téléphone" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                        </TextField>
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                        </HBox>
+                                                        <VBox spacing="5.0" alignment="CENTER">
+                                                            <children>
+                                                                <Label text="Adresse" textFill="#495057">
+                                                                    <font>
+                                                                        <Font size="14.0" />
+                                                                    </font>
+                                                                </Label>
+                                                                <TextField fx:id="adresseField" prefHeight="44.0" prefWidth="400.0" promptText="Votre adresse complète" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                                                                    <font>
+                                                                        <Font size="14.0" />
+                                                                    </font>
+                                                                </TextField>
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- Champs pour Employé avec ComboBox -->
+                                                <VBox fx:id="employeFields" spacing="25.0" visible="false">
+                                                    <children>
+                                                        <HBox spacing="30.0" alignment="CENTER">
+                                                            <children>
+                                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                                    <children>
+                                                                        <Label text="Poste" textFill="#495057">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                        <ComboBox fx:id="posteField" prefHeight="44.0" prefWidth="400.0" promptText="Sélectionnez votre poste" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;" styleClass="modern-combo" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox spacing="5.0" prefWidth="400.0">
+                                                                    <children>
+                                                                        <Label text="Département" textFill="#495057">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                        <ComboBox fx:id="departementField" prefHeight="44.0" prefWidth="400.0" promptText="Sélectionnez le département" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0;" styleClass="modern-combo" />
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                        </HBox>
+                                                        <VBox spacing="5.0" alignment="CENTER">
+                                                            <children>
+                                                                <Label text="Date d'embauche" textFill="#495057">
+                                                                    <font>
+                                                                        <Font size="14.0" />
+                                                                    </font>
+                                                                </Label>
+                                                                <TextField fx:id="dateEmbaucheField" editable="false" prefHeight="44.0" prefWidth="400.0" promptText="Date d'embauche" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15; -fx-background-color: #f8f9fa;">
+                                                                    <font>
+                                                                        <Font size="14.0" />
+                                                                    </font>
+                                                                </TextField>
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </StackPane>
+
+                                        <HBox spacing="20.0" alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#changePassword" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #17a2b8; -fx-background-radius: 8; -fx-text-fill: white;" text="Changer le mot de passe">
+                                                    <font>
+                                                        <Font name="System Bold" size="15.0" />
+                                                    </font>
+                                                </Button>
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveProfile" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #4169E1; -fx-background-radius: 8; -fx-text-fill: white;" text="Enregistrer">
+                                                    <font>
+                                                        <Font name="System Bold" size="15.0" />
+                                                    </font>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
                             </children>
                         </VBox>
-
-                        <!-- Champs pour Employé -->
-                        <VBox fx:id="employeFields" spacing="5.0">
-                            <children>
-                                <Label text="Poste" />
-                                <TextField fx:id="posteField" promptText="Poste" />
-                                <Label text="Département" />
-                                <TextField fx:id="departementField" promptText="Département" />
-                                <Label text="Date d'embauche" />
-                                <TextField fx:id="dateEmbaucheField" editable="false" promptText="Date d'embauche" />
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
-                <Button fx:id="saveButton" layoutX="532.0" layoutY="603.0" mnemonicParsing="false" onAction="#saveProfile" prefHeight="39.0" prefWidth="122.0" style="-fx-background-color: #4169E1;" text="Enregistrer" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font></Button>
-                <Button fx:id="changePasswordButton" layoutX="327.0" layoutY="603.0" mnemonicParsing="false" onAction="#changePassword" prefHeight="40.0" prefWidth="192.0" style="-fx-background-color: #4169E1;" text="Changer le mot de passe" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font></Button>
+                    </content>
+                </ScrollPane>
             </children>
         </AnchorPane>
     </center>

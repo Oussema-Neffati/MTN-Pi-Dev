@@ -1,0 +1,264 @@
+/* CSS moderne pour les interfaces d'authentification */
+
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", "Arial", sans-serif;
+}
+
+/* Amélioration des labels pour qu'ils soient bien visibles */
+.label {
+    -fx-font-smoothing-type: LCD;
+    -fx-text-fill: derive(-fx-text-base-color, 0%) !important;
+    -fx-font-size: 12px;
+}
+
+/* Labels de titre */
+.label:first-child {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+/* TextField et PasswordField modernes */
+.text-field, .password-field {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-color: #e0e0e0;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 4, 0, 0, 1);
+    -fx-pref-height: 38px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(65,105,225,0.1), 6, 0, 0, 1);
+}
+
+/* ComboBox moderne avec classe personnalisée */
+.combo-box.modern-combo {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-color: #e0e0e0;
+    -fx-background-color: #ffffff;
+    -fx-padding: 0 10;
+    -fx-pref-height: 38px;
+    -fx-font-size: 13px;
+}
+
+.combo-box.modern-combo:focused {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 1.5;
+}
+
+.combo-box.modern-combo .list-cell {
+    -fx-text-fill: #333333;
+    -fx-font-size: 13px;
+    -fx-padding: 6 10;
+}
+
+.combo-box.modern-combo > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8;
+}
+
+.combo-box.modern-combo > .arrow-button > .arrow {
+    -fx-background-color: #4169E1;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+.combo-box.modern-combo:showing {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 1.5;
+}
+
+/* ComboBox popup pour la classe moderne */
+.combo-box-popup > .list-view {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 4);
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-padding: 8 12;
+    -fx-font-size: 13px;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: white;
+}
+
+/* DatePicker moderne avec classe personnalisée */
+.date-picker.modern-date-picker {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-color: #e0e0e0;
+    -fx-background-color: #ffffff;
+    -fx-pref-height: 38px;
+}
+
+.date-picker.modern-date-picker:focused {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 1.5;
+}
+
+.date-picker.modern-date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8;
+}
+
+.date-picker.modern-date-picker > .arrow-button > .arrow {
+    -fx-background-color: #4169E1;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+.date-picker.modern-date-picker .text-field {
+    -fx-background-radius: 6 0 0 6;
+    -fx-border-radius: 6 0 0 6;
+    -fx-border-color: transparent;
+    -fx-font-size: 13px;
+    -fx-padding: 0 12;
+}
+
+.date-picker.modern-date-picker:showing {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 1.5;
+}
+
+/* DatePicker popup pour la classe moderne */
+.date-picker-popup {
+    -fx-background-color: white;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 4);
+}
+
+/* Boutons modernes */
+.button {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 2);
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 2, 0, 0, 0);
+}
+
+/* ScrollPane moderne */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6;
+}
+
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 6;
+}
+
+.scroll-pane .scroll-bar:vertical .track,
+.scroll-pane .scroll-bar:horizontal .track {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 3;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb,
+.scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: #d0d0d0;
+    -fx-background-radius: 3;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb:hover,
+.scroll-pane .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #c0c0c0;
+}
+
+/* CheckBox moderne */
+.check-box {
+    -fx-text-fill: #495057;
+}
+
+.check-box .box {
+    -fx-background-radius: 3;
+    -fx-border-radius: 3;
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #4169E1;
+    -fx-background-radius: 1;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #4169E1;
+    -fx-border-color: #4169E1;
+}
+
+/* Hyperlink moderne */
+.hyperlink {
+    -fx-border-width: 0;
+    -fx-underline: false;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #2f5bc7;
+    -fx-underline: true;
+}
+
+/* StackPane pour superposer les champs de rôle */
+.stack-pane > * {
+    -fx-background-color: transparent;
+}
+
+/* VBox spacing optimisé */
+.vbox {
+    -fx-spacing: 12;
+}
+
+/* Hover effect subtil */
+.anchor-pane:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 4, 0, 0, 1);
+}
+
+/* Styles supplémentaires pour une meilleure compatibilité */
+.combo-box.modern-combo .arrow {
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+.date-picker.modern-date-picker .arrow {
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}

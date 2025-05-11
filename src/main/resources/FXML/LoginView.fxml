@@ -1,58 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.PasswordField?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.LoginViewController">
+<BorderPane maxHeight="Infinity" maxWidth="Infinity" minHeight="500.0" minWidth="600.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.LoginViewController">
+   <stylesheets>
+      <URL value="@../CSS/authentification.css" />
+   </stylesheets>
+
    <left>
-      <AnchorPane prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: FFFFFF;" BorderPane.alignment="CENTER">
+      <AnchorPane minWidth="300.0" prefHeight="600.0" prefWidth="450.0" style="-fx-background-color: #f8f9fa;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="272.0" fitWidth="287.0" layoutX="20.0" layoutY="144.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/10782817_19197324.jpg" />
-               </image>
-            </ImageView>
-            <Label layoutX="16.0" layoutY="45.0" prefHeight="86.0" prefWidth="262.0" text="Municipalité Tunisienne Electronique    " textAlignment="CENTER" textFill="ROYALBLUE" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="23.0" />
-               </font>
-            </Label>
+            <VBox alignment="CENTER" style="-fx-background-color: #4169E1;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <Label maxWidth="400.0" text="Municipalité Tunisienne Electronique" textAlignment="CENTER" textFill="#4169E1" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="28.0" />
+                           </font>
+                        </Label>
+                        <Label maxWidth="400.0" text="Votre espace numérique municipal" textAlignment="CENTER" textFill="#6c757d" wrapText="true">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <ImageView fitHeight="355.0" fitWidth="366.0" layoutX="46.0" layoutY="152.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/10782817_19197324.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
          </children>
       </AnchorPane>
    </left>
-   <right>
-      <AnchorPane prefHeight="574.0" prefWidth="400.0" style="-fx-background-color: #4169E1;" BorderPane.alignment="CENTER">
+   <center>
+      <AnchorPane style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="152.0" layoutY="146.0" prefHeight="50.0" prefWidth="76.0" text="Log in" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font size="27.0" />
-               </font>
-            </Label>
-            <TextField fx:id="EmailTF" layoutX="82.0" layoutY="214.0" prefHeight="33.0" prefWidth="235.0" promptText="Email" />
-            <PasswordField fx:id="passwordTF" layoutX="82.0" layoutY="270.0" prefHeight="34.0" prefWidth="235.0" promptText="password" />
-            <Button fx:id="loginB" layoutX="84.0" layoutY="325.0" mnemonicParsing="false" onAction="#login" prefHeight="34.0" prefWidth="231.0" text="Log in" textFill="ROYALBLUE">
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Button>
-            <Line endX="117.60003662109375" layoutX="196.0" layoutY="395.0" startX="-112.00001525878906" stroke="#ffffff36" />
-            <Label alignment="BASELINE_LEFT" layoutX="84.0" layoutY="418.0" prefHeight="18.0" prefWidth="156.0" text="Vous n'avez pas de compte?" textFill="WHITE" />
-            <Hyperlink fx:id="signup" alignment="BASELINE_LEFT" layoutX="232.0" layoutY="414.0" onAction="#signup" text="Inscrivez-vous" textFill="#d94495" underline="true" />
-            <Label layoutX="113.0" layoutY="48.0" prefHeight="50.0" prefWidth="174.0" text="Bienvenue ! " textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="30.0" />
-               </font>
-            </Label>
+            <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+               <children>
+                  <Label text="Connexion" textFill="#333333">
+                     <font>
+                        <Font name="System Bold" size="32.0" />
+                     </font>
+                  </Label>
+                  <Label text="Bienvenue ! Connectez-vous à votre compte" textFill="#6c757d">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <VBox maxWidth="400.0" spacing="5.0">
+                     <children>
+                        <Label text="Adresse email" textFill="#495057">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="EmailTF" maxWidth="Infinity" prefHeight="42.0" promptText="exemple@email.com" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </VBox>
+                  <VBox maxWidth="400.0" spacing="5.0">
+                     <children>
+                        <Label text="Mot de passe" textFill="#495057">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="passwordTF" maxWidth="Infinity" prefHeight="42.0" promptText="Votre mot de passe" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e0e0e0; -fx-padding: 0 15;">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </PasswordField>
+                     </children>
+                  </VBox>
+                  <AnchorPane maxWidth="400.0" prefHeight="30.0">
+                     <children>
+                        <CheckBox fx:id="rememberMeCheckBox" layoutX="0.0" layoutY="5.0" text="Se souvenir de moi" textFill="#495057">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Hyperlink fx:id="forgotPasswordLink" layoutX="200.0" layoutY="5.0" onAction="#handleForgotPassword" text="Mot de passe oublié ?" textFill="#4169E1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Hyperlink>
+                     </children>
+                  </AnchorPane>
+                  <Button fx:id="loginB" maxWidth="400.0" mnemonicParsing="false" onAction="#login" prefHeight="42.0" prefWidth="350.0" style="-fx-background-color: #4169E1; -fx-background-radius: 8; -fx-text-fill: white;" text="Se connecter">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <!-- Bouton Google Sign-In -->
+                  <Button fx:id="googleSignInButton" maxWidth="400.0" mnemonicParsing="false" onAction="#googleSignIn" prefHeight="42.0" prefWidth="350.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-width: 1;">
+                     <graphic>
+                        <HBox alignment="CENTER" spacing="10">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/google-logo.png" />
+                                 </image>
+                              </ImageView>
+                              <Label text="Se connecter avec Google" textFill="#333333">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </graphic>
+                  </Button>
+                  <AnchorPane maxWidth="400.0" prefHeight="30.0">
+                     <children>
+                        <Label alignment="CENTER" layoutX="60.0" layoutY="8.0" prefHeight="18.0" prefWidth="130.0" text="Pas encore de compte ?" textFill="#6c757d">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Hyperlink fx:id="signup" alignment="CENTER" layoutX="211.0" layoutY="3.0" onAction="#signup" text="S'inscrire" textFill="#4169E1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Hyperlink>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
          </children>
       </AnchorPane>
-   </right>
+   </center>
 </BorderPane>

@@ -1,0 +1,385 @@
+/* CSS pour les interfaces de l'application (taille 1200x800) */
+
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", "Arial", sans-serif;
+    -fx-background-color: #f5f7fa;
+}
+
+/* Styles généraux */
+.label {
+    -fx-font-smoothing-type: LCD;
+    -fx-text-fill: derive(-fx-text-base-color, 0%) !important;
+}
+
+/* Titre principal */
+.label[style*="32.0"] {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333 !important;
+}
+
+/* Sous-titre */
+.label[style*="16.0"] {
+    -fx-font-size: 16px;
+    -fx-text-fill: #6c757d !important;
+}
+
+/* Labels de champs */
+.label[style*="14.0"] {
+    -fx-font-size: 14px;
+    -fx-text-fill: #495057 !important;
+    -fx-font-weight: 500;
+}
+
+/* TextField et PasswordField pour application */
+.text-field, .password-field {
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 6, 0, 0, 2);
+    -fx-pref-height: 44px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(65,105,225,0.15), 10, 0, 0, 2);
+}
+
+/* TextField désactivés */
+.text-field[editable="false"] {
+    -fx-background-color: #f8f9fa !important;
+    -fx-text-fill: #6c757d;
+    -fx-border-color: #e9ecef;
+}
+
+.text-field[editable="false"]:focused {
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1;
+    -fx-effect: none;
+}
+
+/* ComboBox pour application */
+.combo-box.modern-combo {
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-background-color: #ffffff;
+    -fx-padding: 0 12;
+    -fx-pref-height: 44px;
+    -fx-font-size: 14px;
+}
+
+.combo-box.modern-combo:focused {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 2;
+}
+
+.combo-box.modern-combo .list-cell {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-padding: 8 12;
+}
+
+.combo-box.modern-combo > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12;
+}
+
+.combo-box.modern-combo > .arrow-button > .arrow {
+    -fx-background-color: #4169E1;
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+}
+
+.combo-box.modern-combo:showing {
+    -fx-border-color: #4169E1;
+    -fx-border-width: 2;
+}
+
+/* ComboBox popup */
+.combo-box-popup > .list-view {
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: white;
+}
+
+/* Boutons pour application */
+.button {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 12 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+    -fx-translate-y: -1;
+}
+
+.button:pressed {
+    -fx-translate-y: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 1);
+}
+
+/* Bouton primaire */
+.button[style*="#4169E1"] {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: white;
+}
+
+.button[style*="#4169E1"]:hover {
+    -fx-background-color: #3158d8;
+}
+
+/* Bouton info */
+.button[style*="#17a2b8"] {
+    -fx-background-color: #17a2b8;
+    -fx-text-fill: white;
+}
+
+.button[style*="#17a2b8"]:hover {
+    -fx-background-color: #138496;
+}
+
+/* Bouton retour */
+.button[style*="#DB4495"] {
+    -fx-background-color: #DB4495;
+    -fx-text-fill: white;
+}
+
+.button[style*="#DB4495"]:hover {
+    -fx-background-color: #c93781;
+}
+
+/* Boutons de navigation sidebar (styles pour la navigation bleue) */
+.button[style*="transparent"] {
+    -fx-effect: none;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-opacity: 0.8;
+}
+
+.button[style*="transparent"]:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: #ffffff !important;
+    -fx-opacity: 1;
+    -fx-effect: none;
+}
+
+/* Bouton actif dans sidebar (nouveau style pour l'élément actif) */
+.button[style*="#315bb5"] {
+    -fx-background-color: #315bb5;
+    -fx-effect: none;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
+
+.button[style*="#315bb5"]:hover {
+    -fx-background-color: #234699;
+}
+
+/* Header de l'application */
+.anchor-pane[style*="border-width: 0 0 1 0"] {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+}
+
+/* Sidebar bleue */
+.anchor-pane[style*="#4169E1"] {
+    -fx-background-color: #4169E1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 2, 0);
+}
+
+/* Labels dans la sidebar */
+.anchor-pane[style*="#4169E1"] .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* ScrollPane pour application */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 8;
+}
+
+.scroll-pane .scroll-bar:vertical .track,
+.scroll-pane .scroll-bar:horizontal .track {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 4;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb,
+.scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: #c0c0c0;
+    -fx-background-radius: 4;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb:hover,
+.scroll-pane .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #9e9e9e;
+}
+
+/* VBox et HBox spacing */
+.vbox[spacing="30.0"] {
+    -fx-spacing: 30;
+}
+
+.vbox[spacing="25.0"] {
+    -fx-spacing: 25;
+}
+
+.vbox[spacing="20.0"] {
+    -fx-spacing: 20;
+}
+
+.vbox[spacing="10.0"] {
+    -fx-spacing: 10;
+}
+
+.vbox[spacing="5.0"] {
+    -fx-spacing: 5;
+}
+
+.hbox[spacing="30.0"] {
+    -fx-spacing: 30;
+}
+
+.hbox[spacing="20.0"] {
+    -fx-spacing: 20;
+}
+
+.hbox[spacing="15.0"] {
+    -fx-spacing: 15;
+}
+
+/* StackPane pour les champs de rôle */
+.stack-pane {
+    -fx-background-color: transparent;
+}
+
+/* Animations et transitions */
+@keyframes fadeIn {
+    from {
+        -fx-opacity: 0;
+        -fx-scale-x: 0.95;
+        -fx-scale-y: 0.95;
+    }
+    to {
+        -fx-opacity: 1;
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+    }
+}
+
+.fade-in {
+    -fx-animation: fadeIn 0.3s ease-out;
+}
+
+/* Logo et branding */
+.label[text="MTE"] {
+    -fx-font-family: "Abril Fatface";
+    -fx-font-size: 32px;
+    -fx-text-fill: #db4495 !important;
+}
+
+/* Amélioration des icônes */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+}
+
+/* Styles pour les labels de version */
+.label[text^="Version"] {
+    -fx-font-size: 13px;
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Amélioration du contraste */
+.label[style*="#333333"] {
+    -fx-text-fill: #333333 !important;
+}
+
+.label[style*="#495057"] {
+    -fx-text-fill: #495057 !important;
+}
+
+.label[style*="#6c757d"] {
+    -fx-text-fill: #6c757d !important;
+}
+
+/* Styles pour éviter les conflits avec la sidebar bleue */
+.anchor-pane[style*="#4169E1"] .label[style*="#6c757d"] {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1200px) {
+    .hbox[spacing="30.0"] {
+        -fx-spacing: 20;
+    }
+}
+
+/* Amélioration des marges */
+.vbox[alignment="CENTER"] {
+    -fx-padding: 20;
+}
+
+/* Conteneur principal */
+.vbox[prefHeight="700.0"] {
+    -fx-padding: 40;
+}
+
+/* Styles pour les champs de formulaire groupés */
+.hbox[spacing="30.0"][alignment="CENTER"] {
+    -fx-alignment: center;
+}
+
+/* Amélioration des flèches ComboBox */
+.combo-box.modern-combo .arrow {
+    -fx-shape: "M 0 0 h 8 l -4 5 z";
+}
+
+/* Styles pour les ComboBox avec edit capability */
+.combo-box.modern-combo:editable > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 12;
+}

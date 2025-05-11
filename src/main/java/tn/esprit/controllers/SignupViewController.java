@@ -83,12 +83,10 @@ public class SignupViewController {
         // Initialiser les options des ComboBox pour les employés
         posteField.getItems().addAll(
                 "Secrétaire Général",
-                "Chargé de Communication",
                 "Agent d'État Civil",
                 "Responsable des Services Techniques",
                 "Agent d'Accueil",
-                "Comptable",
-                "Responsable des Travaux Publics"
+                "Comptable"
         );
 
         departementField.getItems().addAll(
@@ -96,9 +94,7 @@ public class SignupViewController {
                 "Urbanisme",
                 "Services Sociaux",
                 "Services Techniques",
-                "Administration",
-                "Travaux Publics",
-                "Hygiène et Sécurité"
+                "Administration"
         );
 
         // Ajouter un TextFormatter pour limiter le CIN à 8 chiffres
@@ -263,5 +259,12 @@ public class SignupViewController {
 
         // Retourner à la page de connexion
         gologinpage(event);
+    }
+
+    // Ajoutez cette méthode publique dans la classe SignupViewController
+    public void setEmailFromGoogle(String email) {
+        EmailTFs.setText(email);
+        EmailTFs.setEditable(false); // Empêcher la modification de l'email provenant de Google
+        EmailTFs.setStyle("-fx-background-color: #f0f0f0;"); // Grisé pour indiquer qu'il n'est pas modifiable
     }
 }

@@ -50,10 +50,10 @@ public class UserProfileController {
     private TextField telephoneField;
 
     @FXML
-    private TextField posteField;
+    private ComboBox<String> posteField;
 
     @FXML
-    private TextField departementField;
+    private ComboBox<String> departementField;
 
     @FXML
     private TextField dateEmbaucheField;
@@ -87,6 +87,9 @@ public class UserProfileController {
         emailField.setText(currentUser.getEmail());
         roleField.setText(currentUser.getRole().name());
 
+        // Initialiser les ComboBox
+        initializeComboBoxes();
+
         // Afficher/masquer les champs spécifiques selon le rôle
         if (currentUser.getRole() == Role.CITOYEN) {
             citoyenFields.setVisible(true);
@@ -106,15 +109,35 @@ public class UserProfileController {
             // Récupérer les informations de l'employé
             Employe employe = serviceUtilisateur.getEmployeById(currentUser.getId());
             if (employe != null) {
-                posteField.setText(employe.getPoste());
-                departementField.setText(employe.getDepartement());
-                dateEmbaucheField.setText(employe.getDateEmbauche().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                posteField.setValue(employe.getPoste());
+                departementField.setValue(employe.getDepartement());
+                if (employe.getDateEmbauche() != null) {
+                    dateEmbaucheField.setText(employe.getDateEmbauche().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                }
             }
         } else {
             // Cas de l'administrateur
             citoyenFields.setVisible(false);
             employeFields.setVisible(false);
         }
+    }
+
+    private void initializeComboBoxes() {
+        // Initialiser les options des ComboBox pour les employés
+        posteField.getItems().addAll(
+                "Secrétaire Général",
+                "Agent d'État Civil",
+                "Responsable des Services Techniques",
+                "Agent d'Accueil",
+                "Comptable"
+        );
+
+        departementField.getItems().addAll(
+                "État Civil",
+                "Services Sociaux",
+                "Services Techniques",
+                "Administration"
+        );
     }
 
     @FXML
@@ -167,7 +190,7 @@ public class UserProfileController {
             }
         } else if (currentUser.getRole() == Role.EMPLOYE) {
             // Validation des champs spécifiques à l'employé
-            if (posteField.getText().isEmpty() || departementField.getText().isEmpty()) {
+            if (posteField.getValue() == null || departementField.getValue() == null) {
                 showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
                         "Les champs Poste et Département sont obligatoires.");
                 return;
@@ -178,8 +201,8 @@ public class UserProfileController {
             if (employe != null) {
                 employe.setNom(nomField.getText());
                 employe.setPrenom(prenomField.getText());
-                employe.setPoste(posteField.getText());
-                employe.setDepartement(departementField.getText());
+                employe.setPoste(posteField.getValue());
+                employe.setDepartement(departementField.getValue());
 
                 // Mettre à jour
                 serviceUtilisateur.update(employe);
@@ -249,6 +272,13 @@ public class UserProfileController {
                 if (!newPasswordField.getText().equals(confirmPasswordField.getText())) {
                     showAlert(Alert.AlertType.ERROR, "Erreur",
                             "Les nouveaux mots de passe ne correspondent pas.");
+                    return null;
+                }
+
+                // Validation du nouveau mot de passe
+                if (newPasswordField.getText().length() < 8) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur",
+                            "Le nouveau mot de passe doit contenir au moins 8 caractères.");
                     return null;
                 }
 
