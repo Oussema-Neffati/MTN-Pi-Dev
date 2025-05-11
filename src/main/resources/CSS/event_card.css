@@ -1,0 +1,24 @@
+.event-card {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #db4495;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-padding: 10;
+}
+
+.event-card:hover {
+    -fx-background-color: #f0f0f0;
+    -fx-cursor: hand;
+}
+
+.event-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.event-label-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #db］}

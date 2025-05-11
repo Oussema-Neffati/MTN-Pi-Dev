@@ -97,6 +97,46 @@ public class Interface1Controller {
         alert.showAndWait();
     }
 
-    // Méthodes pour gérer les autres boutons de l'interface principale
-    // À implémenter selon vos besoins
+    @FXML
+    private void handleEvenements(ActionEvent event) {
+        try {
+            Utilisateur currentUser = SessionManager.getInstance().getCurrentUser();
+            String fxmlPath;
+
+            // Debugging: Vérifier l'utilisateur et son rôle
+            if (currentUser == null) {
+                System.err.println("Erreur: Aucun utilisateur connecté.");
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Aucun utilisateur connecté. Veuillez vous reconnecter.");
+                return;
+            }
+
+            String userRole = String.valueOf(currentUser.getRole());
+            System.out.println("Rôle de l'utilisateur: " + userRole); // Log pour débogage
+
+            // Vérifier si l'utilisateur est un employeur (insensible à la casse)
+            if (userRole != null && userRole.equalsIgnoreCase("Employe")) {
+                fxmlPath = "/FXML/interfaceevenement.fxml"; // FXML pour les événements employeur
+                System.out.println("Chargement de la page employeur: " + fxmlPath);
+            } else {
+                fxmlPath = "/FXML/inter_event_usr.fxml"; // FXML pour les événements utilisateur
+                System.out.println("Chargement de la page utilisateur: " + fxmlPath);
+            }
+
+            // Charger la page correspondante
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Événements - Municipalité Tunisienne Électronique");
+            stage.show();
+
+            // Fermer la fenêtre actuelle
+            ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erreur lors du chargement de la page des événements : " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de charger la page des événements.");
+        }
+    }
 }
