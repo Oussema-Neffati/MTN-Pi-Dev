@@ -13,15 +13,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import tn.esprit.models.Citoyen;
+import tn.esprit.models.Utilisateur;
 import tn.esprit.models.Evenement;
 import tn.esprit.models.Participation;
-import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ParticipationService;
 import tn.esprit.services.ServiceUtilisateur;
 import tn.esprit.utils.SessionManager;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 
 public class participation {
 
@@ -35,64 +36,74 @@ public class participation {
     private Label eventNameLabel;
 
     @FXML
+    private Label userNameLabel;
+
+    @FXML
     private Button closeButton;
 
+    @FXML
+    private Button profileButton;
+
+    @FXML
+    private Button logoutButton;
+
     private ParticipationService participationService;
-    private ServiceUtilisateur ServiceUtilisateur;
+    private ServiceUtilisateur serviceUtilisateur;
     private Evenement selectedEvent;
     private ObservableList<Participation> participations;
 
     public participation() {
         this.participationService = new ParticipationService();
-        this.ServiceUtilisateur = new ServiceUtilisateur();
+        this.serviceUtilisateur = new ServiceUtilisateur();
     }
 
     @FXML
     public void initialize() {
-        // Le champ de recherche sera configuré une fois que l'événement est défini
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterParticipations(newValue);
         });
+        Utilisateur currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userNameLabel.setText(currentUser.getPrenom() + " " + currentUser.getNom());
+        } else {
+            userNameLabel.setText("Non connecté");
+        }
     }
 
     public void setEvent(Evenement event) {
         this.selectedEvent = event;
         eventNameLabel.setText("Participations à l'événement: " + event.getNom());
+        System.out.println("Event ID: " + event.getId() + ", Event Name: " + event.getNom());
         loadParticipations();
     }
 
     private void loadParticipations() {
-        // Charger toutes les participations pour cet événement
-        participations = participationService.getParticipationsByEvent(selectedEvent.getId());
+        participations = participationService.getApprovedParticipationsByEvent(selectedEvent.getId());
+        System.out.println("Loaded " + participations.size() + " approved participations for event ID: " + selectedEvent.getId());
         displayParticipations(participations);
     }
 
     private void filterParticipations(String searchText) {
-        if (searchText == null || searchText.isEmpty()) {
-            displayParticipations(participations);
-            return;
-        }
-
         FilteredList<Participation> filteredData = new FilteredList<>(participations, p -> {
-            // Si le filtre est vide, afficher tout
             if (searchText == null || searchText.isEmpty()) {
                 return true;
             }
 
             String lowerCaseFilter = searchText.toLowerCase();
-
-            // Essayer de trouver le nom d'utilisateur correspondant
             try {
-                Utilisateur user = ServiceUtilisateur.getCitoyenById(p.getId_user());
-                if (user != null && user.getNom().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
+                Citoyen user = (Citoyen) serviceUtilisateur.getCitoyenById(p.getId_user());
+                if (user != null) {
+                    return user.getPrenom().toLowerCase().contains(lowerCaseFilter) ||
+                            user.getNom().toLowerCase().contains(lowerCaseFilter) ||
+                            (user.getCin() != null && user.getCin().toLowerCase().contains(lowerCaseFilter)) ||
+                            (user.getEmail() != null && user.getEmail().toLowerCase().contains(lowerCaseFilter));
+                } else {
+                    System.err.println("User not found for ID: " + p.getId_user());
                 }
             } catch (Exception e) {
-                System.err.println("Erreur lors de la recherche d'utilisateur: " + e.getMessage());
+                System.err.println("Error during user search for ID " + p.getId_user() + ": " + e.getMessage());
             }
-
-            // Vérifier si le statut correspond
-            return p.getStatut().toLowerCase().contains(lowerCaseFilter);
+            return false;
         });
 
         displayParticipations(filteredData);
@@ -101,113 +112,102 @@ public class participation {
     private void displayParticipations(ObservableList<Participation> participationsToDisplay) {
         participationVBox.getChildren().clear();
 
+        // Header row
+        HBox header = new HBox(10);
+        header.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 5;");
+        Label prenomHeader = new Label("Prénom");
+        prenomHeader.setPrefWidth(92);
+        prenomHeader.setStyle("-fx-font-size: 14px; -fx-text-fill: #db4495; -fx-font-weight: bold;");
+
+        Label nomHeader = new Label("Nom");
+        nomHeader.setPrefWidth(88);
+        nomHeader.setStyle("-fx-font-size: 14px; -fx-text-fill: #db4495; -fx-font-weight: bold;");
+
+        Label cinHeader = new Label("CIN");
+        cinHeader.setPrefWidth(97);
+        cinHeader.setStyle("-fx-font-size: 14px; -fx-text-fill: #db4495; -fx-font-weight: bold;");
+
+        Label emailHeader = new Label("Email");
+        emailHeader.setPrefWidth(159);
+        emailHeader.setStyle("-fx-font-size: 14px; -fx-text-fill: #db4495; -fx-font-weight: bold;");
+
+        Label statusHeader = new Label("Statut");
+        statusHeader.setPrefWidth(80);
+        statusHeader.setStyle("-fx-font-size: 14px; -fx-text-fill: #db4495; -fx-font-weight: bold;");
+
+        Label datePayHeader = new Label("Date de paiement");
+        datePayHeader.setPrefWidth(120);
+        datePayHeader.setStyle("-fx-font-size: 14px; -fx-text-fill: #db4495; -fx-font-weight: bold;");
+
+        header.getChildren().addAll(prenomHeader, nomHeader, cinHeader, emailHeader, statusHeader, datePayHeader);
+        participationVBox.getChildren().add(header);
+
+        // Check if there are participations
+        if (participationsToDisplay.isEmpty()) {
+            HBox noDataRow = new HBox(10);
+            noDataRow.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 5;");
+            Label noDataLabel = new Label("Aucun participant payé trouvé pour cet événement.");
+            noDataLabel.setPrefWidth(636); // Adjusted for new column (92 + 88 + 97 + 159 + 80 + 120 = 636)
+            noDataLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555555;");
+            noDataRow.getChildren().add(noDataLabel);
+            participationVBox.getChildren().add(noDataRow);
+            System.out.println("No approved participations found for display.");
+            return;
+        }
+
+        // Data rows
         for (Participation participation : participationsToDisplay) {
             HBox row = new HBox(10);
-            row.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 10; -fx-border-color: #DDDDDD; -fx-border-width: 1;");
+            row.setStyle("-fx-background-color: #FFFFFF; -fx-padding: 5;");
 
-            // ID de participation
-            Label idLabel = new Label(String.valueOf(participation.getIdParticipation()));
-            idLabel.setPrefWidth(60);
-
-            // Nom de l'utilisateur (on essaie de le récupérer depuis le service)
-            String userName = "Utilisateur " + participation.getId_user();
             try {
-                Utilisateur user = ServiceUtilisateur.getCitoyenById(participation.getId_user());
+                System.out.println("Fetching user for participation ID: " + participation.getIdParticipation() + ", User ID: " + participation.getId_user());
+                Citoyen user = (Citoyen) serviceUtilisateur.getCitoyenById(participation.getId_user());
                 if (user != null) {
-                    userName = user.getNom();
+                    System.out.println("User found: " + user.getPrenom() + " " + user.getNom());
+                    Label prenomLabel = new Label(user.getPrenom() != null ? user.getPrenom() : "Non spécifié");
+                    prenomLabel.setPrefWidth(92);
+                    prenomLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+
+                    Label nomLabel = new Label(user.getNom() != null ? user.getNom() : "Non spécifié");
+                    nomLabel.setPrefWidth(88);
+                    nomLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+
+                    Label cinLabel = new Label(user.getCin() != null ? user.getCin() : "Non spécifié");
+                    cinLabel.setPrefWidth(97);
+                    cinLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+
+                    Label emailLabel = new Label(user.getEmail() != null ? user.getEmail() : "Non spécifié");
+                    emailLabel.setPrefWidth(159);
+                    emailLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+
+                    Label statusLabel = new Label("Payé");
+                    statusLabel.setPrefWidth(80);
+                    statusLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #4CAF50;");
+
+                    // Add Date de paiement
+                    Label datePayLabel = new Label(participation.getDatepay() != null ?
+                            participation.getDatepay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : "Non spécifiée");
+                    datePayLabel.setPrefWidth(120);
+                    datePayLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+
+                    row.getChildren().addAll(prenomLabel, nomLabel, cinLabel, emailLabel, statusLabel, datePayLabel);
+                } else {
+                    System.err.println("User not found for ID: " + participation.getId_user());
+                    Label errorLabel = new Label("Utilisateur introuvable (ID: " + participation.getId_user() + ")");
+                    errorLabel.setPrefWidth(636); // Adjusted for new column
+                    errorLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #FF5555;");
+                    row.getChildren().add(errorLabel);
                 }
             } catch (Exception e) {
-                System.err.println("Erreur lors de la récupération de l'utilisateur: " + e.getMessage());
+                System.err.println("Error loading user for participation ID " + participation.getIdParticipation() + ": " + e.getMessage());
+                Label errorLabel = new Label("Erreur de chargement (ID: " + participation.getId_user() + ")");
+                errorLabel.setPrefWidth(636); // Adjusted for new column
+                errorLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #FF5555;");
+                row.getChildren().add(errorLabel);
             }
-            Label userLabel = new Label(userName);
-            userLabel.setPrefWidth(180);
 
-            // Statut de la participation
-            Label statutLabel = new Label(participation.getStatut());
-            statutLabel.setPrefWidth(220);
-
-            // Boutons d'action
-            HBox actionsBox = new HBox(5);
-            Button approveBtn = new Button("Approuver");
-            approveBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-
-            Button rejectBtn = new Button("Refuser");
-            rejectBtn.setStyle("-fx-background-color: #F44336; -fx-text-fill: white;");
-
-            Button deleteBtn = new Button("Supprimer");
-            deleteBtn.setStyle("-fx-background-color: #9E9E9E; -fx-text-fill: white;");
-
-            actionsBox.getChildren().addAll(approveBtn, rejectBtn, deleteBtn);
-
-            // Configuration des actions des boutons
-            approveBtn.setOnAction(event -> {
-                updateParticipationStatus(participation, "Approuvé");
-            });
-
-            rejectBtn.setOnAction(event -> {
-                updateParticipationStatus(participation, "Refusé");
-            });
-
-            deleteBtn.setOnAction(event -> {
-                deleteParticipation(participation);
-            });
-
-            // Ajouter tous les éléments à la ligne
-            row.getChildren().addAll(idLabel, userLabel, statutLabel, actionsBox);
             participationVBox.getChildren().add(row);
-        }
-    }
-
-    private void updateParticipationStatus(Participation participation, String newStatus) {
-        try {
-            participationService.updateStatut(participation.getId_user(), participation.getIdEvenement(), newStatus);
-
-            // Rafraîchir l'affichage
-            loadParticipations();
-
-            // Afficher un message de confirmation
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Statut mis à jour");
-            alert.setHeaderText(null);
-            alert.setContentText("Le statut de la participation a été mis à jour avec succès!");
-            alert.showAndWait();
-
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText(null);
-            alert.setContentText("Erreur lors de la mise à jour du statut: " + e.getMessage());
-            alert.showAndWait();
-        }
-    }
-
-    private void deleteParticipation(Participation participation) {
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Confirmation");
-        confirmation.setHeaderText(null);
-        confirmation.setContentText("Voulez-vous vraiment supprimer cette participation?");
-
-        if (confirmation.showAndWait().get() == ButtonType.OK) {
-            try {
-                participationService.delete(participation.getIdParticipation());
-
-                // Rafraîchir l'affichage
-                loadParticipations();
-
-                // Afficher un message de confirmation
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Participation supprimée");
-                alert.setHeaderText(null);
-                alert.setContentText("La participation a été supprimée avec succès!");
-                alert.showAndWait();
-
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur");
-                alert.setHeaderText(null);
-                alert.setContentText("Erreur lors de la suppression de la participation: " + e.getMessage());
-                alert.showAndWait();
-            }
         }
     }
 
@@ -216,12 +216,12 @@ public class participation {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
+
     @FXML
     void showProfile(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/UserProfile.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -229,21 +229,16 @@ public class participation {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger la page de profil.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la page de profil.");
         }
     }
 
     @FXML
     void logout(ActionEvent event) {
-        // Déconnecter l'utilisateur
         SessionManager.getInstance().clearSession();
-
-        // Rediriger vers la page de connexion
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -251,8 +246,7 @@ public class participation {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'écran de connexion.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'écran de connexion.");
         }
     }
 

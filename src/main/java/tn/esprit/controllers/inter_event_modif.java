@@ -29,7 +29,7 @@ public class inter_event_modif {
     @FXML
     private TextField organisateurField;
     @FXML
-    private TextField nombreplacesField; // Updated to nombreplacesField
+    private TextField nombreplacesField;
     @FXML
     private TextField prixField1;
     @FXML
@@ -52,11 +52,9 @@ public class inter_event_modif {
 
     @FXML
     public void initialize() {
-        // Initialiser le contrôleur de carte
         mapController = new map();
         mapController.setLinkedAddressField(lieuEvenementField);
 
-        // Configurer l'événement du bouton de carte
         if (mapButton != null) {
             mapButton.setOnAction(event -> handleOpenMap());
         }
@@ -90,15 +88,7 @@ public class inter_event_modif {
             lieuEvenementField.setText(evenementToModify.getLieu());
             organisateurField.setText(evenementToModify.getOrganisateur());
             prixField1.setText(String.valueOf(evenementToModify.getPrix()));
-            nombreplacesField.setText(String.valueOf(evenementToModify.getNombreplace())); // Updated to nombreplaces
-
-            try {
-                LocalDate date = LocalDate.parse(evenementToModify.getDate(), dateFormatter);
-                dateEvenementPicker.setValue(date);
-            } catch (DateTimeParseException e) {
-                System.out.println("Error parsing date: " + e.getMessage());
-                dateEvenementPicker.setValue(null);
-            }
+            nombreplacesField.setText(String.valueOf(evenementToModify.getNombreplace()));
         }
     }
 
@@ -109,7 +99,6 @@ public class inter_event_modif {
             return;
         }
 
-        // Validate input
         String nom = nomEvenementField.getText().trim();
         String lieu = lieuEvenementField.getText().trim();
         String organisateur = organisateurField.getText().trim();
@@ -144,13 +133,21 @@ public class inter_event_modif {
             return;
         }
 
-        // Update the event
+        // Adjust totalPlaces based on the new nombreplaces
+        int currentNombrePlaces = evenementToModify.getNombreplace();
+        int currentTotalPlaces = evenementToModify.getTotalPlaces();
+        if (nombreplaces > currentNombrePlaces) {
+            evenementToModify.setTotalPlaces(currentTotalPlaces + (nombreplaces - currentNombrePlaces));
+        } else if (nombreplaces < currentNombrePlaces) {
+            evenementToModify.setTotalPlaces(currentTotalPlaces - (currentNombrePlaces - nombreplaces));
+        }
+
         evenementToModify.setNom(nom);
         evenementToModify.setLieu(lieu);
         evenementToModify.setOrganisateur(organisateur);
         evenementToModify.setDate(date.format(dateFormatter));
         evenementToModify.setPrix(prix);
-        evenementToModify.setNombreplace(nombreplaces); // Updated to nombreplaces
+        evenementToModify.setNombreplace(nombreplaces);
 
         try {
             evenementService.update(evenementToModify);

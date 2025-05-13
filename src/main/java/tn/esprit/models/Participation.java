@@ -1,29 +1,34 @@
 package tn.esprit.models;
 
+import java.time.LocalDateTime;
+
 public class Participation {
 
     private int idParticipation;
     private int idEvenement;
     private int id_user;
     private String statut;
-    private int nombreticket; // Ajout du champ nombreticket
+    private int nombreticket;
+    private LocalDateTime datepay; // Updated to LocalDateTime for timestamp
 
     public Participation() {
     }
 
-    public Participation(int idParticipation, int idEvenement, int id_user, String statut, int nombreticket) {
+    public Participation(int idParticipation, int idEvenement, int id_user, String statut, int nombreticket, LocalDateTime datepay) {
         this.idParticipation = idParticipation;
         this.idEvenement = idEvenement;
         this.id_user = id_user;
         this.statut = statut;
         this.nombreticket = nombreticket;
+        this.datepay = datepay;
     }
 
-    public Participation(int idEvenement, int id_user, String statut, int nombreticket) {
+    public Participation(int idEvenement, int id_user, String statut, int nombreticket, LocalDateTime datepay) {
         this.idEvenement = idEvenement;
         this.id_user = id_user;
         this.statut = statut;
         this.nombreticket = nombreticket;
+        this.datepay = datepay;
     }
 
     public int getIdParticipation() {
@@ -47,7 +52,7 @@ public class Participation {
     }
 
     public void setId_user(int id_user) {
-        this.id_user = id_user; // Correction : ajout de l'implémentation
+        this.id_user = id_user;
     }
 
     public String getStatut() {
@@ -66,6 +71,14 @@ public class Participation {
         this.nombreticket = nombreticket;
     }
 
+    public LocalDateTime getDatepay() {
+        return datepay;
+    }
+
+    public void setDatepay(LocalDateTime datepay) {
+        this.datepay = datepay;
+    }
+
     @Override
     public String toString() {
         return "Participation{" +
@@ -74,6 +87,7 @@ public class Participation {
                 ", id_user=" + id_user +
                 ", statut='" + statut + '\'' +
                 ", nombreticket=" + nombreticket +
+                ", datepay=" + datepay +
                 '}';
     }
 }

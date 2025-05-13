@@ -45,11 +45,9 @@ public class inter_event_ajout {
 
     @FXML
     public void initialize() {
-        // Initialiser le contrôleur de carte
         mapController = new map();
         mapController.setLinkedAddressField(lieuEvenementField);
 
-        // Configurer l'événement du bouton de carte
         if (mapButton != null) {
             mapButton.setOnAction(event -> handleOpenMap());
         }
@@ -58,11 +56,9 @@ public class inter_event_ajout {
             userNameLabel.setText(currentUser.getPrenom() + " " + currentUser.getNom());
         } else {
             userNameLabel.setText("Non connecté");
-            // Rediriger vers la page de connexion si aucun utilisateur n'est connecté
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
                 Parent root = loader.load();
-
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) userNameLabel.getScene().getWindow();
                 stage.setScene(scene);
@@ -86,18 +82,14 @@ public class inter_event_ajout {
 
     @FXML
     private void onAjouterButtonClick() {
-        // Récupère les valeurs des champs
         String nomEvenement = nomEvenementField.getText();
         String lieuEvenement = lieuEvenementField.getText();
         LocalDate dateEvenement = dateEvenementPicker.getValue();
         String organisateur = organisateurField.getText();
-        float prix=Float.parseFloat(prixField1.getText());
-        int nbrEvenement=Integer.parseInt(nombreplaceField11.getText());
+        float prix = Float.parseFloat(prixField1.getText().trim());
+        int totalPlaces = Integer.parseInt(nombreplaceField11.getText().trim());
 
-        // Vérifie si tous les champs sont remplis
-        if (nomEvenement.isEmpty() || lieuEvenement.isEmpty() || dateEvenement == null || organisateur.isEmpty() || prix <= 0 || nbrEvenement <= 10)
-        {
-            // Affiche une alerte si un champ est vide
+        if (nomEvenement.isEmpty() || lieuEvenement.isEmpty() || dateEvenement == null || organisateur.isEmpty() || prix <= 0 || totalPlaces <= 10) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Erreur");
             alert.setHeaderText(null);
@@ -106,22 +98,18 @@ public class inter_event_ajout {
             return;
         }
 
-        // Formate la date pour correspondre au format attendu par la base de données
         String dateFormatted = dateEvenement.format(DateTimeFormatter.ISO_LOCAL_DATE);
-
-        // Crée un objet Evenement
         Evenement evenement = new Evenement();
         evenement.setNom(nomEvenement);
         evenement.setLieu(lieuEvenement);
         evenement.setDate(dateFormatted);
         evenement.setOrganisateur(organisateur);
         evenement.setPrix(prix);
-        evenement.setNombreplace(nbrEvenement);
+        evenement.setNombreplace(totalPlaces); // Initial available places
+        evenement.setTotalPlaces(totalPlaces); // Set total places
 
-        // Ajoute l'événement à la base de données
         evenementService.create(evenement);
 
-        // Affiche un message de confirmation
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Confirmation");
         alert.setHeaderText(null);
@@ -131,10 +119,9 @@ public class inter_event_ajout {
                 "Date : " + dateEvenement + "\n" +
                 "Organisateur : " + organisateur + "\n" +
                 "Prix : " + prix +
-                "nombre des places" + nbrEvenement);
+                "Nombre total des places : " + totalPlaces);
         alert.showAndWait();
 
-        // Réinitialise les champs après l'ajout
         nomEvenementField.clear();
         lieuEvenementField.clear();
         dateEvenementPicker.setValue(null);
@@ -169,12 +156,12 @@ public class inter_event_ajout {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     @FXML
     void showProfile(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/UserProfile.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -182,21 +169,16 @@ public class inter_event_ajout {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert1(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger la page de profil.");
+            showAlert1(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la page de profil.");
         }
     }
 
     @FXML
     void logout(ActionEvent event) {
-        // Déconnecter l'utilisateur
         SessionManager.getInstance().clearSession();
-
-        // Rediriger vers la page de connexion
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -204,8 +186,7 @@ public class inter_event_ajout {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert1(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'écran de connexion.");
+            showAlert1(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'écran de connexion.");
         }
     }
 

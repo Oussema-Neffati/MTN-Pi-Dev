@@ -116,30 +116,40 @@
         <center>
             <AnchorPane prefHeight="573.0" prefWidth="672.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
                 <children>
-                    <BorderPane layoutX="144.0" layoutY="56.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="442.0">
-                  <bottom>
-                            <AnchorPane prefHeight="442.0" prefWidth="661.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
+                    <BorderPane layoutX="144.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="442.0">
+                        <bottom>
+                            <AnchorPane prefHeight="534.0" prefWidth="672.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
                                 <children>
-                                    <VBox fx:id="participationVBox" layoutX="54.0" layoutY="107.0" prefHeight="266.0" prefWidth="542.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 10;">
+                                    <VBox fx:id="participationVBox" layoutX="-18.0" layoutY="107.0" prefHeight="344.0" prefWidth="683.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 10;">
                                         <children>
                                             <HBox prefHeight="26.0" prefWidth="740.0" spacing="10" style="-fx-background-color: #FFFFFF; -fx-padding: 5;">
                                                 <children>
-                                                    <Label prefHeight="20.0" prefWidth="60.0" text="ID" textFill="#db4495">
+                                                    <Label prefHeight="20.0" prefWidth="58.0" text="Prénom" textFill="#db4495">
                                                         <font>
                                                             <Font name="System Bold" size="14.0" />
                                                         </font>
                                                     </Label>
-                                                    <Label prefHeight="20.0" prefWidth="180.0" text="Utilisateur" textFill="#db4495">
+                                                    <Label prefHeight="20.0" prefWidth="42.0" text="Nom" textFill="#db4495">
                                                         <font>
                                                             <Font name="System Bold" size="14.0" />
                                                         </font>
                                                     </Label>
-                                                    <Label prefHeight="20.0" prefWidth="220.0" text="Statut" textFill="#db4495">
+                                                    <Label prefHeight="20.0" prefWidth="35.0" text="CIN" textFill="#db4495">
                                                         <font>
                                                             <Font name="System Bold" size="14.0" />
                                                         </font>
                                                     </Label>
-                                                    <Label prefHeight="20.0" prefWidth="150.0" text="Actions" textFill="#db4495">
+                                                    <Label prefHeight="20.0" prefWidth="174.0" text="Email" textFill="#db4495">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <Label prefHeight="20.0" prefWidth="51.0" text="Statut" textFill="#db4495">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <Label prefHeight="20.0" prefWidth="270.0" text="Date de paiement" textFill="#db4495">
                                                         <font>
                                                             <Font name="System Bold" size="14.0" />
                                                         </font>
@@ -147,21 +157,21 @@
                                                 </children>
                                             </HBox>
                                         </children>
-                           </VBox>
+                                    </VBox>
                                     <Label fx:id="eventNameLabel" layoutX="129.0" layoutY="14.0" prefHeight="46.0" prefWidth="542.0" text="Participations à l'événement" textAlignment="CENTER" textFill="#4169e1">
                                         <font>
                                             <Font name="System Bold" size="24.0" />
                                         </font>
                                     </Label>
-                                    <TextField fx:id="searchField" layoutX="65.0" layoutY="71.0" prefHeight="34.0" prefWidth="270.0" promptText="Rechercher un participant" />
-                                    <Button fx:id="closeButton" layoutX="457.0" layoutY="392.0" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #4169E1; -fx-background-radius: 6;" text="Fermer" textFill="WHITE">
+                                    <TextField fx:id="searchField" layoutX="65.0" layoutY="71.0" prefHeight="34.0" prefWidth="270.0" promptText="Rechercher par prénom, nom, CIN, email ou statut" />
+                                    <Button fx:id="closeButton" layoutX="468.0" layoutY="480.0" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #4169E1; -fx-background-radius: 6;" text="Fermer" textFill="WHITE">
                                         <font>
                                             <Font name="System Bold" size="18.0" />
                                         </font>
                                     </Button>
                                 </children>
                             </AnchorPane>
-                  </bottom>
+                        </bottom>
                     </BorderPane>
                 </children>
             </AnchorPane>

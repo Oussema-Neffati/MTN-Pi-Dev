@@ -54,11 +54,9 @@ public class interfaceevenement {
             userNameLabel.setText(currentUser.getPrenom() + " " + currentUser.getNom());
         } else {
             userNameLabel.setText("Non connecté");
-            // Rediriger vers la page de connexion si aucun utilisateur n'est connecté
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
                 Parent root = loader.load();
-
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) userNameLabel.getScene().getWindow();
                 stage.setScene(scene);
@@ -69,7 +67,6 @@ public class interfaceevenement {
             }
         }
     }
-
 
     private void refreshVBox() {
         ObservableList<Evenement> evenements = evenementService.readAll();
@@ -94,11 +91,12 @@ public class interfaceevenement {
             organisateurLabel.setPrefWidth(127);
             Label prixLabel = new Label(String.valueOf(evenement.getPrix()));
             prixLabel.setPrefWidth(134);
+            Label totalPlacesLabel = new Label(String.valueOf(evenement.getTotalPlaces()));
+            totalPlacesLabel.setPrefWidth(134);
             Label nombreplaceLabel = new Label(String.valueOf(evenement.getNombreplace()));
             nombreplaceLabel.setPrefWidth(134);
 
-
-            eventRow.getChildren().addAll(nomLabel, lieuLabel, dateLabel, organisateurLabel,prixLabel,nombreplaceLabel);
+            eventRow.getChildren().addAll(nomLabel, lieuLabel, dateLabel, organisateurLabel, prixLabel, totalPlacesLabel, nombreplaceLabel);
 
             eventRow.setOnMouseClicked(event -> {
                 for (HBox child : eventVBox.getChildren().filtered(node -> node instanceof HBox).toArray(HBox[]::new)) {
@@ -186,6 +184,7 @@ public class interfaceevenement {
     private void handleGestionEvenement(ActionEvent event) {
         refreshVBox();
     }
+
     @FXML
     private void handleVoirParticipation(ActionEvent event) throws IOException {
         if (selectedEvenement == null) {
@@ -212,12 +211,12 @@ public class interfaceevenement {
 
         stage.showAndWait();
     }
+
     @FXML
     void showProfile(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/UserProfile.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -225,21 +224,16 @@ public class interfaceevenement {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger la page de profil.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la page de profil.");
         }
     }
 
     @FXML
     void logout(ActionEvent event) {
-        // Déconnecter l'utilisateur
         SessionManager.getInstance().clearSession();
-
-        // Rediriger vers la page de connexion
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -247,8 +241,7 @@ public class interfaceevenement {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'écran de connexion.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'écran de connexion.");
         }
     }
 

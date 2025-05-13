@@ -199,6 +199,19 @@
                                     </graphic>
                                 </Label>
 
+                                <Label fx:id="eventTotalPlacesLabel" prefHeight="30.0" prefWidth="550.0" textAlignment="CENTER" textFill="#333333">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/tableau-de-reservation (3).png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Label>
+
                                 <Separator prefWidth="550.0">
                                     <VBox.margin>
                                         <Insets bottom="15.0" top="10.0" />

@@ -23,14 +23,15 @@ public class Evenementservice implements IService<Evenement> {
 
     @Override
     public void create(Evenement evenement) {
-        String req = "INSERT INTO evenement (nom, lieu, date, organisateur,prix,nombreplace) VALUES (?, ?, ?, ?,?,?)";
+        String req = "INSERT INTO evenement (nom, lieu, date, organisateur, prix, nombreplace, totalPlaces) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(req)) {
             ps.setString(1, evenement.getNom());
             ps.setString(2, evenement.getLieu());
             ps.setString(3, evenement.getDate());
             ps.setString(4, evenement.getOrganisateur());
             ps.setDouble(5, evenement.getPrix());
-            ps.setDouble(6, evenement.getNombreplace());
+            ps.setInt(6, evenement.getNombreplace());
+            ps.setInt(7, evenement.getTotalPlaces());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error creating event: " + e.getMessage());
@@ -52,6 +53,7 @@ public class Evenementservice implements IService<Evenement> {
                 evenement.setOrganisateur(rs.getString("organisateur"));
                 evenement.setPrix(rs.getInt("prix"));
                 evenement.setNombreplace(rs.getInt("nombreplace"));
+                evenement.setTotalPlaces(rs.getInt("totalPlaces"));
                 return evenement;
             }
         } catch (SQLException e) {
@@ -62,16 +64,16 @@ public class Evenementservice implements IService<Evenement> {
 
     @Override
     public void update(Evenement evenement) {
-        String req = "UPDATE evenement SET nom = ?, lieu = ?, date = ?, organisateur = ?,prix=?,nombreplace=? WHERE id = ?";
+        String req = "UPDATE evenement SET nom = ?, lieu = ?, date = ?, organisateur = ?, prix = ?, nombreplace = ?, totalPlaces = ? WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(req)) {
             ps.setString(1, evenement.getNom());
             ps.setString(2, evenement.getLieu());
             ps.setString(3, evenement.getDate());
-            ps.setString(4, evenement.getOrganisateur());
+            ps.setString(4,evenement.getOrganisateur());
             ps.setDouble(5, evenement.getPrix());
             ps.setInt(6, evenement.getNombreplace());
-            ps.setInt(7, evenement.getId());
-
+            ps.setInt(7, evenement.getTotalPlaces());
+            ps.setInt(8, evenement.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error updating event: " + e.getMessage());
@@ -103,6 +105,7 @@ public class Evenementservice implements IService<Evenement> {
                 evenement.setOrganisateur(rs.getString("organisateur"));
                 evenement.setPrix(rs.getInt("prix"));
                 evenement.setNombreplace(rs.getInt("nombreplace"));
+                evenement.setTotalPlaces(rs.getInt("totalPlaces"));
                 evenements.add(evenement);
             }
         } catch (SQLException e) {
@@ -129,6 +132,7 @@ public class Evenementservice implements IService<Evenement> {
                 evenement.setOrganisateur(rs.getString("organisateur"));
                 evenement.setPrix(rs.getInt("prix"));
                 evenement.setNombreplace(rs.getInt("nombreplace"));
+                evenement.setTotalPlaces(rs.getInt("totalPlaces"));
                 evenements.add(evenement);
             }
         } catch (SQLException e) {
@@ -156,6 +160,7 @@ public class Evenementservice implements IService<Evenement> {
                 evenement.setOrganisateur(rs.getString("organisateur"));
                 evenement.setPrix(rs.getInt("prix"));
                 evenement.setNombreplace(rs.getInt("nombreplace"));
+                evenement.setTotalPlaces(rs.getInt("totalPlaces"));
                 evenements.add(evenement);
             }
         } catch (SQLException e) {
