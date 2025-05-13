@@ -1,26 +1,21 @@
 package tn.esprit.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import tn.esprit.models.Demande;
 import tn.esprit.models.Document;
-import tn.esprit.models.Utilisateur;
 import tn.esprit.models.Citoyen;
+import tn.esprit.models.Utilisateur;
 import tn.esprit.services.ServiceDemande;
 import tn.esprit.services.ServiceDocument;
 import tn.esprit.services.StripePayment;
@@ -30,8 +25,12 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class DemandeController implements Initializable {
+
+    private static final Logger LOGGER = Logger.getLogger(DemandeController.class.getName());
 
     @FXML
     private TextField idUserField;
@@ -54,16 +53,10 @@ public class DemandeController implements Initializable {
     @FXML
     private Label currentUserLabel;
 
-    @FXML
-    private Button downloadTicketButton;
-
-    @FXML
-    private Label statusLabel;
-
     private Map mapController;
     private ServiceDemande serviceDemande;
+    private ServiceDocument serviceDocument;
     private StripePayment stripePaymentService;
-    private Utilisateur currentUser;
     private Citoyen currentCitoyen;
     private HashMap<String, Double> documentPrices;
     private boolean userFieldsPrefilled = false;
@@ -74,52 +67,76 @@ public class DemandeController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            // Initialize services with exception handling
+            LOGGER.info("Initializing DemandeController...");
+
+            // Initialize services
+            LOGGER.info("Initializing services...");
             initializeServices();
+            LOGGER.info("Services initialized successfully.");
+
             // Initialize UI components
+            LOGGER.info("Initializing UI components...");
             initializeUIComponents();
-            // Initialize map controller
-            initializeMapController();
-            // Set up map button
-            setupMapButton();
-            // Set up field validations and styles
-            setupFieldValidations();
+            LOGGER.info("UI components initialized successfully.");
+
             // Initialize document types
+            LOGGER.info("Initializing document types...");
             initializeDocumentTypes();
+            LOGGER.info("Document types initialized successfully.");
+
+            // Initialize map controller
+            LOGGER.info("Initializing map controller...");
+            initializeMapController();
+            LOGGER.info("Map controller initialized successfully.");
+
+            // Set up event handlers
+            LOGGER.info("Setting up event handlers...");
+            setupMapButton();
+            setupFieldValidations();
+            LOGGER.info("Event handlers set up successfully.");
+
             // Initialize user data
+            LOGGER.info("Initializing user data...");
             initializeUserData();
+            LOGGER.info("User data initialized successfully.");
+
+            LOGGER.info("DemandeController initialized successfully.");
         } catch (Exception e) {
-            System.err.println("Unexpected error during initialization of DemandeController: " + e.getMessage());
-            e.printStackTrace();
-            showAlert("Erreur", "Erreur inattendue lors de l'initialisation: " + e.getMessage());
+            e.printStackTrace(); // Ensure stack trace is printed
+            String errorMessage = e.getMessage() != null ? e.getMessage() : "No specific error message available";
+            LOGGER.log(Level.SEVERE, "Unexpected error during initialization: " + errorMessage, e);
+            showAlert("Erreur", "Erreur inattendue lors de l'initialisation: " + errorMessage);
+            throw new RuntimeException("Initialization failed", e); // Rethrow to stop further execution
         }
     }
 
     private void initializeServices() {
         try {
             serviceDemande = new ServiceDemande();
-        } catch (Exception e) {
-            System.err.println("Failed to initialize ServiceDemande: " + e.getMessage());
-            e.printStackTrace();
-            showAlert("Erreur", "Erreur lors de l'initialisation du service de demande: " + e.getMessage());
-        }
-        try {
+            serviceDocument = new ServiceDocument();
             stripePaymentService = new StripePayment();
         } catch (Exception e) {
-            System.err.println("Failed to initialize StripePayment: " + e.getMessage());
-            e.printStackTrace();
-            showAlert("Erreur", "Erreur lors de l'initialisation du service de paiement: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to initialize services: " + e.getMessage(), e);
+            throw new RuntimeException("Service initialization failed", e);
         }
     }
 
     private void initializeUIComponents() {
-        try {
-            downloadTicketButton.setVisible(false);
-            statusLabel.setVisible(false);
-        } catch (Exception e) {
-            System.err.println("Failed to initialize UI components: " + e.getMessage());
-            e.printStackTrace();
-        }
+        prixField.setEditable(false);
+        adresseField.setEditable(false);
+    }
+
+    private void initializeDocumentTypes() {
+        documentPrices = new HashMap<>();
+        documentPrices.put("Plans urbanisme", 75.00);
+        documentPrices.put("Registre état civil", 25.00);
+        documentPrices.put("Autorisation construction", 150.00);
+        documentPrices.put("Règlements municipalité", 50.00);
+        documentPrices.put("Légalisation d'un papier", 15.00);
+
+        ObservableList<String> documentTypes = FXCollections.observableArrayList(documentPrices.keySet());
+        typeDocumentCombo.setItems(documentTypes);
+        typeDocumentCombo.valueProperty().addListener((obs, oldVal, newVal) -> handleTypeDocumentChange());
     }
 
     private void initializeMapController() {
@@ -127,40 +144,84 @@ public class DemandeController implements Initializable {
             mapController = new Map();
             mapController.setLinkedAddressField(adresseField);
         } catch (Exception e) {
-            System.err.println("Failed to initialize Map controller: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Failed to initialize Map controller: " + e.getMessage(), e);
             showAlert("Erreur", "Erreur lors de l'initialisation de la carte: " + e.getMessage());
         }
     }
 
     private void setupMapButton() {
-        try {
-            if (mapButton != null) {
-                mapButton.setOnAction(event -> handleOpenMap());
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to set up map button: " + e.getMessage());
-            e.printStackTrace();
-        }
+        mapButton.setOnAction(event -> handleOpenMap());
     }
 
     private void setupFieldValidations() {
-        try {
-            setupCINValidation();
-            setupNomValidation();
-            adresseField.setEditable(false);
-            prixField.setEditable(false);
-            String readOnlyStyle = "-fx-background-color: #f0f0f0; -fx-opacity: 0.85;";
-            prixField.setStyle(readOnlyStyle);
-        } catch (Exception e) {
-            System.err.println("Failed to set up field validations: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // CIN Validation
+        idUserField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!idUserField.isEditable()) {
+                event.consume();
+                return;
+            }
+            String character = event.getCharacter();
+            if (!character.matches("[0-9]")) {
+                event.consume();
+                return;
+            }
+            if (idUserField.getText().isEmpty() && !character.matches("[01]")) {
+                event.consume();
+                return;
+            }
+            if (idUserField.getText().length() >= 8) {
+                event.consume();
+            }
+        });
+
+        idUserField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal && idUserField.isEditable()) {
+                validateCIN();
+            }
+        });
+
+        // Nom Validation
+        nomField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+            if (!nomField.isEditable()) {
+                event.consume();
+                return;
+            }
+            String character = event.getCharacter();
+            if (!character.matches("[a-zA-Z\\s]")) {
+                event.consume();
+            }
+        });
+
+        nomField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal && nomField.isEditable()) {
+                validateNom();
+            }
+        });
+
+        // Adresse Validation (ensure it's not empty when submitting)
+        adresseField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                validateAdresse();
+            }
+        });
+
+        // Style for read-only fields
+        String readOnlyStyle = "-fx-background-color: #f0f0f0; -fx-opacity: 0.85;";
+        prixField.setStyle(readOnlyStyle);
+        adresseField.setStyle(readOnlyStyle);
     }
 
     public void initializeUserData() {
-        if (currentCitoyen != null && SessionManager.getInstance().isCitoyen()) {
-            try {
+        try {
+            LOGGER.info("Fetching current user from SessionManager...");
+            Utilisateur user = SessionManager.getInstance().getCurrentUser();
+            LOGGER.info("Current User: " + (user != null ? user.toString() : "null"));
+            LOGGER.info("SessionManager.isCitoyen(): " + SessionManager.getInstance().isCitoyen());
+
+            if (user != null && SessionManager.getInstance().isCitoyen()) {
+                currentCitoyen = (Citoyen) user; // Safe cast since isCitoyen() already checks the type
+                LOGGER.info("Current Citoyen: " + currentCitoyen.toString());
+
                 String cin = currentCitoyen.getCin() != null && !currentCitoyen.getCin().isEmpty()
                         ? currentCitoyen.getCin()
                         : String.valueOf(currentCitoyen.getId());
@@ -188,169 +249,128 @@ public class DemandeController implements Initializable {
                 }
 
                 userFieldsPrefilled = true;
-            } catch (Exception e) {
-                showAlert("Erreur", "Impossible de charger les données utilisateur : " + e.getMessage());
-                e.printStackTrace();
+            } else {
+                String errorMessage = user == null ? "No user is logged in." : "Logged-in user is not a Citoyen (Role: " + user.getRole() + ").";
+                LOGGER.warning(errorMessage);
+                showAlert("Erreur", errorMessage + " Vérifiez votre connexion ou votre type de compte.");
             }
-        } else {
-            showAlert("Erreur", "Aucun utilisateur citoyen connecté.");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error initializing user data: " + (e.getMessage() != null ? e.getMessage() : "Unknown error"), e);
+            throw new RuntimeException("Failed to initialize user data", e);
         }
     }
 
-    private void initializeDocumentTypes() {
-        documentPrices = new HashMap<>();
-        documentPrices.put("Plans urbanisme", 75.00);
-        documentPrices.put("Registre état civil", 25.00);
-        documentPrices.put("Autorisation construction", 150.00);
-        documentPrices.put("Règlements municipalité", 50.00);
-        documentPrices.put("Légalisation d'un papier", 15.00);
-
-        ObservableList<String> documentTypes = FXCollections.observableArrayList(documentPrices.keySet());
-        typeDocumentCombo.setItems(documentTypes);
-    }
-
     @FXML
-    public void handleTypeDocumentChange() {
+    private void handleTypeDocumentChange() {
         String selectedType = typeDocumentCombo.getValue();
         if (selectedType != null && documentPrices.containsKey(selectedType)) {
             Double price = documentPrices.get(selectedType);
             prixField.setText(String.format("%.2f", price));
+            typeDocumentCombo.setStyle(""); // Reset style on valid selection
         } else {
             prixField.clear();
+            typeDocumentCombo.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
         }
     }
 
-    private void setupCINValidation() {
-        idUserField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-            if (!idUserField.isEditable()) {
-                event.consume();
-                return;
-            }
-            String character = event.getCharacter();
-            if (!character.matches("[0-9]")) {
-                event.consume();
-                return;
-            }
-            if (idUserField.getText().isEmpty() && !character.matches("[01]")) {
-                event.consume();
-                return;
-            }
-            if (idUserField.getText().length() >= 8) {
-                event.consume();
-            }
-        });
-
-        idUserField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue && idUserField.isEditable()) {
-                validateCIN();
-            }
-        });
-    }
-
-    private void setupNomValidation() {
-        nomField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-            if (!nomField.isEditable()) {
-                event.consume();
-                return;
-            }
-            String character = event.getCharacter();
-            if (!character.matches("[a-zA-Z\\s]")) {
-                event.consume();
-                return;
-            }
-        });
-
-        nomField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue && nomField.isEditable()) {
-                validateNom();
-            }
-        });
+    private boolean validateCIN() {
+        String cin = idUserField.getText().trim();
+        if (cin.isEmpty()) {
+            idUserField.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
+            showAlert("Erreur", "Le champ CIN ne peut pas être vide.");
+            return false;
+        }
+        if (cin.length() != 8) {
+            idUserField.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
+            showAlert("Erreur", "La CIN doit contenir exactement 8 chiffres.");
+            return false;
+        }
+        if (!cin.matches("[01][0-9]{7}")) {
+            idUserField.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
+            showAlert("Erreur", "La CIN doit commencer par 0 ou 1 et contenir 8 chiffres.");
+            return false;
+        }
+        idUserField.setStyle("-fx-border-color: green; -fx-border-width: 1px;");
+        return true;
     }
 
     private boolean validateNom() {
         String nom = nomField.getText().trim();
         if (nom.isEmpty()) {
+            nomField.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
             showAlert("Erreur", "Le champ nom ne peut pas être vide.");
             return false;
         }
         if (!nom.matches("[a-zA-Z\\s]+")) {
+            nomField.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
             showAlert("Erreur", "Le nom ne doit contenir que des lettres et des espaces.");
             return false;
         }
+        nomField.setStyle("-fx-border-color: green; -fx-border-width: 1px;");
         return true;
     }
 
-    private boolean validateCIN() {
-        String cin = idUserField.getText();
-        if (cin.isEmpty()) {
+    private boolean validateAdresse() {
+        String adresse = adresseField.getText().trim();
+        if (adresse.isEmpty()) {
+            adresseField.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
+            showAlert("Erreur", "Le champ adresse ne peut pas être vide.");
             return false;
         }
-        if (cin.length() != 8) {
-            showAlert("Erreur", "La CIN doit contenir exactement 8 chiffres.");
+        adresseField.setStyle("-fx-border-color: green; -fx-border-width: 1px;");
+        return true;
+    }
+
+    private boolean validateTypeDocument() {
+        String selectedType = typeDocumentCombo.getValue();
+        if (selectedType == null || selectedType.trim().isEmpty()) {
+            typeDocumentCombo.setStyle("-fx-border-color: red; -fx-border-width: 1px;");
+            showAlert("Erreur", "Veuillez sélectionner un type de document.");
             return false;
         }
-        char firstChar = cin.charAt(0);
-        if (firstChar != '0' && firstChar != '1') {
-            showAlert("Erreur", "La CIN doit commencer par 0 ou 1.");
-            return false;
-        }
+        typeDocumentCombo.setStyle("-fx-border-color: green; -fx-border-width: 1px;");
         return true;
     }
 
     @FXML
-    public void handleOpenMap() {
+    private void handleOpenMap() {
         try {
-            System.out.println("Opening map...");
-            if (adresseField == null) {
-                System.err.println("adresseField is null");
-                showAlert("Erreur", "Champ d'adresse non initialisé");
-                return;
-            }
             if (mapController == null) {
                 mapController = new Map();
                 mapController.setLinkedAddressField(adresseField);
             }
             mapController.openMap();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error opening map: " + e.getMessage(), e);
             showAlert("Erreur", "Problème lors de l'ouverture de la carte: " + e.getMessage());
         }
     }
 
     @FXML
-    public void handleSubmit(ActionEvent event) {
-        if (!validateCIN() || !validateNom()) {
+    private void handleSubmit(ActionEvent event) {
+        // Validate all fields
+        if (!validateCIN() || !validateNom() || !validateAdresse() || !validateTypeDocument()) {
             return;
         }
 
-        if (nomField.getText().isEmpty() || typeDocumentCombo.getValue() == null ||
-                adresseField.getText().isEmpty() || prixField.getText().isEmpty()) {
-            showAlert("Erreur", "Veuillez remplir tous les champs obligatoires.");
-            return;
-        }
-
-        if (currentUser == null) {
-            showAlert("Erreur", "Aucun utilisateur connecté. Veuillez vous connecter.");
+        if (currentCitoyen == null || !SessionManager.getInstance().isCitoyen()) {
+            showAlert("Erreur", "Utilisateur non connecté ou type d'utilisateur incorrect.");
             return;
         }
 
         try {
             Demande demande = new Demande();
-            demande.setId_user(currentUser.getId());
+            demande.setId_user(currentCitoyen.getId());
             demande.setCin(idUserField.getText());
             demande.setNom(nomField.getText());
             demande.setAdresse(adresseField.getText());
             demande.setType(typeDocumentCombo.getValue());
 
-            try {
-                totalAmount = Float.parseFloat(prixField.getText().replace(",", "."));
-                demande.setPrice(totalAmount);
-            } catch (NumberFormatException e) {
-                showAlert("Erreur", "Format de prix invalide");
-                return;
-            }
+            totalAmount = Float.parseFloat(prixField.getText().replace(",", "."));
+            demande.setPrice(totalAmount);
 
-            paymentSessionId = StripePayment.createCheckoutSession(totalAmount);
+
+            paymentSessionId = stripePaymentService.createCheckoutSession(totalAmount);
             if (paymentSessionId == null || paymentSessionId.isEmpty()) {
                 showAlert("Erreur", "Impossible de créer la session de paiement.");
                 return;
@@ -365,63 +385,63 @@ public class DemandeController implements Initializable {
             stage.setScene(scene);
             stage.setTitle("Paiement Stripe");
 
-            webView.getEngine().locationProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    String location = newValue.toString();
-                    if (location.contains("success")) {
-                        Platform.runLater(() -> {
-                            stage.close();
-                            paymentCompleted = true;
-                            confirmPayment(demande);
-                        });
-                    }
+            webView.getEngine().locationProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && newVal.contains("success")) {
+                    Platform.runLater(() -> {
+                        stage.close();
+                        paymentCompleted = true;
+                        confirmPayment(demande);
+                    });
+                } else if (newVal != null && newVal.contains("cancel")) {
+                    Platform.runLater(() -> {
+                        stage.close();
+                        showAlert("Annulé", "Le paiement a été annulé.");
+                    });
                 }
             });
 
             stage.show();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Une erreur s'est produite lors du paiement.", e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error during payment submission: " + e.getMessage(), e);
+
+            showAlert("Erreur", "Une erreur s'est produite lors du paiement: " + e.getMessage());
         }
     }
 
     private void confirmPayment(Demande demande) {
         try {
-            // Add the demand to the demande table
+            // Add the demand
             serviceDemande.ajouter(demande);
-            downloadTicketButton.setVisible(true);
-            showAlert("Succès", "Demande enregistrée avec succès! ID: " + demande.getId_demande());
+            LOGGER.info("Demande recorded with ID: " + demande.getId_demande());
 
-            // Create and add a corresponding document entry with status "en traitement"
-            ServiceDocument serviceDocument = new ServiceDocument();
+            // Create and add a corresponding document
             Document document = new Document();
-            document.setId_demande(demande.getId_demande()); // Link to the demand
-            document.setType_docs(demande.getType()); // Copy the type from the demand
-            document.setStatut_doc("en traitement"); // Default status
-            document.setDate_emission_doc(new java.sql.Date(System.currentTimeMillis())); // Current date
-            document.setDate_expiration_doc(null); // No expiration date initially
-            document.setArchive(false); // Not archived by default
-            document.setNb_req(1); // Default to 1 request
+            document.setId_demande(demande.getId_demande());
+            document.setType_docs(demande.getType());
+            document.setStatut_doc("En traitement");
+            document.setDate_emission_doc(new java.sql.Date(System.currentTimeMillis()));
 
-            // Set id_citoyen based on currentUser (assuming currentUser is a Citoyen)
-            if (currentUser != null && SessionManager.getInstance().isCitoyen()) {
-                document.setId_citoyen(currentUser.getId());
-            } else {
-                document.setId_citoyen(0); // Set to null in DB if not a citizen
-            }
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.add(java.util.Calendar.MONTH, 3);
+            document.setDate_expiration_doc(new java.sql.Date(calendar.getTimeInMillis()));
 
-            serviceDocument.add(document); // Use the add method from ServiceDocument
-            System.out.println("Document created with status 'en traitement' for demande ID: " + demande.getId_demande());
+            document.setArchive(false);
+            document.setNb_req(1);
+            document.setId_citoyen(currentCitoyen.getId());
 
-            resetForm(); // Reset the form after successful submission
+            serviceDocument.add(document);
+            LOGGER.info("Document created with status 'En traitement' for demande ID: " + demande.getId_demande());
+
+            resetForm();
         } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Erreur lors de l'enregistrement dans la base de données : " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Database error during payment confirmation: " + e.getMessage(), e);
+            showAlert("Erreur", "Erreur lors de l'enregistrement dans la base de données: " + e.getMessage());
         }
     }
+
     @FXML
-    public void resetForm() {
+    private void resetForm() {
         if (!userFieldsPrefilled) {
             idUserField.clear();
             nomField.clear();
@@ -429,8 +449,13 @@ public class DemandeController implements Initializable {
         typeDocumentCombo.setValue(null);
         adresseField.clear();
         prixField.clear();
-        downloadTicketButton.setVisible(false);
         paymentCompleted = false;
+
+        // Reset field styles
+        idUserField.setStyle("");
+        nomField.setStyle("-fx-background-color: #f0f0f0; -fx-opacity: 0.85;");
+        adresseField.setStyle("-fx-background-color: #f0f0f0; -fx-opacity: 0.85;");
+        typeDocumentCombo.setStyle("");
     }
 
     private void showAlert(String title, String message) {
@@ -441,5 +466,4 @@ public class DemandeController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 }

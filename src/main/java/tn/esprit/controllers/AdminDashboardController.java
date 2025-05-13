@@ -44,11 +44,6 @@ public class AdminDashboardController {
     @FXML
     private TableColumn<Utilisateur, Utilisateur> actionsColumn;
 
-    @FXML
-    private Button btnRefresh;
-
-    @FXML
-    private Button btnRetour;
 
     private ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
 

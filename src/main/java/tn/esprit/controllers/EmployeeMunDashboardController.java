@@ -49,8 +49,6 @@ public class EmployeeMunDashboardController {
     @FXML
     private FlowPane documentCardContainer;
 
-    @FXML
-    private Button retourLoginButton;
 
     @FXML
     private Circle statusIndicator;
@@ -109,25 +107,13 @@ public class EmployeeMunDashboardController {
         documentCardContainer.setVgap(15);
         documentScrollPane.setFitToWidth(true);
 
-        // Show loading message initially
         showLoadingMessage("Chargement des documents en cours");
 
         Thread initThread = new Thread(() -> {
             try {
-                refreshDashboard(); // Refresh the dashboard data
+                refreshDashboard();
                 Platform.runLater(() -> {
-                    clearLoadingMessage(); // Clear the loading message
-                    try {
-                        // Display all documents initially (e.g., for "Tous")
-                        displayDocuments(allDocuments); // Use the loaded allDocuments list
-                    } catch (SQLException e) {
-                        System.out.println("Erreur de Base de Données: Impossible de charger les documents - " + e.getMessage());
-                        Label errorLabel = new Label("Impossible de charger les documents.\nVérifiez la connexion à la base de données");
-                        errorLabel.setStyle("-fx-text-fill: #E74C3C; -fx-font-size: 14px;");
-                        errorLabel.setWrapText(true);
-                        documentCardContainer.getChildren().clear();
-                        documentCardContainer.getChildren().add(errorLabel);
-                    }
+
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
@@ -287,8 +273,6 @@ public class EmployeeMunDashboardController {
                     entry.getValue().getStyleClass().add("selected-tile");
                 }
             }
-
-            showLoadingMessage("Chargement des documents pour: " + type);
         });
 
         try {
@@ -345,7 +329,7 @@ public class EmployeeMunDashboardController {
 
         documentCardContainer.getChildren().clear();
 
-        // Ajouter une carte de résumé (facultatif, si vous voulez la conserver)
+
         StackPane summaryCard = createSummaryCard(documents.size());
         documentCardContainer.getChildren().add(summaryCard);
 
@@ -420,7 +404,7 @@ public class EmployeeMunDashboardController {
 
  private AnchorPane createDocumentCard(Citoyen citoyen, Document document) {
         AnchorPane card = new AnchorPane();
-        card.setPrefSize(300, 150); // Taille réduite pour une carte plus compacte
+        card.setPrefSize(300, 200);
         card.getStyleClass().add("document-card");
 
         VBox content = new VBox(8); // Espacement réduit pour une meilleure lisibilité
@@ -441,7 +425,7 @@ public class EmployeeMunDashboardController {
         nameLabel.getStyleClass().add("name-label");
         cinLabel.getStyleClass().add("cin-label");
 
-        // Statut du document
+
         Label statusLabel = new Label("Statut: " + (document.getStatut_doc() != null ? document.getStatut_doc() : "N/A"));
         statusLabel.getStyleClass().add("status-label");
         if (document.getStatut_doc() != null) {
@@ -455,7 +439,6 @@ public class EmployeeMunDashboardController {
             }
         }
 
-        // Dates de création et d'expiration
         String emissionDate = document.getDate_emission_doc() != null
                 ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(document.getDate_emission_doc())
                 : "N/A";
@@ -465,7 +448,7 @@ public class EmployeeMunDashboardController {
         Label datesLabel = new Label("Création: " + emissionDate + " | Expiration: " + expirationDate);
         datesLabel.getStyleClass().add("cin-label");
 
-        // Ajout des éléments à la carte
+
         content.getChildren().addAll(nameLabel, cinLabel, statusLabel, datesLabel);
 
         AnchorPane.setTopAnchor(content, 0.0);
@@ -542,7 +525,7 @@ public class EmployeeMunDashboardController {
             node.setManaged(true);
         }
 
-        currentFullScreenCard.setPrefSize(500, 300);
+
         currentFullScreenCard.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
         VBox content = (VBox) currentFullScreenCard.getChildren().get(0);
