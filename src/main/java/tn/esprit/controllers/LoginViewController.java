@@ -33,10 +33,7 @@ public class LoginViewController {
 
     @FXML
     void initialize() {
-        // Ajouter un gestionnaire d'événements au bouton de connexion
         loginB.setOnAction(this::login);
-
-        // Ajouter un gestionnaire d'événements au lien d'inscription
         signup.setOnAction(this::signup);
     }
 
@@ -59,6 +56,7 @@ public class LoginViewController {
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur de chargement: " + e.getMessage());
+            e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur",
                     "Impossible de charger l'écran d'inscription. Détails: " + e.getMessage());
         }
@@ -77,15 +75,12 @@ public class LoginViewController {
         String email = EmailTF.getText();
         String password = passwordTF.getText();
 
-        // Validation des champs
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez remplir tous les champs.");
             return;
         }
 
-        // Cas spécial pour l'administrateur
         if (email.equals("admin@mairie.tn") && password.equals("admin123")) {
-            // Créer et stocker l'utilisateur admin
             Utilisateur admin = new Utilisateur();
             admin.setId(1);
             admin.setNom("Admin");
@@ -95,10 +90,7 @@ public class LoginViewController {
             admin.setRole(Role.ADMIN);
             admin.setActif(true);
 
-            // Stocker dans la session
             SessionManager.getInstance().setCurrentUser(admin);
-
-            // Journaliser la connexion réussie
             logUtils.logAuthEvent(email, true, "Connexion administrateur");
 
             try {
@@ -116,7 +108,7 @@ public class LoginViewController {
                 stage.setTitle("Administration - Gestion des utilisateurs");
                 stage.show();
             } catch (IOException e) {
-                System.err.println("Erreur de chargement: " + e.getMessage());
+                System.err.println("Erreur de chargement du dashboard administrateur: " + e.getMessage());
                 e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Erreur",
                         "Impossible de charger le dashboard administrateur. Détails: " + e.getMessage());
@@ -124,18 +116,13 @@ public class LoginViewController {
             return;
         }
 
-        // Pour les autres utilisateurs
         ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
         Utilisateur user = serviceUtilisateur.authenticate(email, password);
 
         if (user != null) {
-            // Stocker l'utilisateur dans la session
             SessionManager.getInstance().setCurrentUser(user);
-
-            // Journaliser la connexion réussie
             logUtils.logAuthEvent(email, true, "Connexion " + user.getRole().name());
 
-            // Rediriger l'utilisateur en fonction de son rôle
             try {
                 String fxmlPath = "";
                 String title = "";
@@ -155,13 +142,23 @@ public class LoginViewController {
                         break;
                 }
 
+                System.out.println("Attempting to load FXML: " + fxmlPath);
                 URL fxmlUrl = getClass().getResource(fxmlPath);
                 if (fxmlUrl == null) {
+                    System.err.println("Resource not found: " + fxmlPath);
                     throw new IOException("Fichier FXML non trouvé: " + fxmlPath);
                 }
+                System.out.println("FXML URL: " + fxmlUrl.toString());
 
                 FXMLLoader loader = new FXMLLoader(fxmlUrl);
-                Parent root = loader.load();
+                Parent root;
+                try {
+                    root = loader.load();
+                } catch (Exception e) {
+                    System.err.println("Failed to load FXML: " + fxmlPath + ", Error: " + e.getMessage());
+                    e.printStackTrace();
+                    throw new IOException("Erreur lors du chargement du fichier FXML: " + e.getMessage(), e);
+                }
 
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -170,13 +167,12 @@ public class LoginViewController {
                 stage.show();
 
             } catch (IOException e) {
-                System.err.println("Erreur de chargement: " + e.getMessage());
+                System.err.println("Erreur de chargement pour le rôle " + user.getRole() + ": " + e.getMessage());
                 e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Erreur",
-                        "Impossible de charger l'interface. Détails: " + e.getMessage());
+                        "Impossible de charger l'interface pour le rôle " + user.getRole() + ". Détails: " + e.getMessage());
             }
         } else {
-            // Essayer de déterminer la cause de l'échec
             Utilisateur inactiveUser = serviceUtilisateur.findByEmail(email);
 
             if (inactiveUser != null && !inactiveUser.isActif()) {

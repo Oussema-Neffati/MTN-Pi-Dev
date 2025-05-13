@@ -1,24 +1,372 @@
-/* styles_employee.css */
-.demand-type-button {
+/* ------------------- Root and General Styling ------------------- */
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-background-color: #F8F9FA;
+}
+
+/* ------------------- Top Bar Styling ------------------- */
+.top-bar {
     -fx-background-color: #FFFFFF;
-    -fx-background-radius: 8;
-    -fx-border-color: #E0E0E0;
-    -fx-border-width: 1;
-    -fx-border-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
     -fx-padding: 10;
 }
 
-.demand-type-button:hover {
+/* Logo and Title (MTE Label) */
+.logo-title {
+    -fx-font-family: "Abril Fatface";
+    -fx-font-size: 27px;
+    -fx-text-fill: #DB4495;
+}
+
+/* Search Field */
+.search-field {
+    -fx-background-color: #F5F5F5;
+    -fx-background-radius: 15;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 15;
+    -fx-padding: 8;
+    -fx-prompt-text-fill: #757575;
+    -fx-font-size: 14px;
+}
+
+.search-field:focused {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #4169E1;
+}
+
+/* User Info (Current User Label) */
+.current-user-label {
+    -fx-text-fill: #817E7E;
+    -fx-font-size: 15px;
+}
+
+/* ------------------- Side Menu Styling ------------------- */
+.side-menu {
+    -fx-background-color: #4169E1;
+    -fx-background-radius: 0 50 0 0;
+}
+
+/* Side Menu Labels (Titles and Section Headers) */
+.side-menu-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.section-header {
+    -fx-text-fill: #A8C6FA;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Side Menu Buttons (Demandes, Rapports) */
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: rgba(255,255,255,0.2);
+}
+
+/* Logout Button */
+.logout-button {
+    -fx-background-color: #DB4495;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #C13B84;
+}
+
+/* Version Label */
+.version-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+}
+
+/* ------------------- Main Content Styling ------------------- */
+.main-content {
     -fx-background-color: #F8F9FA;
+}
+
+/* Dashboard Title */
+.dashboard-title {
+    -fx-text-fill: #4169E1;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Selected Type Label */
+.selected-type-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* Status Indicator Circle */
+.status-indicator {
+    -fx-fill: #4169E1;
+}
+
+/* ------------------- Tile Styling ------------------- */
+.document-tile {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: transparent;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0.1, 0, 5);
+    -fx-padding: 15;
+    -fx-transition: all 0.3s ease;
+}
+
+.document-tile:hover {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 7);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-border-color: rgba(65,105,225,0.3);
+    -fx-border-width: 1;
+}
+
+.document-tile .tile-title {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+}
+
+.document-tile .count-badge {
+    -fx-background-color: #4169E1;
+    -fx-background-radius: 50%;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-padding: 8 12 8 12;
+    -fx-min-width: 35px;
+    -fx-min-height: 35px;
+}
+
+.selected-tile {
+    -fx-background-color: #E7F3FF;
+    -fx-border-color: #4169E1;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 7);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-border-color: rgba(65,105,225,0.3);
+}
+
+/* ------------------- Document Card Styling ------------------- */
+.document-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: transparent;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0.1, 0, 5);
+    -fx-padding: 15;
+    -fx-transition: all 0.3s ease;
+}
+
+.document-card:hover {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 7);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-border-color: rgba(65,105,225,0.3);
+    -fx-border-width: 1;
+}
+
+.document-card .name-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.document-card .cin-label {
+    -fx-text-fill: #757575;
+    -fx-font-size: 13px;
+}
+
+.document-card .status-label {
+    -fx-text-fill: #757575;
+    -fx-font-size: 13px;
+}
+
+.document-card .status-pending {
+    -fx-text-fill: #FFA500;
+}
+
+.document-card .status-approved {
+    -fx-text-fill: #2ECC71;
+}
+
+.document-card .status-rejected {
+    -fx-text-fill: #E74C3C;
+}
+
+/* ------------------- Switch Button Styling ------------------- */
+.archive-switch {
+    -fx-background-color: #F4F4F4;
+    -fx-background-radius: 30;
+    -fx-padding: 2;
+}
+
+.archive-switch .thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.archive-switch:selected {
+    -fx-background-color: #2ECC71;
+    -fx-background-radius: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.archive-label {
+    -fx-font-size: 13px;
+    -fx-padding: 0 5 0 0;
+}
+
+.archive-true {
+    -fx-text-fill: #E74C3C;
+}
+
+.archive-false {
+    -fx-text-fill: #2ECC71;
+}
+
+/* ------------------- Add Button Styling ------------------- */
+#add-button-container {
+    -fx-background-color: rgba(65, 105, 225, 0.9);
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 5);
+    -fx-opacity: 0.9;
+    -fx-alignment: center;
+}
+
+#add-button-container:hover {
+    -fx-opacity: 1.0;
+}
+
+.action-button {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.action-button:hover {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 7);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-border-color: rgba(65,105,225,0.3);
+    -fx-border-width: 1;
+
+}
+
+/* Specific styling for addDemandButton */
+#addDemandButton {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #4169E1;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+}
+
+#addDemandButton:hover {
+    -fx-background-color: #E3F2FD;
+}
+
+/* ------------------- ScrollPane Styling ------------------- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ------------------- General UI Elements ------------------- */
+.section-title {
+    -fx-text-fill: #4169E1;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.sub-title {
+    -fx-text-fill: #333333;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.empty-message {
+    -fx-text-fill: #757575;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-padding: 20;
+}
+
+/* Support for responsive layouts */
+.document-container {
+    -fx-padding: 10;
+    -fx-spacing: 20;
+}
+
+@media screen and (max-width: 800px) {
+    .document-tile, .document-card {
+        -fx-padding: 10;
+    }
+}
+
+/* Legacy class names for backwards compatibility */
+.demand-type-button {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: transparent;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0.1, 0, 5);
+    -fx-padding: 15;
+    -fx-cursor: hand;
+}
+
+.demand-type-button:hover {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 7);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-border-color: rgba(65,105,225,0.3);
+    -fx-border-width: 1;
 }
 
 .selected-type-button {
     -fx-background-color: #E7F3FF;
     -fx-border-color: #4169E1;
+    -fx-border-width: 1;
 }
 
-.type-label {
+.type-label, .tile-title {
     -fx-text-fill: #333333;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -27,35 +375,13 @@
 
 .count-label {
     -fx-text-fill: #4169E1;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-}
-
-.document-card {
-    -fx-background-color: #FFFFFF;
-    -fx-background-radius: 10;
-    -fx-border-color: #E0E0E0;
-    -fx-border-width: 1;
-    -fx-border-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
-}
-
-.document-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
-}
-
-.name-label {
-    -fx-text-fill: #333333;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-}
-
-.cin-label, .status-label {
-    -fx-text-fill: #757575;
-    -fx-font-size: 12px;
-}
-
-.empty-message {
-    -fx-text-fill: #757575;
     -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.type-tile {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
 }
