@@ -1,0 +1,114 @@
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controllers.RessourceController">
+    <!-- Sidebar -->
+    <VBox prefWidth="200.0" style="-fx-background-color: #3B5C95;" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+        <padding>
+            <Insets top="20.0" left="20.0" bottom="20.0" right="20.0"/>
+        </padding>
+
+        <!-- MTE Logo/Title -->
+        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" text="MTE &#x1F3DF;"/>
+        <VBox spacing="20" style="-fx-padding: 40 0 0 0;">
+            <!-- Demandes -->
+
+            <!-- Réservations (Active) -->
+            <Button onAction="#navigateToReservations" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="📅 Réservations"/>
+            <!-- Évènements -->
+            <Button onAction="#navigateToEvenements" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="🎉 Évènements"/>
+            <!-- Projets -->
+            <Button onAction="#navigateToProjets" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="📊 Projets"/>
+            <!-- Paramètres -->
+            <Button onAction="#navigateToParametres" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="⚙️ Paramètres"/>
+            <!-- Mon Profil -->
+            <Button onAction="#navigateToProfil" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="👤 Mon Profil"/>
+        </VBox>
+        <VBox alignment="BOTTOM_LEFT" VBox.vgrow="ALWAYS">
+            <!-- Déconnexion -->
+            <Button onAction="#navigateToLogout" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="🚪 Déconnexion"/>
+            <!-- Version -->
+            <Label style="-fx-text-fill: #B0BEC5; -fx-font-size: 12px; -fx-padding: 10 0 0 0;" text="Version 1.0.1"/>
+        </VBox>
+    </VBox>
+
+    <!-- Main Content -->
+    <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #F5F7FA;" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+        <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        </padding>
+
+        <!-- Header with User Info -->
+        <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 20 20 0;">
+            <Label style="-fx-font-size: 16px; -fx-text-fill: #FF4081;" text="Oussema Neffati"/>
+            <Button style="-fx-background-color: transparent; -fx-text-fill: #FF4081;" text="👤"/>
+        </HBox>
+
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Gestion des Ressources"/>
+
+        <!-- Nom -->
+        <VBox spacing="5">
+            <Label text="Nom"/>
+            <TextField fx:id="nomField" promptText="Entrez le nom de la ressource"/>
+        </VBox>
+
+        <!-- Catégorie -->
+        <VBox spacing="5">
+            <Label text="Catégorie"/>
+            <ComboBox fx:id="categorieField" promptText="Sélectionner une catégorie"/>
+        </VBox>
+
+        <!-- Capacité -->
+        <VBox spacing="5">
+            <Label text="Capacité"/>
+            <TextField fx:id="capaciteField" promptText="Entrez la capacité"/>
+        </VBox>
+
+        <!-- Tarif Horaire -->
+        <VBox spacing="5">
+            <Label text="Tarif Horaire"/>
+            <TextField fx:id="tarifHoraireField" promptText="Entrez le tarif horaire"/>
+        </VBox>
+
+        <!-- Horaire Ouverture -->
+        <VBox spacing="5">
+            <Label text="Horaire d'Ouverture"/>
+            <TextField fx:id="horaireOuvertureField" promptText="Ex: 08:00"/>
+        </VBox>
+
+        <!-- Horaire Fermeture -->
+        <VBox spacing="5">
+            <Label text="Horaire de Fermeture"/>
+            <TextField fx:id="horaireFermetureField" promptText="Ex: 18:00"/>
+        </VBox>
+
+        <!-- Description -->
+        <VBox spacing="5">
+            <Label text="Description"/>
+            <TextArea fx:id="descriptionField" promptText="Entrez une description" prefHeight="100.0"/>
+        </VBox>
+
+        <!-- Disponibilité -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Disponible"/>
+            <CheckBox fx:id="disponibleCheckBox" selected="true"/>
+        </HBox>
+
+        <!-- Buttons -->
+        <HBox alignment="CENTER" spacing="20">
+            <Button fx:id="saveButton" onAction="#saveRessource" style="-fx-background-color: #3B5C95; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="Enregistrer"/>
+            <Button fx:id="backButton" onAction="#goBack" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="Retour"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

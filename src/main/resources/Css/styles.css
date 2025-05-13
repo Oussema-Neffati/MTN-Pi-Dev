@@ -1,0 +1,123 @@
+/* General Styles */
+.root {
+    -fx-font-family: "Arial";
+    -fx-background-color: #f4f4f4;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    -fx-background-color: #1e3a8a;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+.logo {
+    -fx-text-fill: #ff69b4;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.menu-button:hover {
+    -fx-background-color: #3b82f6;
+}
+
+.menu-button.active {
+    -fx-background-color: #ff69b4; /* Pink color for Réservations when active */
+    -fx-text-fill: white;
+}
+
+.logout-button {
+    -fx-background-color: #ff69b4;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+/* Header Styles */
+.header {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.search-bar {
+    -fx-pref-width: 300px;
+}
+
+.user-button {
+    -fx-background-color: #ff69b4;
+    -fx-text-fill: white;
+}
+
+/* Form Styles */
+.form {
+    -fx-padding: 20;
+    -fx-background-color: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+
+
+/* Button Styles */
+.button {
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+}
+
+.primary-button {
+    -fx-background-color: #1e40af;
+    -fx-text-fill: white;
+}
+
+.primary-button:hover {
+    -fx-background-color: #3b82f6;
+}
+
+.secondary-button {
+    -fx-background-color: #ff69b4;
+    -fx-text-fill: white;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #f472b6;
+}
+
+.danger-button {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+}
+
+.danger-button:hover {
+    -fx-background-color: #ef4444;
+}
+
+.fullscreen-button {
+    -fx-background-color: #6b7280;
+    -fx-text-fill: white;
+}
+
+.fullscreen-button:hover {
+    -fx-background-color: #9ca3af;
+}
+
+/* Table Styles */
+.table-view {
+    -fx-pref-height: 300;
+}
+
+.table-column {
+    -fx-alignment: CENTER;
+}
