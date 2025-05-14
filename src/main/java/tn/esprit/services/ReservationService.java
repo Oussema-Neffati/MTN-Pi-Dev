@@ -1,11 +1,10 @@
 package tn.esprit.services;
 
-import tn.esprit.controllers.ReservationController.Reservation;
+import tn.esprit.models.Reservation;
 import tn.esprit.utils.MyDataBase;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,49 +16,53 @@ public class ReservationService {
     }
 
     public void add(Reservation reservation) throws SQLException {
-        String query = "INSERT INTO reservation (date_reservation, heure_debut, heure_fin, status, nombre_participants, motif, cin) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO reservation (dateReservation, heureDebut, heureFin, status, nombreParticipants, motif, cin, idUtilisateur, idRessource) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement pst = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             pst.setDate(1, Date.valueOf(reservation.getDateReservation()));
-            pst.setTime(2, Time.valueOf(reservation.getHeureDebut()));
-            pst.setTime(3, Time.valueOf(reservation.getHeureFin()));
+            pst.setString(2, reservation.getHeureDebut());
+            pst.setString(3, reservation.getHeureFin());
             pst.setString(4, reservation.getStatus());
             pst.setInt(5, reservation.getNombreParticipants());
             pst.setString(6, reservation.getMotif());
             pst.setString(7, reservation.getCin());
+            pst.setInt(8, reservation.getIdUtilisateur());
+            pst.setInt(9, reservation.getIdRessource());
             
             pst.executeUpdate();
             
             // Get the generated ID
             try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    reservation.setId(generatedKeys.getInt(1));
+                    reservation.setIdRes(generatedKeys.getInt(1));
                 }
             }
         }
     }
 
     public void update(Reservation reservation) throws SQLException {
-        String query = "UPDATE reservation SET date_reservation=?, heure_debut=?, heure_fin=?, status=?, " +
-                      "nombre_participants=?, motif=?, cin=? WHERE id=?";
+        String query = "UPDATE reservation SET dateReservation=?, heureDebut=?, heureFin=?, status=?, " +
+                      "nombreParticipants=?, motif=?, cin=?, idUtilisateur=?, idRessource=? WHERE idRes=?";
         
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             pst.setDate(1, Date.valueOf(reservation.getDateReservation()));
-            pst.setTime(2, Time.valueOf(reservation.getHeureDebut()));
-            pst.setTime(3, Time.valueOf(reservation.getHeureFin()));
+            pst.setString(2, reservation.getHeureDebut());
+            pst.setString(3, reservation.getHeureFin());
             pst.setString(4, reservation.getStatus());
             pst.setInt(5, reservation.getNombreParticipants());
             pst.setString(6, reservation.getMotif());
             pst.setString(7, reservation.getCin());
-            pst.setInt(8, reservation.getId());
+            pst.setInt(8, reservation.getIdUtilisateur());
+            pst.setInt(9, reservation.getIdRessource());
+            pst.setInt(10, reservation.getIdRes());
             
             pst.executeUpdate();
         }
     }
 
     public void delete(int id) throws SQLException {
-        String query = "DELETE FROM reservation WHERE id=?";
+        String query = "DELETE FROM reservation WHERE idRes=?";
         
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             pst.setInt(1, id);
@@ -75,16 +78,17 @@ public class ReservationService {
              ResultSet rs = st.executeQuery(query)) {
             
             while (rs.next()) {
-                Reservation reservation = new Reservation(
-                    rs.getInt("id"),
-                    rs.getDate("date_reservation").toLocalDate(),
-                    rs.getTime("heure_debut").toLocalTime(),
-                    rs.getTime("heure_fin").toLocalTime(),
-                    rs.getString("status"),
-                    rs.getInt("nombre_participants"),
-                    rs.getString("motif"),
-                    rs.getString("cin")
-                );
+                Reservation reservation = new Reservation();
+                reservation.setIdRes(rs.getInt("idRes"));
+                reservation.setDateReservation(rs.getDate("dateReservation").toLocalDate());
+                reservation.setHeureDebut(rs.getString("heureDebut"));
+                reservation.setHeureFin(rs.getString("heureFin"));
+                reservation.setStatus(rs.getString("status"));
+                reservation.setNombreParticipants(rs.getInt("nombreParticipants"));
+                reservation.setMotif(rs.getString("motif"));
+                reservation.setCin(rs.getString("cin"));
+                reservation.setIdUtilisateur(rs.getInt("idUtilisateur"));
+                reservation.setIdRessource(rs.getInt("idRessource"));
                 reservations.add(reservation);
             }
         }
@@ -92,19 +96,19 @@ public class ReservationService {
         return reservations;
     }
 
-    public boolean hasTimeConflict(LocalDate date, LocalTime startTime, LocalTime endTime, Integer excludeId) throws SQLException {
-        String query = "SELECT COUNT(*) FROM reservation WHERE date_reservation = ? " +
-                      "AND ((heure_debut <= ? AND heure_fin > ?) OR (heure_debut < ? AND heure_fin >= ?))";
+    public boolean hasTimeConflict(LocalDate date, String startTime, String endTime, Integer excludeId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM reservation WHERE dateReservation = ? " +
+                      "AND ((heureDebut <= ? AND heureFin > ?) OR (heureDebut < ? AND heureFin >= ?))";
         if (excludeId != null) {
-            query += " AND id != ?";
+            query += " AND idRes != ?";
         }
         
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             pst.setDate(1, Date.valueOf(date));
-            pst.setTime(2, Time.valueOf(endTime));
-            pst.setTime(3, Time.valueOf(startTime));
-            pst.setTime(4, Time.valueOf(endTime));
-            pst.setTime(5, Time.valueOf(startTime));
+            pst.setString(2, endTime);
+            pst.setString(3, startTime);
+            pst.setString(4, endTime);
+            pst.setString(5, startTime);
             if (excludeId != null) {
                 pst.setInt(6, excludeId);
             }

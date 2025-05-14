@@ -1,33 +1,35 @@
 package tn.esprit.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Reservation {
     private int idRes;
-    private Date dateReservation;
+    private LocalDate dateReservation;
     private String heureDebut;
     private String heureFin;
     private String status;
     private int nombreParticipants;
     private String motif;
+    private String cin;
     private int idUtilisateur;
     private int idRessource;
 
     public Reservation() {
     }
 
-    public Reservation(Date dateReservation, String heureDebut, String heureFin, String status, int nombreParticipants, String motif, int idUtilisateur, int idRessource) {
+    public Reservation(LocalDate dateReservation, String heureDebut, String heureFin, 
+                      String status, int nombreParticipants, String motif, String cin) {
         this.dateReservation = dateReservation;
         this.heureDebut = heureDebut;
         this.heureFin = heureFin;
         this.status = status;
         this.nombreParticipants = nombreParticipants;
         this.motif = motif;
-        this.idUtilisateur = idUtilisateur;
-        this.idRessource = idRessource;
+        this.cin = cin;
     }
 
-    public Reservation(int idRes, Date dateReservation, String heureDebut, String heureFin, String status, int nombreParticipants, String motif, int idUtilisateur, int idRessource) {
+    public Reservation(int idRes, LocalDate dateReservation, String heureDebut, String heureFin, 
+                      String status, int nombreParticipants, String motif, String cin) {
         this.idRes = idRes;
         this.dateReservation = dateReservation;
         this.heureDebut = heureDebut;
@@ -35,8 +37,7 @@ public class Reservation {
         this.status = status;
         this.nombreParticipants = nombreParticipants;
         this.motif = motif;
-        this.idUtilisateur = idUtilisateur;
-        this.idRessource = idRessource;
+        this.cin = cin;
     }
 
     public int getIdRes() {
@@ -47,11 +48,11 @@ public class Reservation {
         this.idRes = idRes;
     }
 
-    public Date getDateReservation() {
+    public LocalDate getDateReservation() {
         return dateReservation;
     }
 
-    public void setDateReservation(Date dateReservation) {
+    public void setDateReservation(LocalDate dateReservation) {
         this.dateReservation = dateReservation;
     }
 
@@ -95,6 +96,14 @@ public class Reservation {
         this.motif = motif;
     }
 
+    public String getCin() {
+        return cin;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
+
     public int getIdUtilisateur() {
         return idUtilisateur;
     }
@@ -121,6 +130,7 @@ public class Reservation {
                 ", status='" + status + '\'' +
                 ", nombreParticipants=" + nombreParticipants +
                 ", motif='" + motif + '\'' +
+                ", cin='" + cin + '\'' +
                 ", idUtilisateur=" + idUtilisateur +
                 ", idRessource=" + idRessource +
                 '}';

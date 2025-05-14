@@ -139,50 +139,13 @@ public class ServiceReservation implements IService<Reservation> {
         try {
             ensureConnection();
 
-            // First check the table structure and get the actual date column name
-            String dateColumnName = null;
-            try (Statement stmt = cnx.createStatement()) {
-                ResultSet rs = stmt.executeQuery("SHOW COLUMNS FROM `reservation`");
-                System.out.println("\nExisting table columns:");
-
-                while (rs.next()) {
-                    String field = rs.getString("Field");
-                    String type = rs.getString("Type");
-                    System.out.println(" - " + field + " - " + type);
-
-                    // Common variations of date column names
-                    if (field.equalsIgnoreCase("datereservation") ||
-                        field.equalsIgnoreCase("date_reservation") ||
-                        field.equalsIgnoreCase("dateRes") ||
-                        field.equalsIgnoreCase("date_res") ||
-                        field.equalsIgnoreCase("date") ||
-                        field.toLowerCase().contains("date")) {
-                        dateColumnName = field;
-                        System.out.println("Found date column: " + dateColumnName);
-                        break;
-                    }
-                }
-            } catch (SQLException e) {
-                System.err.println("Warning: Could not examine table structure: " + e.getMessage());
-                // Fall back to default name if we can't check
-                dateColumnName = "date_reservation";
-            }
-
-            if (dateColumnName == null) {
-                System.err.println("WARNING: Could not find any date column in the table!");
-                System.err.println("Using default column name 'date_reservation' as fallback");
-                dateColumnName = "date_reservation";
-            }
-
-            // Use exact field names from the entity class
-            System.out.println("Using entity field names as column names");
-            String qry = "INSERT INTO `reservation` (`dateReservation`, `heureDebut`, `heureFin`, `status`, "
-                        + "`nombreParticipants`, `motif`, `idUtilisateur`, `idRessource`) "
+            String qry = "INSERT INTO `reservation` (`date_reservation`, `heure_debut`, `heure_fin`, `status`, "
+                        + "`nombre_participants`, `motif`, `id_utilisateur`, `id_ressource`) "
                         + "VALUES (?,?,?,?,?,?,?,?)";
 
             System.out.println("Executing query: " + qry);
             PreparedStatement pstm = cnx.prepareStatement(qry);
-            pstm.setDate(1, new java.sql.Date(reservation.getDateReservation().getTime()));
+            pstm.setDate(1, java.sql.Date.valueOf(reservation.getDateReservation()));
             pstm.setString(2, reservation.getHeureDebut());
             pstm.setString(3, reservation.getHeureFin());
             pstm.setString(4, reservation.getStatus());
@@ -192,36 +155,8 @@ public class ServiceReservation implements IService<Reservation> {
             pstm.setInt(8, reservation.getIdRessource());
             pstm.executeUpdate();
             System.out.println("Insert successful!");
-
         } catch (SQLException e) {
-            // Print detailed error for diagnosis
             System.err.println("Error adding reservation: " + e.getMessage());
-            System.err.println("SQL State: " + e.getSQLState());
-            System.err.println("Error Code: " + e.getErrorCode());
-
-            // If we get a column not found error, try to find the date column
-            if (e.getMessage().contains("Unknown column")) {
-                System.err.println("\nAttempting to determine correct column names...");
-                try (Statement stmt = cnx.createStatement()) {
-                    ResultSet rs = stmt.executeQuery("SHOW COLUMNS FROM `reservation` WHERE Field LIKE '%date%' OR Field LIKE '%reservation%'");
-                    while (rs.next()) {
-                        System.out.println("Found possible date column: " + rs.getString("Field"));
-                    }
-
-                    // Show all columns for reference
-                    System.out.println("\nAll columns in reservation table:");
-                    rs = stmt.executeQuery("SHOW COLUMNS FROM `reservation`");
-                    while (rs.next()) {
-                        System.out.println(" - " + rs.getString("Field"));
-                    }
-                } catch (SQLException e2) {
-                    System.err.println("Error checking columns: " + e2.getMessage());
-                }
-            }
-
-            // Print full table structure for debugging
-            debugPrintTableStructure("reservation");
-
             throw new RuntimeException("Failed to add reservation", e);
         }
     }
@@ -236,15 +171,15 @@ public class ServiceReservation implements IService<Reservation> {
             ResultSet rs = stm.executeQuery(qry);
             while (rs.next()) {
                 Reservation r = new Reservation();
-                r.setIdRes(rs.getInt("idRes"));
-                r.setDateReservation(rs.getDate("dateReservation"));
-                r.setHeureDebut(rs.getString("heureDebut"));
-                r.setHeureFin(rs.getString("heureFin"));
+                r.setIdRes(rs.getInt("id_res"));
+                r.setDateReservation(rs.getDate("date_reservation").toLocalDate());
+                r.setHeureDebut(rs.getString("heure_debut"));
+                r.setHeureFin(rs.getString("heure_fin"));
                 r.setStatus(rs.getString("status"));
-                r.setNombreParticipants(rs.getInt("nombreParticipants"));
+                r.setNombreParticipants(rs.getInt("nombre_participants"));
                 r.setMotif(rs.getString("motif"));
-                r.setIdUtilisateur(rs.getInt("idUtilisateur"));
-                r.setIdRessource(rs.getInt("idRessource"));
+                r.setIdUtilisateur(rs.getInt("id_utilisateur"));
+                r.setIdRessource(rs.getInt("id_ressource"));
                 reservations.add(r);
             }
         } catch (SQLException e) {
@@ -256,11 +191,12 @@ public class ServiceReservation implements IService<Reservation> {
 
     @Override
     public void update(Reservation reservation) {
-        String qry = "UPDATE `reservation` SET `dateReservation`=?, `heureDebut`=?, `heureFin`=?, `status`=?, `nombreParticipants`=?, `motif`=?, `idUtilisateur`=?, `idRessource`=? WHERE `idRes`=?";
+        String qry = "UPDATE `reservation` SET `date_reservation`=?, `heure_debut`=?, `heure_fin`=?, `status`=?, " +
+                    "`nombre_participants`=?, `motif`=?, `id_utilisateur`=?, `id_ressource`=? WHERE `id_res`=?";
         try {
             ensureConnection();
             PreparedStatement pstm = cnx.prepareStatement(qry);
-            pstm.setDate(1, new java.sql.Date(reservation.getDateReservation().getTime()));
+            pstm.setDate(1, java.sql.Date.valueOf(reservation.getDateReservation()));
             pstm.setString(2, reservation.getHeureDebut());
             pstm.setString(3, reservation.getHeureFin());
             pstm.setString(4, reservation.getStatus());
@@ -278,7 +214,7 @@ public class ServiceReservation implements IService<Reservation> {
 
     @Override
     public void delete(Reservation reservation) {
-        String qry = "DELETE FROM `reservation` WHERE `idRes`=?";
+        String qry = "DELETE FROM `reservation` WHERE `id_res`=?";
         try {
             ensureConnection();
             PreparedStatement pstm = cnx.prepareStatement(qry);
@@ -293,7 +229,7 @@ public class ServiceReservation implements IService<Reservation> {
     // Get reservations by user ID
     public List<Reservation> getByUserId(int userId) {
         List<Reservation> reservations = new ArrayList<>();
-        String qry = "SELECT * FROM `reservation` WHERE `idUtilisateur`=?";
+        String qry = "SELECT * FROM `reservation` WHERE `id_utilisateur`=?";
         try {
             ensureConnection();
             PreparedStatement pstm = cnx.prepareStatement(qry);
@@ -301,15 +237,15 @@ public class ServiceReservation implements IService<Reservation> {
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
                 Reservation r = new Reservation();
-                r.setIdRes(rs.getInt("idRes"));
-                r.setDateReservation(rs.getDate("dateReservation"));
-                r.setHeureDebut(rs.getString("heureDebut"));
-                r.setHeureFin(rs.getString("heureFin"));
+                r.setIdRes(rs.getInt("id_res"));
+                r.setDateReservation(rs.getDate("date_reservation").toLocalDate());
+                r.setHeureDebut(rs.getString("heure_debut"));
+                r.setHeureFin(rs.getString("heure_fin"));
                 r.setStatus(rs.getString("status"));
-                r.setNombreParticipants(rs.getInt("nombreParticipants"));
+                r.setNombreParticipants(rs.getInt("nombre_participants"));
                 r.setMotif(rs.getString("motif"));
-                r.setIdUtilisateur(rs.getInt("idUtilisateur"));
-                r.setIdRessource(rs.getInt("idRessource"));
+                r.setIdUtilisateur(rs.getInt("id_utilisateur"));
+                r.setIdRessource(rs.getInt("id_ressource"));
                 reservations.add(r);
             }
         } catch (SQLException e) {
@@ -322,7 +258,7 @@ public class ServiceReservation implements IService<Reservation> {
     // Get reservations by resource ID
     public List<Reservation> getByRessourceId(int ressourceId) {
         List<Reservation> reservations = new ArrayList<>();
-        String qry = "SELECT * FROM `reservation` WHERE `idRessource`=?";
+        String qry = "SELECT * FROM `reservation` WHERE `id_ressource`=?";
         try {
             ensureConnection();
             PreparedStatement pstm = cnx.prepareStatement(qry);
@@ -330,15 +266,15 @@ public class ServiceReservation implements IService<Reservation> {
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
                 Reservation r = new Reservation();
-                r.setIdRes(rs.getInt("idRes"));
-                r.setDateReservation(rs.getDate("dateReservation"));
-                r.setHeureDebut(rs.getString("heureDebut"));
-                r.setHeureFin(rs.getString("heureFin"));
+                r.setIdRes(rs.getInt("id_res"));
+                r.setDateReservation(rs.getDate("date_reservation").toLocalDate());
+                r.setHeureDebut(rs.getString("heure_debut"));
+                r.setHeureFin(rs.getString("heure_fin"));
                 r.setStatus(rs.getString("status"));
-                r.setNombreParticipants(rs.getInt("nombreParticipants"));
+                r.setNombreParticipants(rs.getInt("nombre_participants"));
                 r.setMotif(rs.getString("motif"));
-                r.setIdUtilisateur(rs.getInt("idUtilisateur"));
-                r.setIdRessource(rs.getInt("idRessource"));
+                r.setIdUtilisateur(rs.getInt("id_utilisateur"));
+                r.setIdRessource(rs.getInt("id_ressource"));
                 reservations.add(r);
             }
         } catch (SQLException e) {
@@ -350,8 +286,8 @@ public class ServiceReservation implements IService<Reservation> {
 
     // Check for resource availability
     public boolean isResourceAvailable(int resourceId, Date date, String startTime, String endTime) {
-        String qry = "SELECT COUNT(*) FROM `reservation` WHERE `idRessource`=? AND `dateReservation`=? " +
-                "AND ((`heureDebut` <= ? AND `heureFin` > ?) OR (`heureDebut` < ? AND `heureFin` >= ?)) " +
+        String qry = "SELECT COUNT(*) FROM `reservation` WHERE `id_ressource`=? AND `date_reservation`=? " +
+                "AND ((`heure_debut` <= ? AND `heure_fin` > ?) OR (`heure_debut` < ? AND `heure_fin` >= ?)) " +
                 "AND `status` != 'ANNULEE'";
         try {
             ensureConnection();

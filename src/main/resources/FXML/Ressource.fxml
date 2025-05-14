@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -7,108 +7,201 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="tn.esprit.controllers.RessourceController">
-    <!-- Sidebar -->
-    <VBox prefWidth="200.0" style="-fx-background-color: #3B5C95;" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+<AnchorPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.RessourceController">
+
+    <!-- Sidebar - Fixed width and anchored to top/bottom/left -->
+    <VBox maxWidth="220" minWidth="220" prefWidth="220" spacing="20" style="-fx-background-color: #4169E1;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0">
         <padding>
-            <Insets top="20.0" left="20.0" bottom="20.0" right="20.0"/>
+            <Insets bottom="40" left="30" right="30" top="40" />
         </padding>
 
-        <!-- MTE Logo/Title -->
-        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" text="MTE &#x1F3DF;"/>
-        <VBox spacing="20" style="-fx-padding: 40 0 0 0;">
-            <!-- Demandes -->
+        <Label style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18;" text="Menu Principal" />
 
-            <!-- Réservations (Active) -->
-            <Button onAction="#navigateToReservations" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="📅 Réservations"/>
-            <!-- Évènements -->
-            <Button onAction="#navigateToEvenements" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="🎉 Évènements"/>
-            <!-- Projets -->
-            <Button onAction="#navigateToProjets" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="📊 Projets"/>
-            <!-- Paramètres -->
-            <Button onAction="#navigateToParametres" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="⚙️ Paramètres"/>
-            <!-- Mon Profil -->
-            <Button onAction="#navigateToProfil" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;" text="👤 Mon Profil"/>
+        <VBox spacing="10">
+            <Button alignment="CENTER_LEFT" style="-fx-background-color: #315bb5; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16;" text="   Tableau de bord">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true" />
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
+
+            <Button alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-opacity: 0.8; -fx-font-size: 16;" text="   Demandes">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/output-onlinepngtools (5).png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
+
+            <Button alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-opacity: 0.8; -fx-font-size: 16;" text="   Réservations">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/tableau-de-reservation (3).png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
+
+            <Button alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-opacity: 0.8; -fx-font-size: 16;" text="   Calendrier">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/etoile-du-calendrier.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
+
+            <Button alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-opacity: 0.8; -fx-font-size: 16;" text="   Projets">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/plan.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
+
+            <Button alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-opacity: 0.8; -fx-font-size: 16;" text="   Paramètres">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/parametres.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
+
+            <Button fx:id="profileButton" alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-opacity: 0.8; -fx-font-size: 16;" text="   Mon Profil">
+                <graphic>
+                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/user.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="10" right="10" />
+                </padding>
+            </Button>
         </VBox>
-        <VBox alignment="BOTTOM_LEFT" VBox.vgrow="ALWAYS">
-            <!-- Déconnexion -->
-            <Button onAction="#navigateToLogout" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="🚪 Déconnexion"/>
-            <!-- Version -->
-            <Label style="-fx-text-fill: #B0BEC5; -fx-font-size: 12px; -fx-padding: 10 0 0 0;" text="Version 1.0.1"/>
-        </VBox>
+
+        <Spacer VBox.vgrow="ALWAYS" />
+
+        <Button fx:id="logoutButton" style="-fx-background-color: #DB4495; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 10 20;" text="Déconnexion" />
     </VBox>
 
-    <!-- Main Content -->
-    <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #F5F7FA;" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+    <!-- Main Content - Anchored around the sidebar -->
+    <VBox style="-fx-background-color: #F5F7FA;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="220" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            <Insets bottom="20" left="30" right="30" top="20" />
         </padding>
 
         <!-- Header with User Info -->
-        <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 20 20 0;">
-            <Label style="-fx-font-size: 16px; -fx-text-fill: #FF4081;" text="Oussema Neffati"/>
-            <Button style="-fx-background-color: transparent; -fx-text-fill: #FF4081;" text="👤"/>
+        <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 0 20 0;">
+            <Label style="-fx-font-size: 16; -fx-text-fill: #FF4081;" text="Oussema Neffati" />
+            <Button style="-fx-background-color: transparent; -fx-text-fill: #FF4081; -fx-padding: 5;" text="👤" />
         </HBox>
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Gestion des Ressources"/>
+        <Label style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 0 0 20 0;" text="Gestion des Ressources" />
 
-        <!-- Nom -->
-        <VBox spacing="5">
-            <Label text="Nom"/>
-            <TextField fx:id="nomField" promptText="Entrez le nom de la ressource"/>
-        </VBox>
+        <!-- Form Fields -->
+        <GridPane hgap="20" style="-fx-padding: 0 0 20 0;" vgap="15">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="200" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="200" />
+            </columnConstraints>
 
-        <!-- Catégorie -->
-        <VBox spacing="5">
-            <Label text="Catégorie"/>
-            <ComboBox fx:id="categorieField" promptText="Sélectionner une catégorie"/>
-        </VBox>
+            <rowConstraints>
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="120" prefHeight="120" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="40" prefHeight="40" vgrow="SOMETIMES" />
+            </rowConstraints>
 
-        <!-- Capacité -->
-        <VBox spacing="5">
-            <Label text="Capacité"/>
-            <TextField fx:id="capaciteField" promptText="Entrez la capacité"/>
-        </VBox>
+            <!-- Row 1 -->
+            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label style="-fx-font-weight: bold;" text="Nom" />
+                <TextField fx:id="nomField" promptText="Entrez le nom de la ressource" style="-fx-padding: 8; -fx-background-radius: 5;" />
+            </VBox>
 
-        <!-- Tarif Horaire -->
-        <VBox spacing="5">
-            <Label text="Tarif Horaire"/>
-            <TextField fx:id="tarifHoraireField" promptText="Entrez le tarif horaire"/>
-        </VBox>
+            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label style="-fx-font-weight: bold;" text="Catégorie" />
+                <ComboBox fx:id="categorieField" promptText="Sélectionner une catégorie" style="-fx-padding: 8; -fx-background-radius: 5;" />
+            </VBox>
 
-        <!-- Horaire Ouverture -->
-        <VBox spacing="5">
-            <Label text="Horaire d'Ouverture"/>
-            <TextField fx:id="horaireOuvertureField" promptText="Ex: 08:00"/>
-        </VBox>
+            <!-- Row 2 -->
+            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label style="-fx-font-weight: bold;" text="Capacité" />
+                <TextField fx:id="capaciteField" promptText="Entrez la capacité" style="-fx-padding: 8; -fx-background-radius: 5;" />
+            </VBox>
 
-        <!-- Horaire Fermeture -->
-        <VBox spacing="5">
-            <Label text="Horaire de Fermeture"/>
-            <TextField fx:id="horaireFermetureField" promptText="Ex: 18:00"/>
-        </VBox>
+            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label style="-fx-font-weight: bold;" text="Tarif Horaire" />
+                <TextField fx:id="tarifHoraireField" promptText="Entrez le tarif horaire" style="-fx-padding: 8; -fx-background-radius: 5;" />
+            </VBox>
 
-        <!-- Description -->
-        <VBox spacing="5">
-            <Label text="Description"/>
-            <TextArea fx:id="descriptionField" promptText="Entrez une description" prefHeight="100.0"/>
-        </VBox>
+            <!-- Row 3 -->
+            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <Label style="-fx-font-weight: bold;" text="Horaire d'Ouverture" />
+                <TextField fx:id="horaireOuvertureField" promptText="Ex: 08:00" style="-fx-padding: 8; -fx-background-radius: 5;" />
+            </VBox>
 
-        <!-- Disponibilité -->
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label text="Disponible"/>
-            <CheckBox fx:id="disponibleCheckBox" selected="true"/>
-        </HBox>
+            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Label style="-fx-font-weight: bold;" text="Horaire de Fermeture" />
+                <TextField fx:id="horaireFermetureField" promptText="Ex: 18:00" style="-fx-padding: 8; -fx-background-radius: 5;" />
+            </VBox>
+
+            <!-- Description (full width) -->
+            <VBox spacing="5" GridPane.columnSpan="2" GridPane.rowIndex="6">
+                <Label style="-fx-font-weight: bold;" text="Description" />
+                <TextArea fx:id="descriptionField" promptText="Entrez une description" style="-fx-padding: 8; -fx-background-radius: 5; -fx-min-height: 100;" />
+            </VBox>
+
+            <!-- Disponibilité -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 5 0 0 0;" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                <Label style="-fx-font-weight: bold;" text="Disponible" />
+                <CheckBox fx:id="disponibleCheckBox" selected="true" style="-fx-padding: 5;" />
+            </HBox>
+        </GridPane>
 
         <!-- Buttons -->
-        <HBox alignment="CENTER" spacing="20">
-            <Button fx:id="saveButton" onAction="#saveRessource" style="-fx-background-color: #3B5C95; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="Enregistrer"/>
-            <Button fx:id="backButton" onAction="#goBack" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-border-radius: 20; -fx-background-radius: 20;" text="Retour"/>
+        <HBox alignment="CENTER" spacing="30" style="-fx-padding: 20 0 0 0;">
+            <Button fx:id="saveButton" onAction="#saveRessource" style="-fx-background-color: #3B5C95; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 10 30; -fx-border-radius: 20; -fx-background-radius: 20;" text="Enregistrer" />
+            <Button fx:id="backButton" onAction="#goBack" style="-fx-background-color: #FF4081; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 10 30; -fx-border-radius: 20; -fx-background-radius: 20;" text="Retour" />
         </HBox>
     </VBox>
 </AnchorPane>

@@ -1,45 +1,52 @@
 package tn.esprit.utils;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MyDataBase {
+    private final String URL = "jdbc:mysql://127.0.0.1:3306/base_commune";
+    private final String USER = "root";
+    private final String PASSWORD = "";
+    private Connection cnx;
     private static MyDataBase instance;
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/base_commune";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
-    private HikariDataSource dataSource;
 
     private MyDataBase() {
-        initializeDataSource();
+        try {
+            cnx = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Connected to Database!");
+            initializeTables();
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 
-    private void initializeDataSource() {
+    private void initializeTables() {
         try {
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(URL);
-            config.setUsername(USERNAME);
-            config.setPassword(PASSWORD);
+            Statement stmt = cnx.createStatement();
             
-            // Connection pool settings
-            config.setMaximumPoolSize(10);
-            config.setMinimumIdle(5);
-            config.setIdleTimeout(300000); // 5 minutes
-            config.setConnectionTimeout(20000); // 20 seconds
-            config.setAutoCommit(true);
+            // Create reservation table
+            String createReservationTable = "CREATE TABLE IF NOT EXISTS reservation (" +
+                "idRes INT AUTO_INCREMENT PRIMARY KEY, " +
+                "dateReservation DATE NOT NULL, " +
+                "heureDebut VARCHAR(10) NOT NULL, " +
+                "heureFin VARCHAR(10) NOT NULL, " +
+                "status VARCHAR(50) NOT NULL, " +
+                "nombreParticipants INT NOT NULL, " +
+                "motif TEXT NOT NULL, " +
+                "cin VARCHAR(8) NOT NULL, " +
+                "idUtilisateur INT NOT NULL, " +
+                "idRessource INT NOT NULL, " +
+                "INDEX idx_utilisateur (idUtilisateur), " +
+                "INDEX idx_ressource (idRessource)" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
             
-            // MySQL specific settings
-            config.addDataSourceProperty("cachePrepStmts", "true");
-            config.addDataSourceProperty("prepStmtCacheSize", "250");
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            config.addDataSourceProperty("useServerPrepStmts", "true");
+            stmt.executeUpdate(createReservationTable);
+            System.out.println("Reservation table created or already exists");
             
-            dataSource = new HikariDataSource(config);
-            System.out.println("Connection pool initialized successfully.");
-        } catch (Exception e) {
-            System.err.println("Error initializing connection pool: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Error initializing tables: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -52,19 +59,6 @@ public class MyDataBase {
     }
 
     public Connection getCnx() {
-        try {
-            return dataSource.getConnection();
-        } catch (SQLException e) {
-            System.err.println("Error getting connection from pool: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Cleanup method to be called when shutting down the application
-    public void closePool() {
-        if (dataSource != null && !dataSource.isClosed()) {
-            dataSource.close();
-        }
+        return cnx;
     }
 }

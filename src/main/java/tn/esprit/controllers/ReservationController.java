@@ -5,7 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.stream.Collectors;
@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.animation.ScaleTransition;
 import javafx.util.Duration;
+import tn.esprit.models.Reservation;
 import tn.esprit.services.MailerService;
 import java.time.format.DateTimeFormatter;
 import javafx.application.Platform;
@@ -126,11 +127,11 @@ public class ReservationController {
             heureFinComboBox.getValue() != null) {
             
             LocalDate selectedDate = dateReservationPicker.getValue();
-            LocalTime startTime = LocalTime.parse(heureDebutComboBox.getValue() + ":00");
-            LocalTime endTime = LocalTime.parse(heureFinComboBox.getValue() + ":00");
+            String startTime = heureDebutComboBox.getValue();
+            String endTime = heureFinComboBox.getValue();
 
             // Check if end time is after start time
-            if (endTime.isBefore(startTime) || endTime.equals(startTime)) {
+            if (endTime.compareTo(startTime) <= 0) {
                 showAlert(Alert.AlertType.ERROR, "Erreur", "L'heure de fin doit être après l'heure de début");
                 heureFinComboBox.setValue(null);
                 return;
@@ -228,7 +229,6 @@ public class ReservationController {
         String toEmail = "rouaghaffari940@gmail.com";
         String subject = "Nouvelle Réservation - " + reservation.getDateReservation();
         
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
         String body = String.format(
@@ -243,8 +243,8 @@ public class ReservationController {
             "Cordialement,\n" +
             "L'équipe de gestion des réservations",
             reservation.getDateReservation().format(dateFormatter),
-            reservation.getHeureDebut().format(timeFormatter),
-            reservation.getHeureFin().format(timeFormatter),
+            reservation.getHeureDebut(),
+            reservation.getHeureFin(),
             reservation.getStatus(),
             reservation.getNombreParticipants(),
             reservation.getCin(),
@@ -288,8 +288,14 @@ public class ReservationController {
         Button deleteButton = new Button("Supprimer");
         deleteButton.getStyleClass().add("delete-button");
         deleteButton.setOnAction(e -> {
-            reservationList.remove(reservation);
-            reservationCardsContainer.getChildren().remove(card);
+            try {
+                reservationService.delete(reservation.getIdRes());
+                reservationList.remove(reservation);
+                reservationCardsContainer.getChildren().remove(card);
+            } catch (SQLException ex) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", 
+                    "Impossible de supprimer la réservation: " + ex.getMessage());
+            }
         });
         
         buttons.getChildren().addAll(editButton, deleteButton);
@@ -328,34 +334,14 @@ public class ReservationController {
 
     @FXML
     private void updateReservation() {
-        VBox selectedReservation = reservationCardsContainer.getChildren().stream()
-            .map(node -> (VBox) node)
-            .filter(vbox -> vbox.getChildren().get(0) instanceof Label)
-            .map(vbox -> (Label) vbox.getChildren().get(0))
-            .filter(label -> label.getText().equals(dateReservationPicker.getValue().toString()))
-            .findFirst()
-            .map(label -> reservationCardsContainer.getChildren().stream()
-                .filter(node -> node instanceof VBox)
-                .filter(node -> ((VBox) node).getChildren().get(0) instanceof Label)
-                .filter(node -> ((Label) ((VBox) node).getChildren().get(0)).getText().equals(label.getText()))
-                .findFirst()
-                .map(node -> (VBox) node)
-                .orElse(null)
-            )
-            .orElse(null);
-
-        if (selectedReservation != null) {
-            try {
-                Reservation updatedReservation = createReservationFromForm();
-                updatedReservation.setId(reservationList.indexOf(reservationCardsContainer.getChildren().indexOf(selectedReservation)));
-                reservationList.set(reservationList.indexOf(reservationCardsContainer.getChildren().indexOf(selectedReservation)), updatedReservation);
-                resetForm();
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation modifiée avec succès");
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la modification: " + e.getMessage());
-            }
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Avertissement", "Veuillez sélectionner une réservation à modifier");
+        try {
+            Reservation reservation = createReservationFromForm();
+            reservationService.update(reservation);
+            loadReservations(); // Reload all reservations
+            resetForm();
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation modifiée avec succès");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la modification: " + e.getMessage());
         }
     }
 
@@ -383,7 +369,7 @@ public class ReservationController {
                 Reservation reservation = reservationList.get(index);
                 
                 // Delete from database
-                reservationService.delete(reservation.getId());
+                reservationService.delete(reservation.getIdRes());
                 
                 // Remove from UI
                 reservationList.remove(index);
@@ -407,13 +393,11 @@ public class ReservationController {
         LocalDate date = dateReservationPicker.getValue();
         if (date == null) throw new IllegalArgumentException("La date est requise");
 
-        String heureDebutStr = heureDebutComboBox.getValue();
-        if (heureDebutStr == null) throw new IllegalArgumentException("L'heure de début est requise");
-        LocalTime heureDebut = LocalTime.parse(heureDebutStr + ":00");
+        String heureDebut = heureDebutComboBox.getValue();
+        if (heureDebut == null) throw new IllegalArgumentException("L'heure de début est requise");
 
-        String heureFinStr = heureFinComboBox.getValue();
-        if (heureFinStr == null) throw new IllegalArgumentException("L'heure de fin est requise");
-        LocalTime heureFin = LocalTime.parse(heureFinStr + ":00");
+        String heureFin = heureFinComboBox.getValue();
+        if (heureFin == null) throw new IllegalArgumentException("L'heure de fin est requise");
 
         String status = statusComboBox.getValue();
         if (status == null) throw new IllegalArgumentException("Le statut est requis");
@@ -430,27 +414,27 @@ public class ReservationController {
         if (cin.length() != 8) throw new IllegalArgumentException("Le CIN doit contenir exactement 8 chiffres");
         if (!cin.matches("\\d{8}")) throw new IllegalArgumentException("Le CIN doit contenir uniquement des chiffres");
 
-        return new Reservation(
-                reservationList.size() + 1,
-                date,
-                heureDebut,
-                heureFin,
-                status,
-                nombreParticipants,
-                motif,
-                cin
-        );
+        Reservation reservation = new Reservation();
+        reservation.setDateReservation(date);
+        reservation.setHeureDebut(heureDebut);
+        reservation.setHeureFin(heureFin);
+        reservation.setStatus(status);
+        reservation.setNombreParticipants(nombreParticipants);
+        reservation.setMotif(motif);
+        reservation.setCin(cin);
+        // Set default values for user and resource IDs
+        // TODO: Replace these with actual values from your authentication system
+        reservation.setIdUtilisateur(1); // Default user ID
+        reservation.setIdRessource(1);   // Default resource ID
+
+        return reservation;
     }
 
     // Helper method to populate form with selected reservation
     private void populateForm(Reservation reservation) {
         dateReservationPicker.setValue(reservation.getDateReservation());
-        // Format the time properly for the ComboBox values
-        String heureDebutStr = String.format("%02d:00", reservation.getHeureDebut().getHour());
-        String heureFinStr = String.format("%02d:00", reservation.getHeureFin().getHour());
-
-        heureDebutComboBox.setValue(heureDebutStr);
-        heureFinComboBox.setValue(heureFinStr);
+        heureDebutComboBox.setValue(reservation.getHeureDebut());
+        heureFinComboBox.setValue(reservation.getHeureFin());
         statusComboBox.setValue(reservation.getStatus());
         nombreParticipantsField.setText(String.valueOf(reservation.getNombreParticipants()));
         motifField.setText(reservation.getMotif());
@@ -479,47 +463,5 @@ public class ReservationController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    // Reservation model class
-    public static class Reservation {
-        private int id;
-        private LocalDate dateReservation;
-        private LocalTime heureDebut;
-        private LocalTime heureFin;
-        private String status;
-        private int nombreParticipants;
-        private String motif;
-        private String cin;
-
-        public Reservation(int id, LocalDate dateReservation, LocalTime heureDebut, LocalTime heureFin,
-                           String status, int nombreParticipants, String motif, String cin) {
-            this.id = id;
-            this.dateReservation = dateReservation;
-            this.heureDebut = heureDebut;
-            this.heureFin = heureFin;
-            this.status = status;
-            this.nombreParticipants = nombreParticipants;
-            this.motif = motif;
-            this.cin = cin;
-        }
-
-        // Getters and setters
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
-        public LocalDate getDateReservation() { return dateReservation; }
-        public void setDateReservation(LocalDate dateReservation) { this.dateReservation = dateReservation; }
-        public LocalTime getHeureDebut() { return heureDebut; }
-        public void setHeureDebut(LocalTime heureDebut) { this.heureDebut = heureDebut; }
-        public LocalTime getHeureFin() { return heureFin; }
-        public void setHeureFin(LocalTime heureFin) { this.heureFin = heureFin; }
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
-        public int getNombreParticipants() { return nombreParticipants; }
-        public void setNombreParticipants(int nombreParticipants) { this.nombreParticipants = nombreParticipants; }
-        public String getMotif() { return motif; }
-        public void setMotif(String motif) { this.motif = motif; }
-        public String getCin() { return cin; }
-        public void setCin(String cin) { this.cin = cin; }
     }
 }
