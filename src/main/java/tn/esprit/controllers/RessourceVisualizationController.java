@@ -20,9 +20,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import tn.esprit.models.Ressource;
 import tn.esprit.services.ServiceRessource;
+import tn.esprit.services.QrCodeService;
 import javafx.scene.Node;
 import javafx.animation.ScaleTransition;
 import javafx.util.Duration;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.net.URL;
@@ -68,6 +72,7 @@ public class RessourceVisualizationController implements Initializable {
     private Label lblTarifMoyen;
 
     private ServiceRessource ressourceService;
+    private QrCodeService qrCodeService;
     private List<Ressource> ressources;
     private Map<String, Integer> resourceHistory;
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -75,6 +80,7 @@ public class RessourceVisualizationController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ressourceService = new ServiceRessource();
+        qrCodeService = new QrCodeService();
         resourceHistory = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
 
         // Initial setup
@@ -254,75 +260,88 @@ public class RessourceVisualizationController implements Initializable {
     }
 
     private VBox createResourceCard(Ressource ressource) {
-        VBox card = new VBox();
-        card.getStyleClass().add("resource-card");
+        VBox card = new VBox(10);
+        card.setStyle("-fx-background-color: white; -fx-padding: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
         card.setPrefWidth(300);
-        card.setMaxWidth(300);
-        card.setMinHeight(200);
-        card.setSpacing(10);
-        card.setPadding(new Insets(15));
 
         // Resource name
-        Label lblName = new Label(ressource.getNom());
-        lblName.getStyleClass().add("card-title");
+        Label nameLabel = new Label(ressource.getNom());
+        nameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
 
-        // Category with badge
-        HBox categoryBox = new HBox();
-        categoryBox.setSpacing(5);
-        Label badgeCategory = new Label(ressource.getCategorie());
-        badgeCategory.getStyleClass().add("category-badge");
-        categoryBox.getChildren().add(badgeCategory);
-
-        // Available status
-        Label lblStatus = new Label(ressource.isDisponible() ? "Disponible" : "Non disponible");
-        lblStatus.getStyleClass().add(ressource.isDisponible() ? "status-available" : "status-unavailable");
-
-        // Details
-        VBox detailsBox = new VBox();
-        detailsBox.setSpacing(5);
-
-        Label lblCapacite = new Label("Capacité: " + ressource.getCapacite());
-        Label lblTarif = new Label("Tarif: " + ressource.getTarifHoraire() + " €/h");
-        Label lblHoraires = new Label("Horaires: " + ressource.getHoraireOuverture() + " - " + ressource.getHoraireFermeture());
-
-        detailsBox.getChildren().addAll(lblCapacite, lblTarif, lblHoraires);
-
-        // Description
-        Text txtDescription = new Text(ressource.getDescription());
-        txtDescription.setWrappingWidth(270);
-
-        // Buttons container
-        HBox buttonsBox = new HBox();
-        buttonsBox.setSpacing(10);
-        buttonsBox.setAlignment(javafx.geometry.Pos.CENTER);
-        buttonsBox.setPadding(new Insets(10, 0, 0, 0));
-
-        // Edit button
-        Button editButton = new Button("Modifier");
-        editButton.getStyleClass().addAll("btn", "btn-edit");
-        editButton.setOnAction(e -> handleEditResource(ressource));
-
-        // Delete button
-        Button deleteButton = new Button("Supprimer");
-        deleteButton.getStyleClass().addAll("btn", "btn-delete");
-        deleteButton.setOnAction(e -> handleDeleteResource(ressource));
-
-        buttonsBox.getChildren().addAll(editButton, deleteButton);
-
-        // Add all elements to card
-        card.getChildren().addAll(
-                lblName,
-                categoryBox,
-                lblStatus,
-                new Separator(),
-                detailsBox,
-                txtDescription,
-                buttonsBox
+        // Resource details
+        VBox details = new VBox(5);
+        details.getChildren().addAll(
+            new Label("Catégorie: " + ressource.getCategorie()),
+            new Label("Capacité: " + ressource.getCapacite()),
+            new Label("Tarif: " + String.format("%.2f €/h", ressource.getTarifHoraire())),
+            new Label("Horaires: " + ressource.getHoraireOuverture() + " - " + ressource.getHoraireFermeture()),
+            new Label("Disponible: " + (ressource.isDisponible() ? "Oui" : "Non"))
         );
 
-        // Add hover effect
-        setupCardHoverEffect(card);
+        // Description with scroll capability
+        TextArea description = new TextArea(ressource.getDescription());
+        description.setWrapText(true);
+        description.setEditable(false);
+        description.setPrefRowCount(3);
+        description.setStyle("-fx-background-color: transparent;");
 
+        // QR Code
+        ImageView qrCodeView = new ImageView();
+        qrCodeView.setFitWidth(150);
+        qrCodeView.setFitHeight(150);
+        qrCodeView.setPreserveRatio(true);
+
+        try {
+            Image qrCodeImage = qrCodeService.getQrCodeForResource(ressource);
+            qrCodeView.setImage(qrCodeImage);
+        } catch (Exception e) {
+            System.err.println("Error generating QR code for resource: " + ressource.getNom());
+            e.printStackTrace();
+        }
+
+        // Make QR code clickable to show in larger view
+        qrCodeView.setOnMouseClicked(event -> {
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setTitle("QR Code - " + ressource.getNom());
+
+            ImageView largeQrView = new ImageView(qrCodeView.getImage());
+            largeQrView.setFitWidth(300);
+            largeQrView.setFitHeight(300);
+            largeQrView.setPreserveRatio(true);
+
+            VBox dialogVbox = new VBox(10);
+            dialogVbox.setPadding(new Insets(15));
+            dialogVbox.getChildren().addAll(
+                new Label("Scannez ce QR code pour accéder aux détails de la ressource"),
+                largeQrView
+            );
+
+            Scene dialogScene = new Scene(dialogVbox);
+            dialog.setScene(dialogScene);
+            dialog.show();
+        });
+
+        // Action buttons
+        Button editButton = new Button("Modifier");
+        editButton.setOnAction(e -> handleEditResource(ressource));
+
+        Button deleteButton = new Button("Supprimer");
+        deleteButton.setOnAction(e -> handleDeleteResource(ressource));
+
+        HBox buttons = new HBox(10);
+        buttons.getChildren().addAll(editButton, deleteButton);
+
+        // Add all components to card
+        card.getChildren().addAll(
+            nameLabel,
+            details,
+            description,
+            qrCodeView,
+            buttons
+        );
+
+        setupCardHoverEffect(card);
         return card;
     }
 

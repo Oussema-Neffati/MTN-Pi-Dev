@@ -12,7 +12,7 @@ public class MailerService {
     private static final Logger LOGGER = Logger.getLogger(MailerService.class.getName());
 
     public static void sendMail(String toEmail, String subject, String body) {
-        final String fromEmail = "appnourishia@gmail.com";
+        final String fromEmail = "appReservation@gmail.com";
         final String password = "royi zgox tpya nrko";
 
         Properties props = new Properties();

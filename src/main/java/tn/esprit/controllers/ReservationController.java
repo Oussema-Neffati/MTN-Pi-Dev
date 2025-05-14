@@ -18,6 +18,9 @@ import tn.esprit.services.MailerService;
 import java.time.format.DateTimeFormatter;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import tn.esprit.services.ReservationService;
+import java.sql.SQLException;
+import java.util.List;
 
 public class ReservationController {
 
@@ -56,8 +59,13 @@ public class ReservationController {
     @FXML
     private VBox validationMessages;
 
+    private ReservationService reservationService;
+
     @FXML
     public void initialize() {
+        // Initialize service
+        reservationService = new ReservationService();
+
         // Initialize status ComboBox
         statusComboBox.setItems(FXCollections.observableArrayList("Confirmée", "En attente", "Annulée"));
 
@@ -72,6 +80,9 @@ public class ReservationController {
 
         // Initialize reservation list
         reservationList = FXCollections.observableArrayList();
+        
+        // Load existing reservations
+        loadReservations();
         
         // Add listeners for time validation
         heureDebutComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
@@ -93,6 +104,22 @@ public class ReservationController {
         });
     }
 
+    private void loadReservations() {
+        try {
+            List<Reservation> reservations = reservationService.getAll();
+            reservationList.clear();
+            reservationCardsContainer.getChildren().clear();
+            
+            for (Reservation reservation : reservations) {
+                reservationList.add(reservation);
+                createReservationCard(reservation);
+            }
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Impossible de charger les réservations: " + e.getMessage());
+        }
+    }
+
     private void validateTimeSelection() {
         if (dateReservationPicker.getValue() != null && 
             heureDebutComboBox.getValue() != null && 
@@ -109,19 +136,17 @@ public class ReservationController {
                 return;
             }
 
-            // Check for time conflicts with existing reservations
-            boolean hasConflict = reservationList.stream()
-                .filter(r -> r.getDateReservation().equals(selectedDate))
-                .anyMatch(r -> {
-                    LocalTime existingStart = r.getHeureDebut();
-                    LocalTime existingEnd = r.getHeureFin();
-                    return !(startTime.isAfter(existingEnd) || endTime.isBefore(existingStart));
-                });
-
-            if (hasConflict) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Il existe déjà une réservation pour cette période");
-                heureDebutComboBox.setValue(null);
-                heureFinComboBox.setValue(null);
+            // Check for time conflicts using database
+            try {
+                if (reservationService.hasTimeConflict(selectedDate, startTime, endTime, null)) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", 
+                        "Il existe déjà une réservation pour cette période");
+                    heureDebutComboBox.setValue(null);
+                    heureFinComboBox.setValue(null);
+                }
+            } catch (SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", 
+                    "Impossible de vérifier les conflits: " + e.getMessage());
             }
         }
     }
@@ -153,10 +178,13 @@ public class ReservationController {
             progressIndicator.setVisible(true);
             emailStatusLabel.setVisible(false);
             
-            Task<Void> emailTask = new Task<>() {
+            Task<Void> saveTask = new Task<>() {
                 @Override
                 protected Void call() throws Exception {
-                    // Add reservation and create card
+                    // Save to database
+                    reservationService.add(reservation);
+                    
+                    // Add to UI
                     Platform.runLater(() -> {
                         reservationList.add(reservation);
                         createReservationCard(reservation);
@@ -168,30 +196,31 @@ public class ReservationController {
                 }
             };
             
-            emailTask.setOnSucceeded(e -> {
+            saveTask.setOnSucceeded(e -> {
                 Platform.runLater(() -> {
                     progressIndicator.setVisible(false);
                     emailStatusLabel.setVisible(true);
                     addButton.setDisable(false);
                     resetForm();
-                    showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation enregistrée avec succès");
+                    showAlert(Alert.AlertType.INFORMATION, "Succès", 
+                        "Réservation enregistrée avec succès");
                 });
             });
             
-            emailTask.setOnFailed(e -> {
+            saveTask.setOnFailed(e -> {
                 Platform.runLater(() -> {
                     progressIndicator.setVisible(false);
                     addButton.setDisable(false);
-                    showAlert(Alert.AlertType.WARNING, "Attention", 
-                        "Réservation enregistrée mais l'email n'a pas pu être envoyé");
+                    showAlert(Alert.AlertType.ERROR, "Erreur", 
+                        "Erreur lors de l'enregistrement: " + e.getSource().getException().getMessage());
                 });
             });
             
-            // Start the email sending task
-            new Thread(emailTask).start();
+            new Thread(saveTask).start();
             
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'enregistrement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors de l'enregistrement: " + e.getMessage());
         }
     }
 
@@ -332,7 +361,7 @@ public class ReservationController {
 
     @FXML
     private void deleteReservation() {
-        VBox selectedReservation = reservationCardsContainer.getChildren().stream()
+        VBox selectedCard = reservationCardsContainer.getChildren().stream()
             .map(node -> (VBox) node)
             .filter(vbox -> vbox.getChildren().get(0) instanceof Label)
             .map(vbox -> (Label) vbox.getChildren().get(0))
@@ -348,12 +377,28 @@ public class ReservationController {
             )
             .orElse(null);
 
-        if (selectedReservation != null) {
-            reservationList.remove(reservationCardsContainer.getChildren().indexOf(selectedReservation));
-            resetForm();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation supprimée avec succès");
+        if (selectedCard != null) {
+            try {
+                int index = reservationCardsContainer.getChildren().indexOf(selectedCard);
+                Reservation reservation = reservationList.get(index);
+                
+                // Delete from database
+                reservationService.delete(reservation.getId());
+                
+                // Remove from UI
+                reservationList.remove(index);
+                reservationCardsContainer.getChildren().remove(selectedCard);
+                
+                resetForm();
+                showAlert(Alert.AlertType.INFORMATION, "Succès", 
+                    "Réservation supprimée avec succès");
+            } catch (SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", 
+                    "Impossible de supprimer la réservation: " + e.getMessage());
+            }
         } else {
-            showAlert(Alert.AlertType.WARNING, "Avertissement", "Veuillez sélectionner une réservation à supprimer");
+            showAlert(Alert.AlertType.WARNING, "Avertissement", 
+                "Veuillez sélectionner une réservation à supprimer");
         }
     }
 
