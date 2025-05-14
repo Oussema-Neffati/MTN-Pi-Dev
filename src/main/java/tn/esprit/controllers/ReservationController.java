@@ -77,6 +77,20 @@ public class ReservationController {
         heureDebutComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
         heureFinComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
         dateReservationPicker.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
+
+        // Add CIN validation listener
+        cinField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                // Only allow digits
+                if (!newValue.matches("\\d*")) {
+                    cinField.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+                // Limit to 8 digits
+                if (newValue.length() > 8) {
+                    cinField.setText(oldValue);
+                }
+            }
+        });
     }
 
     private void validateTimeSelection() {
@@ -112,9 +126,26 @@ public class ReservationController {
         }
     }
 
+    private boolean validateCIN() {
+        String cin = cinField.getText();
+        if (cin.length() != 8) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de validation", 
+                "Le numéro CIN doit contenir exactement 8 chiffres.");
+            cinField.setStyle("-fx-border-color: red;");
+            return false;
+        }
+        cinField.setStyle(""); // Reset style if valid
+        return true;
+    }
+
     @FXML
     private void saveReservation() {
         try {
+            // Validate CIN before proceeding
+            if (!validateCIN()) {
+                return;
+            }
+
             Reservation reservation = createReservationFromForm();
             
             // Disable button and show progress
@@ -351,6 +382,8 @@ public class ReservationController {
 
         String cin = cinField.getText();
         if (cin.isEmpty()) throw new IllegalArgumentException("Le CIN est requis");
+        if (cin.length() != 8) throw new IllegalArgumentException("Le CIN doit contenir exactement 8 chiffres");
+        if (!cin.matches("\\d{8}")) throw new IllegalArgumentException("Le CIN doit contenir uniquement des chiffres");
 
         return new Reservation(
                 reservationList.size() + 1,
@@ -391,6 +424,7 @@ public class ReservationController {
         emailStatusLabel.setVisible(false);
         progressIndicator.setVisible(false);
         addButton.setDisable(false);
+        cinField.setStyle(""); // Reset CIN field style
     }
 
     // Helper method to show alerts
