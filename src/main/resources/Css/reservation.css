@@ -1,0 +1,64 @@
+.reservation-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-padding: 15;
+    -fx-pref-width: 300;
+    -fx-min-height: 200;
+}
+
+.reservation-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 15, 0, 0, 8);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-cursor: hand;
+}
+
+.reservation-card .title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4169E1;
+}
+
+.reservation-card .status {
+    -fx-padding: 5 10;
+    -fx-background-radius: 15;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+}
+
+.reservation-card .status-confirmed {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+}
+
+.reservation-card .status-pending {
+    -fx-background-color: #ffc107;
+    -fx-text-fill: #000;
+}
+
+.reservation-card .status-cancelled {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+}
+
+.reservation-card .details {
+    -fx-font-size: 14;
+    -fx-text-fill: #666;
+}
+
+.reservation-card .card-buttons {
+    -fx-spacing: 10;
+}
+
+.reservation-card .edit-button {
+    -fx-background-color: #4169E1;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.reservation-card .delete-button {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+} 
