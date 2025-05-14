@@ -13,6 +13,7 @@ import tn.esprit.services.ServiceRessource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class RessourceController {
 
@@ -48,15 +49,27 @@ public class RessourceController {
 
     private ServiceRessource serviceRessource = new ServiceRessource();
     private Ressource currentRessource;
+    
+    // Regular expression for time format HH:00
+    private static final Pattern TIME_PATTERN = Pattern.compile("^([01]?[0-9]|2[0-3]):00$");
 
     @FXML
     void initialize() {
         // Initialize with a new resource or load an existing one
         currentRessource = new Ressource();
 
-        // Populate the ComboBox with categories (example categories, adjust as needed)
+        // Populate the ComboBox with categories
         categorieField.getItems().addAll("Salle de réunion", "Véhicule", "Équipement", "Espace public");
         categorieField.setPromptText("Sélectionner une catégorie");
+
+        // Add listeners for time validation
+        horaireOuvertureField.textProperty().addListener((observable, oldValue, newValue) -> {
+            validateTimeField(horaireOuvertureField, newValue);
+        });
+
+        horaireFermetureField.textProperty().addListener((observable, oldValue, newValue) -> {
+            validateTimeField(horaireFermetureField, newValue);
+        });
 
         // Clear fields
         nomField.setText("");
@@ -68,6 +81,39 @@ public class RessourceController {
         disponibleCheckBox.setSelected(true);
     }
 
+    private void validateTimeField(TextField field, String value) {
+        if (!value.isEmpty() && !TIME_PATTERN.matcher(value).matches()) {
+            field.setStyle("-fx-border-color: red;");
+            showTooltip(field, "Format invalide. Utilisez le format HH:00 (ex: 09:00)");
+        } else {
+            field.setStyle("");
+            hideTooltip(field);
+        }
+    }
+
+    private void showTooltip(TextField field, String message) {
+        Tooltip tooltip = new Tooltip(message);
+        field.setTooltip(tooltip);
+    }
+
+    private void hideTooltip(TextField field) {
+        field.setTooltip(null);
+    }
+
+    private boolean validateTimeFormat(String time) {
+        return TIME_PATTERN.matcher(time).matches();
+    }
+
+    private boolean validateTimeRange(String startTime, String endTime) {
+        try {
+            int start = Integer.parseInt(startTime.split(":")[0]);
+            int end = Integer.parseInt(endTime.split(":")[0]);
+            return start < end;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @FXML
     void saveRessource(ActionEvent event) {
         // Validation des champs
@@ -76,6 +122,29 @@ public class RessourceController {
                 horaireOuvertureField.getText().isEmpty() || horaireFermetureField.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
                     "Tous les champs obligatoires doivent être remplis.");
+            return;
+        }
+
+        // Validate time format
+        String heureDebut = horaireOuvertureField.getText();
+        String heureFin = horaireFermetureField.getText();
+
+        if (!validateTimeFormat(heureDebut)) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
+                    "L'heure d'ouverture doit être au format HH:00 (ex: 09:00)");
+            return;
+        }
+
+        if (!validateTimeFormat(heureFin)) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
+                    "L'heure de fermeture doit être au format HH:00 (ex: 17:00)");
+            return;
+        }
+
+        // Validate time range
+        if (!validateTimeRange(heureDebut, heureFin)) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie",
+                    "L'heure de fermeture doit être après l'heure d'ouverture");
             return;
         }
 
@@ -113,8 +182,8 @@ public class RessourceController {
         currentRessource.setCategorie(categorieField.getValue());
         currentRessource.setCapacite(capacite);
         currentRessource.setTarifHoraire(tarifHoraire);
-        currentRessource.setHoraireOuverture(horaireOuvertureField.getText());
-        currentRessource.setHoraireFermeture(horaireFermetureField.getText());
+        currentRessource.setHoraireOuverture(heureDebut);
+        currentRessource.setHoraireFermeture(heureFin);
         currentRessource.setDescription(descriptionField.getText());
         currentRessource.setDisponible(disponibleCheckBox.isSelected());
 

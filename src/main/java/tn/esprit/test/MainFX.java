@@ -12,7 +12,7 @@ public class MainFX extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainFX.class.getResource("/FXML/Reservation.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainFX.class.getResource("/FXML/Ressource.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             
             // Set minimum window size

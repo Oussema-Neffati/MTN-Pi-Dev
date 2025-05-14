@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.RessourceController">
+<AnchorPane stylesheets="@../Css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.RessourceController">
 
     <!-- Sidebar - Fixed width and anchored to top/bottom/left -->
     <VBox maxWidth="220" minWidth="220" prefWidth="220" spacing="20" style="-fx-background-color: #4169E1;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0">
@@ -114,8 +114,6 @@
                 </padding>
             </Button>
         </VBox>
-
-        <Spacer VBox.vgrow="ALWAYS" />
 
         <Button fx:id="logoutButton" style="-fx-background-color: #DB4495; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 10 20;" text="Déconnexion" />
     </VBox>
