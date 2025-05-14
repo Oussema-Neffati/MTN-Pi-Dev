@@ -4,12 +4,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.animation.ScaleTransition;
+import javafx.util.Duration;
 
 public class ReservationController {
 
@@ -29,30 +33,13 @@ public class ReservationController {
     @FXML
     private TextField cinField;
 
-    // Table components
+    // Card container
     @FXML
-    private TableView<Reservation> reservationTableView;
-    @FXML
-    private TableColumn<Reservation, Integer> idResColumn;
-    @FXML
-    private TableColumn<Reservation, LocalDate> dateReservationColumn;
-    @FXML
-    private TableColumn<Reservation, LocalTime> heureDebutColumn;
-    @FXML
-    private TableColumn<Reservation, LocalTime> heureFinColumn;
-    @FXML
-    private TableColumn<Reservation, String> statusColumn;
-    @FXML
-    private TableColumn<Reservation, Integer> nombreParticipantsColumn;
-    @FXML
-    private TableColumn<Reservation, String> motifColumn;
-    @FXML
-    private TableColumn<Reservation, String> cinColumn;
+    private FlowPane reservationCardsContainer;
 
-    // Data list for table
+    // Data list
     private ObservableList<Reservation> reservationList;
 
-    // Initialize method
     @FXML
     public void initialize() {
         // Initialize status ComboBox
@@ -67,38 +54,54 @@ public class ReservationController {
         heureDebutComboBox.setItems(timeSlots);
         heureFinComboBox.setItems(timeSlots);
 
-        // Initialize table columns
-        idResColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        dateReservationColumn.setCellValueFactory(new PropertyValueFactory<>("dateReservation"));
-        heureDebutColumn.setCellValueFactory(new PropertyValueFactory<>("heureDebut"));
-        heureFinColumn.setCellValueFactory(new PropertyValueFactory<>("heureFin"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        nombreParticipantsColumn.setCellValueFactory(new PropertyValueFactory<>("nombreParticipants"));
-        motifColumn.setCellValueFactory(new PropertyValueFactory<>("motif"));
-        cinColumn.setCellValueFactory(new PropertyValueFactory<>("cin"));
-
-        // Initialize reservation list and set to table
+        // Initialize reservation list
         reservationList = FXCollections.observableArrayList();
-        reservationTableView.setItems(reservationList);
-
-        // Add listener for table selection
-        reservationTableView.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) -> {
-                    if (newSelection != null) {
-                        populateForm(newSelection);
-                    }
-                }
-        );
+        
+        // Add listeners for time validation
+        heureDebutComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
+        heureFinComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
+        dateReservationPicker.valueProperty().addListener((obs, oldVal, newVal) -> validateTimeSelection());
     }
 
-    // Note: Full-screen functionality has been removed
+    private void validateTimeSelection() {
+        if (dateReservationPicker.getValue() != null && 
+            heureDebutComboBox.getValue() != null && 
+            heureFinComboBox.getValue() != null) {
+            
+            LocalDate selectedDate = dateReservationPicker.getValue();
+            LocalTime startTime = LocalTime.parse(heureDebutComboBox.getValue() + ":00");
+            LocalTime endTime = LocalTime.parse(heureFinComboBox.getValue() + ":00");
 
-    // Save reservation
+            // Check if end time is after start time
+            if (endTime.isBefore(startTime) || endTime.equals(startTime)) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "L'heure de fin doit être après l'heure de début");
+                heureFinComboBox.setValue(null);
+                return;
+            }
+
+            // Check for time conflicts with existing reservations
+            boolean hasConflict = reservationList.stream()
+                .filter(r -> r.getDateReservation().equals(selectedDate))
+                .anyMatch(r -> {
+                    LocalTime existingStart = r.getHeureDebut();
+                    LocalTime existingEnd = r.getHeureFin();
+                    return !(startTime.isAfter(existingEnd) || endTime.isBefore(existingStart));
+                });
+
+            if (hasConflict) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Il existe déjà une réservation pour cette période");
+                heureDebutComboBox.setValue(null);
+                heureFinComboBox.setValue(null);
+            }
+        }
+    }
+
     @FXML
     private void saveReservation() {
         try {
             Reservation reservation = createReservationFromForm();
             reservationList.add(reservation);
+            createReservationCard(reservation);
             resetForm();
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation enregistrée avec succès");
         } catch (Exception e) {
@@ -106,16 +109,101 @@ public class ReservationController {
         }
     }
 
-    // Update reservation
+    private void createReservationCard(Reservation reservation) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("reservation-card");
+        
+        // Title (Date)
+        Label dateLabel = new Label(reservation.getDateReservation().toString());
+        dateLabel.getStyleClass().add("title");
+        
+        // Status badge
+        Label statusLabel = new Label(reservation.getStatus());
+        statusLabel.getStyleClass().addAll("status", getStatusStyleClass(reservation.getStatus()));
+        
+        // Details
+        VBox details = new VBox(5);
+        details.getStyleClass().add("details");
+        details.getChildren().addAll(
+            new Label("Horaire: " + reservation.getHeureDebut() + " - " + reservation.getHeureFin()),
+            new Label("Participants: " + reservation.getNombreParticipants()),
+            new Label("CIN: " + reservation.getCin()),
+            new Label("Motif: " + reservation.getMotif())
+        );
+        
+        // Buttons
+        HBox buttons = new HBox(10);
+        buttons.getStyleClass().add("card-buttons");
+        buttons.setAlignment(Pos.CENTER);
+        
+        Button editButton = new Button("Modifier");
+        editButton.getStyleClass().add("edit-button");
+        editButton.setOnAction(e -> populateForm(reservation));
+        
+        Button deleteButton = new Button("Supprimer");
+        deleteButton.getStyleClass().add("delete-button");
+        deleteButton.setOnAction(e -> {
+            reservationList.remove(reservation);
+            reservationCardsContainer.getChildren().remove(card);
+        });
+        
+        buttons.getChildren().addAll(editButton, deleteButton);
+        
+        // Add all elements to card
+        card.getChildren().addAll(dateLabel, statusLabel, details, buttons);
+        
+        // Add hover effect
+        setupHoverEffect(card);
+        
+        // Add card to container
+        reservationCardsContainer.getChildren().add(card);
+    }
+
+    private void setupHoverEffect(Node node) {
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), node);
+        scaleIn.setToX(1.02);
+        scaleIn.setToY(1.02);
+        
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), node);
+        scaleOut.setToX(1.0);
+        scaleOut.setToY(1.0);
+        
+        node.setOnMouseEntered(e -> scaleIn.playFromStart());
+        node.setOnMouseExited(e -> scaleOut.playFromStart());
+    }
+
+    private String getStatusStyleClass(String status) {
+        switch (status) {
+            case "Confirmée": return "status-confirmed";
+            case "En attente": return "status-pending";
+            case "Annulée": return "status-cancelled";
+            default: return "";
+        }
+    }
+
     @FXML
     private void updateReservation() {
-        Reservation selectedReservation = reservationTableView.getSelectionModel().getSelectedItem();
+        VBox selectedReservation = reservationCardsContainer.getChildren().stream()
+            .map(node -> (VBox) node)
+            .filter(vbox -> vbox.getChildren().get(0) instanceof Label)
+            .map(vbox -> (Label) vbox.getChildren().get(0))
+            .filter(label -> label.getText().equals(dateReservationPicker.getValue().toString()))
+            .findFirst()
+            .map(label -> reservationCardsContainer.getChildren().stream()
+                .filter(node -> node instanceof VBox)
+                .filter(node -> ((VBox) node).getChildren().get(0) instanceof Label)
+                .filter(node -> ((Label) ((VBox) node).getChildren().get(0)).getText().equals(label.getText()))
+                .findFirst()
+                .map(node -> (VBox) node)
+                .orElse(null)
+            )
+            .orElse(null);
+
         if (selectedReservation != null) {
             try {
                 Reservation updatedReservation = createReservationFromForm();
-                updatedReservation.setId(selectedReservation.getId());
-                int index = reservationList.indexOf(selectedReservation);
-                reservationList.set(index, updatedReservation);
+                updatedReservation.setId(reservationList.indexOf(reservationCardsContainer.getChildren().indexOf(selectedReservation)));
+                reservationList.set(reservationList.indexOf(reservationCardsContainer.getChildren().indexOf(selectedReservation)), updatedReservation);
                 resetForm();
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation modifiée avec succès");
             } catch (Exception e) {
@@ -126,12 +214,26 @@ public class ReservationController {
         }
     }
 
-    // Delete reservation
     @FXML
     private void deleteReservation() {
-        Reservation selectedReservation = reservationTableView.getSelectionModel().getSelectedItem();
+        VBox selectedReservation = reservationCardsContainer.getChildren().stream()
+            .map(node -> (VBox) node)
+            .filter(vbox -> vbox.getChildren().get(0) instanceof Label)
+            .map(vbox -> (Label) vbox.getChildren().get(0))
+            .filter(label -> label.getText().equals(dateReservationPicker.getValue().toString()))
+            .findFirst()
+            .map(label -> reservationCardsContainer.getChildren().stream()
+                .filter(node -> node instanceof VBox)
+                .filter(node -> ((VBox) node).getChildren().get(0) instanceof Label)
+                .filter(node -> ((Label) ((VBox) node).getChildren().get(0)).getText().equals(label.getText()))
+                .findFirst()
+                .map(node -> (VBox) node)
+                .orElse(null)
+            )
+            .orElse(null);
+
         if (selectedReservation != null) {
-            reservationList.remove(selectedReservation);
+            reservationList.remove(reservationCardsContainer.getChildren().indexOf(selectedReservation));
             resetForm();
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation supprimée avec succès");
         } else {
@@ -201,7 +303,6 @@ public class ReservationController {
         nombreParticipantsField.clear();
         motifField.clear();
         cinField.clear();
-        reservationTableView.getSelectionModel().clearSelection();
     }
 
     // Helper method to show alerts

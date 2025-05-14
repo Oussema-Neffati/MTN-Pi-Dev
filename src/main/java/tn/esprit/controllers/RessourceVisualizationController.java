@@ -20,13 +20,16 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import tn.esprit.models.Ressource;
 import tn.esprit.services.ServiceRessource;
+import javafx.scene.Node;
+import javafx.animation.ScaleTransition;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RessourceVisualizationController implements Initializable {
@@ -67,43 +70,78 @@ public class RessourceVisualizationController implements Initializable {
     private ServiceRessource ressourceService;
     private List<Ressource> ressources;
     private Map<String, Integer> resourceHistory;
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ressourceService = new ServiceRessource();
-        resourceHistory = new HashMap<>();
+        resourceHistory = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
 
-        // Load all resources
+        // Initial setup
+        setupInitialData();
+        setupEventHandlers();
+        setupChartAnimations();
+    }
+
+    private void setupInitialData() {
         loadRessources();
-
-        // Initialize filter categories
         initializeFilters();
-
-        // Update UI
         updateStatistics();
         updateCharts();
         displayResourceCards();
     }
 
+    private void setupEventHandlers() {
+        // Add real-time search functionality
+        txtFilterSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            displayResourceCards();
+        });
+
+        // Add category filter change listener
+        cmbFilterCategorie.setOnAction(event -> displayResourceCards());
+
+        // Add availability filter change listener
+        chkFilterDisponible.setOnAction(event -> displayResourceCards());
+    }
+
+    private void setupChartAnimations() {
+        // Add hover effect for pie chart slices
+        pieChartCategories.getData().forEach(data -> {
+            Node node = data.getNode();
+            node.setOnMouseEntered(e -> {
+                ScaleTransition st = new ScaleTransition(Duration.millis(200), node);
+                st.setToX(1.1);
+                st.setToY(1.1);
+                st.play();
+            });
+            node.setOnMouseExited(e -> {
+                ScaleTransition st = new ScaleTransition(Duration.millis(200), node);
+                st.setToX(1);
+                st.setToY(1);
+                st.play();
+            });
+        });
+    }
+
     private void loadRessources() {
         try {
             ressources = ressourceService.readAll();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les ressources", e.getMessage());
         }
     }
 
     private void initializeFilters() {
-        // Get all unique categories
         ObservableList<String> categories = FXCollections.observableArrayList();
         categories.add("Toutes les catégories");
 
         if (ressources != null && !ressources.isEmpty()) {
             categories.addAll(
-                    ressources.stream()
-                            .map(Ressource::getCategorie)
-                            .distinct()
-                            .collect(Collectors.toList())
+                ressources.stream()
+                    .map(Ressource::getCategorie)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList())
             );
         }
 
@@ -137,7 +175,6 @@ public class RessourceVisualizationController implements Initializable {
     private void updatePieChart() {
         if (ressources == null) return;
 
-        // Count resources by category
         Map<String, Long> countByCategory = ressources.stream()
                 .collect(Collectors.groupingBy(
                         Ressource::getCategorie,
@@ -145,44 +182,37 @@ public class RessourceVisualizationController implements Initializable {
                 ));
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-
         countByCategory.forEach((category, count) -> {
-            pieChartData.add(new PieChart.Data(category + " (" + count + ")", count));
+            PieChart.Data slice = new PieChart.Data(category + " (" + count + ")", count);
+            pieChartData.add(slice);
         });
 
         pieChartCategories.setData(pieChartData);
+        setupChartAnimations();
     }
 
     private void updateLineChart() {
-        // Update resource history with current count
-        if (ressources != null) {
-            // For the demo, we'll just add the current timestamp and count
-            String timestamp = String.valueOf(System.currentTimeMillis());
-            resourceHistory.put(timestamp, ressources.size());
+        if (ressources == null) return;
+
+        // Update history with current count
+        String currentTime = LocalDateTime.now().format(timeFormatter);
+        resourceHistory.put(currentTime, ressources.size());
+
+        // Keep only last 10 entries
+        if (resourceHistory.size() > 10) {
+            String firstKey = resourceHistory.keySet().iterator().next();
+            resourceHistory.remove(firstKey);
         }
 
-        // Create series for the chart
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Nombre de ressources");
 
-        // Only use the last 10 entries to keep the chart clean
-        resourceHistory.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .limit(10)
-                .forEach(entry -> {
-                    // Format the timestamp for display
-                    String label = formatTimestamp(entry.getKey());
-                    series.getData().add(new XYChart.Data<>(label, entry.getValue()));
-                });
+        resourceHistory.forEach((time, count) -> 
+            series.getData().add(new XYChart.Data<>(time, count))
+        );
 
         lineChartEvolution.getData().clear();
         lineChartEvolution.getData().add(series);
-    }
-
-    private String formatTimestamp(String timestamp) {
-        // In a real application, you would convert the timestamp to a readable date
-        // For simplicity, we'll just use a shortened version of the timestamp
-        return timestamp.substring(timestamp.length() - 5);
     }
 
     private void displayResourceCards() {
@@ -190,19 +220,17 @@ public class RessourceVisualizationController implements Initializable {
 
         resourceCardsContainer.getChildren().clear();
 
-        for (Ressource ressource : ressources) {
-            // Apply filters
-            if (!passesFilters(ressource)) continue;
-
-            try {
-                // Create a card for each resource
-                VBox card = createResourceCard(ressource);
-                resourceCardsContainer.getChildren().add(card);
-            } catch (Exception e) {
-                System.err.println("Error creating card for resource: " + ressource.getNom());
-                e.printStackTrace();
-            }
-        }
+        ressources.stream()
+                .filter(this::passesFilters)
+                .forEach(ressource -> {
+                    try {
+                        VBox card = createResourceCard(ressource);
+                        resourceCardsContainer.getChildren().add(card);
+                    } catch (Exception e) {
+                        System.err.println("Error creating card for resource: " + ressource.getNom());
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private boolean passesFilters(Ressource ressource) {
@@ -220,13 +248,9 @@ public class RessourceVisualizationController implements Initializable {
 
         // Search filter
         String searchText = txtFilterSearch.getText().toLowerCase();
-        if (!searchText.isEmpty() &&
-                !ressource.getNom().toLowerCase().contains(searchText) &&
-                !ressource.getDescription().toLowerCase().contains(searchText)) {
-            return false;
-        }
-
-        return true;
+        return searchText.isEmpty() ||
+               ressource.getNom().toLowerCase().contains(searchText) ||
+               ressource.getDescription().toLowerCase().contains(searchText);
     }
 
     private VBox createResourceCard(Ressource ressource) {
@@ -263,9 +287,27 @@ public class RessourceVisualizationController implements Initializable {
 
         detailsBox.getChildren().addAll(lblCapacite, lblTarif, lblHoraires);
 
-        // Description (truncated if too long)
+        // Description
         Text txtDescription = new Text(ressource.getDescription());
         txtDescription.setWrappingWidth(270);
+
+        // Buttons container
+        HBox buttonsBox = new HBox();
+        buttonsBox.setSpacing(10);
+        buttonsBox.setAlignment(javafx.geometry.Pos.CENTER);
+        buttonsBox.setPadding(new Insets(10, 0, 0, 0));
+
+        // Edit button
+        Button editButton = new Button("Modifier");
+        editButton.getStyleClass().addAll("btn", "btn-edit");
+        editButton.setOnAction(e -> handleEditResource(ressource));
+
+        // Delete button
+        Button deleteButton = new Button("Supprimer");
+        deleteButton.getStyleClass().addAll("btn", "btn-delete");
+        deleteButton.setOnAction(e -> handleDeleteResource(ressource));
+
+        buttonsBox.getChildren().addAll(editButton, deleteButton);
 
         // Add all elements to card
         card.getChildren().addAll(
@@ -274,10 +316,66 @@ public class RessourceVisualizationController implements Initializable {
                 lblStatus,
                 new Separator(),
                 detailsBox,
-                txtDescription
+                txtDescription,
+                buttonsBox
         );
 
+        // Add hover effect
+        setupCardHoverEffect(card);
+
         return card;
+    }
+
+    private void setupCardHoverEffect(VBox card) {
+        card.setOnMouseEntered(e -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), card);
+            st.setToX(1.03);
+            st.setToY(1.03);
+            st.play();
+        });
+
+        card.setOnMouseExited(e -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(200), card);
+            st.setToX(1);
+            st.setToY(1);
+            st.play();
+        });
+    }
+
+    private void handleEditResource(Ressource ressource) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Ressource.fxml"));
+            Parent root = loader.load();
+
+            RessourceController controller = loader.getController();
+            controller.loadRessource(ressource.getId());
+
+            Scene scene = btnRetour.getScene();
+            scene.setRoot(root);
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'interface de modification", e.getMessage());
+        }
+    }
+
+    private void handleDeleteResource(Ressource ressource) {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirmation de suppression");
+        confirmDialog.setHeaderText("Supprimer la ressource");
+        confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer la ressource \"" + ressource.getNom() + "\" ?");
+
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    ressourceService.delete(ressource.getId());
+                    refreshData();
+                    showAlert(Alert.AlertType.INFORMATION, "Succès", "Suppression réussie", 
+                            "La ressource a été supprimée avec succès.");
+                } catch (SQLException e) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de suppression", 
+                            "Impossible de supprimer la ressource: " + e.getMessage());
+                }
+            }
+        });
     }
 
     @FXML
@@ -288,25 +386,17 @@ public class RessourceVisualizationController implements Initializable {
     @FXML
     private void handleRetour(ActionEvent event) {
         try {
-            // Go back to the main ressource screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/Ressource.fxml"));
             Parent root = loader.load();
-
-            // Replace current scene
             Scene scene = btnRetour.getScene();
             scene.setRoot(root);
-
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de retourner à l'écran précédent", e.getMessage());
         }
     }
 
-    // Method that can be called from RessourceController after adding a new resource
     public void refreshData() {
-        loadRessources();
-        updateStatistics();
-        updateCharts();
-        displayResourceCards();
+        setupInitialData();
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

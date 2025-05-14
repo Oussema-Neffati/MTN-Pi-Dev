@@ -128,6 +128,26 @@ public class RessourceController {
             }
             showAlert(Alert.AlertType.INFORMATION, "Succès",
                     "Ressource enregistrée avec succès.");
+            
+            // Navigate to the visualization page
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/RessourcesVisualization.fxml"));
+                Parent root = loader.load();
+                
+                // Get the controller and refresh the data
+                RessourceVisualizationController visualizationController = loader.getController();
+                visualizationController.refreshData();
+                
+                // Switch to the new scene
+                Scene scene = ((Node) event.getSource()).getScene();
+                scene.setRoot(root);
+                
+                Stage stage = (Stage) scene.getWindow();
+                stage.setTitle("Visualisation des Ressources");
+            } catch (IOException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Impossible de charger la page de visualisation: " + e.getMessage());
+            }
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur",
                     "Erreur lors de l'enregistrement de la ressource: " + e.getMessage());
@@ -171,12 +191,16 @@ public class RessourceController {
 
     @FXML
     void navigateToLogout(ActionEvent event) {
-        navigateTo(event, "/FXML/Login.fxml", "Connexion");
+        navigateTo(event, "/FXML/LoginView.fxml", "Connexion");
     }
 
     private void navigateTo(ActionEvent event, String fxmlPath, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource(fxmlPath));
+            if (loader.getLocation() == null) {
+                throw new IOException("FXML file not found: " + fxmlPath);
+            }
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -184,9 +208,10 @@ public class RessourceController {
             stage.setTitle(title);
             stage.show();
         } catch (IOException e) {
-            System.err.println("Erreur de chargement: " + e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger l'interface: " + fxmlPath);
+            System.err.println("Error loading FXML: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Unable to load interface: " + e.getMessage());
         }
     }
 
