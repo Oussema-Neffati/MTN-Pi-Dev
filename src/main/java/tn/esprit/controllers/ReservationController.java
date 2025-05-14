@@ -14,6 +14,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.animation.ScaleTransition;
 import javafx.util.Duration;
+import tn.esprit.services.MailerService;
+import java.time.format.DateTimeFormatter;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 public class ReservationController {
 
@@ -39,6 +43,18 @@ public class ReservationController {
 
     // Data list
     private ObservableList<Reservation> reservationList;
+
+    @FXML
+    private Button addButton;
+    
+    @FXML
+    private ProgressIndicator progressIndicator;
+    
+    @FXML
+    private Label emailStatusLabel;
+    
+    @FXML
+    private VBox validationMessages;
 
     @FXML
     public void initialize() {
@@ -100,13 +116,82 @@ public class ReservationController {
     private void saveReservation() {
         try {
             Reservation reservation = createReservationFromForm();
-            reservationList.add(reservation);
-            createReservationCard(reservation);
-            resetForm();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation enregistrée avec succès");
+            
+            // Disable button and show progress
+            addButton.setDisable(true);
+            progressIndicator.setVisible(true);
+            emailStatusLabel.setVisible(false);
+            
+            Task<Void> emailTask = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    // Add reservation and create card
+                    Platform.runLater(() -> {
+                        reservationList.add(reservation);
+                        createReservationCard(reservation);
+                    });
+                    
+                    // Send email
+                    sendReservationEmail(reservation);
+                    return null;
+                }
+            };
+            
+            emailTask.setOnSucceeded(e -> {
+                Platform.runLater(() -> {
+                    progressIndicator.setVisible(false);
+                    emailStatusLabel.setVisible(true);
+                    addButton.setDisable(false);
+                    resetForm();
+                    showAlert(Alert.AlertType.INFORMATION, "Succès", "Réservation enregistrée avec succès");
+                });
+            });
+            
+            emailTask.setOnFailed(e -> {
+                Platform.runLater(() -> {
+                    progressIndicator.setVisible(false);
+                    addButton.setDisable(false);
+                    showAlert(Alert.AlertType.WARNING, "Attention", 
+                        "Réservation enregistrée mais l'email n'a pas pu être envoyé");
+                });
+            });
+            
+            // Start the email sending task
+            new Thread(emailTask).start();
+            
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'enregistrement: " + e.getMessage());
         }
+    }
+
+    private void sendReservationEmail(Reservation reservation) {
+        String toEmail = "rouaghaffari940@gmail.com";
+        String subject = "Nouvelle Réservation - " + reservation.getDateReservation();
+        
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        
+        String body = String.format(
+            "Une nouvelle réservation a été créée:\n\n" +
+            "Date: %s\n" +
+            "Horaire: %s - %s\n" +
+            "Status: %s\n" +
+            "Nombre de participants: %d\n" +
+            "CIN: %s\n" +
+            "Motif: %s\n\n" +
+            "Cette réservation a été enregistrée avec succès dans notre système.\n\n" +
+            "Cordialement,\n" +
+            "L'équipe de gestion des réservations",
+            reservation.getDateReservation().format(dateFormatter),
+            reservation.getHeureDebut().format(timeFormatter),
+            reservation.getHeureFin().format(timeFormatter),
+            reservation.getStatus(),
+            reservation.getNombreParticipants(),
+            reservation.getCin(),
+            reservation.getMotif()
+        );
+
+        MailerService.sendMail(toEmail, subject, body);
     }
 
     private void createReservationCard(Reservation reservation) {
@@ -303,6 +388,9 @@ public class ReservationController {
         nombreParticipantsField.clear();
         motifField.clear();
         cinField.clear();
+        emailStatusLabel.setVisible(false);
+        progressIndicator.setVisible(false);
+        addButton.setDisable(false);
     }
 
     // Helper method to show alerts

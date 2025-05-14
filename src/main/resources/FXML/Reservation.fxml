@@ -198,18 +198,30 @@
                     <Label text="Motif:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
                     <TextField fx:id="motifField" promptText="Motif de la réservation" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3" maxWidth="Infinity" />
 
-                    <!-- Add Button -->
+                    <!-- Add Button with Loading Indicator -->
                     <HBox alignment="CENTER" spacing="20" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="4" style="-fx-padding: 15 0 0 0;">
-                        <Button onAction="#saveReservation" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #4169E1; -fx-background-radius: 5;" text="Ajouter" textFill="WHITE">
-                            <graphic>
-                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/plus.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
+                        <StackPane>
+                            <Button fx:id="addButton" onAction="#saveReservation" prefHeight="35.0" prefWidth="140.0" 
+                                    style="-fx-background-color: #4169E1; -fx-background-radius: 5;" text="Ajouter" textFill="WHITE">
+                                <graphic>
+                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../images/plus.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <ProgressIndicator fx:id="progressIndicator" visible="false" maxHeight="20" maxWidth="20" style="-fx-progress-color: white;"/>
+                        </StackPane>
+                        <Label fx:id="emailStatusLabel" visible="false" style="-fx-text-fill: #28a745; -fx-font-size: 12px;" 
+                               text="✓ Email de confirmation envoyé"/>
                     </HBox>
+
+                    <!-- Form Validation Messages -->
+                    <VBox fx:id="validationMessages" visible="false" style="-fx-padding: 10 0 0 0;" 
+                          GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="4">
+                        <Label style="-fx-text-fill: #dc3545; -fx-font-size: 12px;"/>
+                    </VBox>
                 </GridPane>
 
                 <!-- CARDS SECTION -->
