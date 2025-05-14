@@ -1,7 +1,6 @@
 package tn.esprit.controllers;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,10 +26,10 @@ import tn.esprit.utils.SessionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class EmployeeMunDashboardController {
 
@@ -48,7 +47,6 @@ public class EmployeeMunDashboardController {
 
     @FXML
     private FlowPane documentCardContainer;
-
 
     @FXML
     private Circle statusIndicator;
@@ -73,10 +71,8 @@ public class EmployeeMunDashboardController {
     @FXML
     void initialize() {
         Utilisateur currentUser = SessionManager.getInstance().getCurrentUser();
-
         if (currentUser != null && currentUser.getRole().equals(Role.EMPLOYE)) {
             try {
-                // Create a new Demande object and populate it using getters
                 String nomComplet = (currentUser.getPrenom() != null ? currentUser.getPrenom() : "") + " "
                         + (currentUser.getNom() != null ? currentUser.getNom() : "");
                 nomComplet = nomComplet.trim();
@@ -102,9 +98,9 @@ public class EmployeeMunDashboardController {
         }
 
         // Configure the FlowPane for responsive layout
-        documentCardContainer.prefWrapLengthProperty().bind(documentScrollPane.widthProperty().subtract(20));
-        documentCardContainer.setHgap(15);
-        documentCardContainer.setVgap(15);
+        documentCardContainer.prefWrapLengthProperty().bind(documentScrollPane.widthProperty().subtract(40));
+        documentCardContainer.setHgap(20);
+        documentCardContainer.setVgap(20);
         documentScrollPane.setFitToWidth(true);
 
         showLoadingMessage("Chargement des documents en cours");
@@ -113,7 +109,14 @@ public class EmployeeMunDashboardController {
             try {
                 refreshDashboard();
                 Platform.runLater(() -> {
-
+                    documentCardContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
+                        double cardWidth = Math.min(300, newVal.doubleValue() / 3 - 20);
+                        documentCardContainer.getChildren().forEach(node -> {
+                            if (node instanceof AnchorPane) {
+                                node.prefWidth(cardWidth);
+                            }
+                        });
+                    });
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
@@ -139,7 +142,6 @@ public class EmployeeMunDashboardController {
             loadingLabel.setStyle("-fx-text-fill: #3498DB; -fx-font-size: 14px;");
             documentCardContainer.getChildren().add(loadingLabel);
 
-            // Ajouter une deuxième carte view pendant le chargement (exemple : carte de statut)
             StackPane statusCard = createStatusCard("Statut du chargement", "En cours...");
             documentCardContainer.getChildren().add(statusCard);
         });
@@ -234,27 +236,24 @@ public class EmployeeMunDashboardController {
     private StackPane createTypeTile(String type, int count) {
         StackPane tile = new StackPane();
         tile.getStyleClass().add("type-tile");
-        tile.setPrefSize(150, 100); // Adjusted size to fit wrapped text
+        tile.setPrefSize(150, 100);
 
         VBox content = new VBox(5);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(5));
 
-        // Label for the type name with text wrapping
         Label typeLabel = new Label(type);
         typeLabel.getStyleClass().add("tile-title");
-        typeLabel.setWrapText(true); // Enable text wrapping
-        typeLabel.setMaxWidth(130); // Set a max width to force wrapping within the tile
+        typeLabel.setWrapText(true);
+        typeLabel.setMaxWidth(130);
         typeLabel.setTextAlignment(TextAlignment.CENTER);
 
-        // Label for the count
         Label countLabel = new Label(String.valueOf(count));
         countLabel.getStyleClass().add("count-label");
 
         content.getChildren().addAll(typeLabel, countLabel);
         tile.getChildren().add(content);
 
-        // Add click event to show documents for this type
         tile.setOnMouseClicked(event -> showDocumentsForType(type));
 
         return tile;
@@ -329,7 +328,7 @@ public class EmployeeMunDashboardController {
 
         documentCardContainer.getChildren().clear();
 
-
+        // Ajouter la carte de résumé
         StackPane summaryCard = createSummaryCard(documents.size());
         documentCardContainer.getChildren().add(summaryCard);
 
@@ -354,7 +353,7 @@ public class EmployeeMunDashboardController {
 
     private StackPane createStatusCard(String title, String status) {
         StackPane tile = new StackPane();
-        tile.getStyleClass().add("document-tile");
+        tile.getStyleClass().add("summary-card");
         tile.setPrefSize(300, 100);
 
         VBox content = new VBox(10);
@@ -362,12 +361,12 @@ public class EmployeeMunDashboardController {
         content.setPadding(new Insets(10));
 
         Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().add("tile-title");
+        titleLabel.getStyleClass().add("summary-title");
         titleLabel.setTextAlignment(TextAlignment.CENTER);
         titleLabel.setMaxWidth(280);
 
         Label statusLabel = new Label(status);
-        statusLabel.getStyleClass().add("count-label");
+        statusLabel.getStyleClass().add("summary-count");
         statusLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         statusLabel.setTextFill(Color.web("#3498DB"));
 
@@ -379,7 +378,7 @@ public class EmployeeMunDashboardController {
 
     private StackPane createSummaryCard(int documentCount) {
         StackPane tile = new StackPane();
-        tile.getStyleClass().add("document-tile");
+        tile.getStyleClass().add("summary-card");
         tile.setPrefSize(300, 100);
 
         VBox content = new VBox(10);
@@ -387,32 +386,32 @@ public class EmployeeMunDashboardController {
         content.setPadding(new Insets(10));
 
         Label titleLabel = new Label("Résumé des documents");
-        titleLabel.getStyleClass().add("tile-title");
+        titleLabel.getStyleClass().add("summary-title");
         titleLabel.setTextAlignment(TextAlignment.CENTER);
         titleLabel.setMaxWidth(280);
 
         Label countLabel = new Label("Nombre de documents: " + documentCount);
-        countLabel.getStyleClass().add("count-label");
-        countLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        countLabel.setTextFill(Color.web("#2ECC71"));
+        countLabel.getStyleClass().add("summary-count");
 
         content.getChildren().addAll(titleLabel, countLabel);
         tile.getChildren().add(content);
 
+        // Ajuster la taille dynamiquement
+        tile.prefWidthProperty().bind(documentCardContainer.widthProperty().divide(3).subtract(20));
+        tile.prefHeightProperty().bind(tile.prefWidthProperty().multiply(0.33));
+
         return tile;
     }
 
- private AnchorPane createDocumentCard(Citoyen citoyen, Document document) {
+    private AnchorPane createDocumentCard(Citoyen citoyen, Document document) {
         AnchorPane card = new AnchorPane();
         card.setPrefSize(300, 200);
         card.getStyleClass().add("document-card");
 
-        VBox content = new VBox(8); // Espacement réduit pour une meilleure lisibilité
+        VBox content = new VBox(8);
         content.setPadding(new Insets(15));
-        content.setPrefWidth(300);
         content.setAlignment(Pos.TOP_LEFT);
 
-        // Nom et CIN du citoyen
         Label nameLabel;
         Label cinLabel;
         if (citoyen != null) {
@@ -424,7 +423,6 @@ public class EmployeeMunDashboardController {
         }
         nameLabel.getStyleClass().add("name-label");
         cinLabel.getStyleClass().add("cin-label");
-
 
         Label statusLabel = new Label("Statut: " + (document.getStatut_doc() != null ? document.getStatut_doc() : "N/A"));
         statusLabel.getStyleClass().add("status-label");
@@ -440,16 +438,23 @@ public class EmployeeMunDashboardController {
         }
 
         String emissionDate = document.getDate_emission_doc() != null
-                ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(document.getDate_emission_doc())
+                ? new SimpleDateFormat("dd/MM/yyyy").format(document.getDate_emission_doc())
                 : "N/A";
         String expirationDate = document.getDate_expiration_doc() != null
-                ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(document.getDate_expiration_doc())
+                ? new SimpleDateFormat("dd/MM/yyyy").format(document.getDate_expiration_doc())
                 : "N/A";
         Label datesLabel = new Label("Création: " + emissionDate + " | Expiration: " + expirationDate);
         datesLabel.getStyleClass().add("cin-label");
 
+        Button archiveButton = new Button(document.isArchive() ? "Désarchiver" : "Archiver");
+        archiveButton.getStyleClass().add("archive-button");
+        archiveButton.setStyle("-fx-background-color: " + (document.isArchive() ? "#FF9800" : "#4CAF50") + "; -fx-text-fill: white;");
+        archiveButton.setOnAction(event -> {
+            document.setArchive(!document.isArchive());
+            toggleArchiveStatus(document);
+        });
 
-        content.getChildren().addAll(nameLabel, cinLabel, statusLabel, datesLabel);
+        content.getChildren().addAll(nameLabel, cinLabel, statusLabel, datesLabel, archiveButton);
 
         AnchorPane.setTopAnchor(content, 0.0);
         AnchorPane.setLeftAnchor(content, 0.0);
@@ -457,89 +462,12 @@ public class EmployeeMunDashboardController {
         AnchorPane.setBottomAnchor(content, 0.0);
         card.getChildren().add(content);
 
+        // Ajuster la taille dynamiquement
+        card.prefWidthProperty().bind(documentCardContainer.widthProperty().divide(3).subtract(20));
+        card.prefHeightProperty().bind(card.prefWidthProperty().multiply(0.67));
+        content.prefWidthProperty().bind(card.widthProperty().subtract(30));
+
         return card;
-    }
-
-
-    private void enterFullScreenMode(AnchorPane card, Document document, Citoyen citoyen) {
-        isFullScreenMode = true;
-        currentFullScreenDocument = document;
-        currentFullScreenCard = card;
-
-        for (Node node : documentCardContainer.getChildren()) {
-            if (node != card) {
-                node.setVisible(false);
-                node.setManaged(false);
-            }
-        }
-
-        card.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-        card.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
-        VBox content = (VBox) card.getChildren().get(0);
-        Button fullScreenButton = (Button) content.getChildren().get(content.getChildren().size() - 1);
-        fullScreenButton.setText("Réduire");
-
-        Label detailsLabel = new Label("Détails Supplémentaires");
-        detailsLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        detailsLabel.setStyle("-fx-padding: 10 0 5 0;");
-
-        TextArea detailsArea = new TextArea();
-        detailsArea.setEditable(false);
-        detailsArea.setPrefHeight(150);
-        detailsArea.setWrapText(true);
-
-        StringBuilder details = new StringBuilder();
-        details.append("Document ID: ").append(document.getId_doc()).append("\n");
-        details.append("Type: ").append(document.getType_docs()).append("\n");
-        details.append("Date d'émission: ").append(document.getDate_emission_doc() != null ?
-                new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(document.getDate_emission_doc()) :
-                "Non disponible").append("\n");
-        details.append("Statut: ").append(document.getStatut_doc() != null ? document.getStatut_doc() : "Non défini").append("\n");
-        details.append("Archivé: ").append(document.isArchive() ? "Oui" : "Non").append("\n");
-
-        if (citoyen != null) {
-            details.append("\nInformations du Citoyen:\n");
-            details.append("Nom complet: ").append(citoyen.getNom()).append(" ").append(citoyen.getPrenom()).append("\n");
-            details.append("CIN: ").append(citoyen.getCin() != null ? citoyen.getCin() : "Non disponible").append("\n");
-            if (citoyen.getEmail() != null) details.append("Email: ").append(citoyen.getEmail()).append("\n");
-            if (citoyen.getTelephone() != null) details.append("Téléphone: ").append(citoyen.getTelephone()).append("\n");
-        }
-
-        detailsArea.setText(details.toString());
-
-        int buttonIndex = content.getChildren().size() - 1;
-        content.getChildren().add(buttonIndex, detailsLabel);
-        content.getChildren().add(buttonIndex + 1, detailsArea);
-
-        card.getStyleClass().add("full-screen-card");
-    }
-
-    private void exitFullScreenMode() {
-        if (!isFullScreenMode || currentFullScreenCard == null) return;
-
-        isFullScreenMode = false;
-
-        for (Node node : documentCardContainer.getChildren()) {
-            node.setVisible(true);
-            node.setManaged(true);
-        }
-
-
-        currentFullScreenCard.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-        VBox content = (VBox) currentFullScreenCard.getChildren().get(0);
-        Button fullScreenButton = (Button) content.getChildren().get(content.getChildren().size() - 1);
-        fullScreenButton.setText("Agrandir");
-
-        content.getChildren().removeIf(node ->
-                (node instanceof Label && ((Label) node).getText().equals("Détails Supplémentaires")) ||
-                        (node instanceof TextArea));
-
-        currentFullScreenCard.getStyleClass().remove("full-screen-card");
-
-        currentFullScreenDocument = null;
-        currentFullScreenCard = null;
     }
 
     private void toggleArchiveStatus(Document document) {
@@ -592,6 +520,81 @@ public class EmployeeMunDashboardController {
         updateThread.start();
     }
 
+    private void enterFullScreenMode(AnchorPane card, Document document, Citoyen citoyen) {
+        isFullScreenMode = true;
+        currentFullScreenDocument = document;
+        currentFullScreenCard = card;
+
+        for (Node node : documentCardContainer.getChildren()) {
+            if (node != card) {
+                node.setVisible(false);
+                node.setManaged(false);
+            }
+        }
+
+        card.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        card.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        VBox content = (VBox) card.getChildren().get(0);
+        Button archiveButton = (Button) content.getChildren().get(content.getChildren().size() - 1);
+        content.getChildren().remove(archiveButton); // Temporarily remove the archive button
+
+        Label detailsLabel = new Label("Détails Supplémentaires");
+        detailsLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        detailsLabel.setStyle("-fx-padding: 10 0 5 0;");
+
+        TextArea detailsArea = new TextArea();
+        detailsArea.setEditable(false);
+        detailsArea.setPrefHeight(150);
+        detailsArea.setWrapText(true);
+
+        StringBuilder details = new StringBuilder();
+        details.append("Document ID: ").append(document.getId_doc()).append("\n");
+        details.append("Type: ").append(document.getType_docs()).append("\n");
+        details.append("Date d'émission: ").append(document.getDate_emission_doc() != null ?
+                new SimpleDateFormat("dd/MM/yyyy HH:mm").format(document.getDate_emission_doc()) :
+                "Non disponible").append("\n");
+        details.append("Statut: ").append(document.getStatut_doc() != null ? document.getStatut_doc() : "Non défini").append("\n");
+        details.append("Archivé: ").append(document.isArchive() ? "Oui" : "Non").append("\n");
+
+        if (citoyen != null) {
+            details.append("\nInformations du Citoyen:\n");
+            details.append("Nom complet: ").append(citoyen.getNom()).append(" ").append(citoyen.getPrenom()).append("\n");
+            details.append("CIN: ").append(citoyen.getCin() != null ? citoyen.getCin() : "Non disponible").append("\n");
+            if (citoyen.getEmail() != null) details.append("Email: ").append(citoyen.getEmail()).append("\n");
+            if (citoyen.getTelephone() != null) details.append("Téléphone: ").append(citoyen.getTelephone()).append("\n");
+        }
+
+        detailsArea.setText(details.toString());
+
+        content.getChildren().addAll(detailsLabel, detailsArea, archiveButton);
+
+        card.getStyleClass().add("full-screen-card");
+    }
+
+    private void exitFullScreenMode() {
+        if (!isFullScreenMode || currentFullScreenCard == null) return;
+
+        isFullScreenMode = false;
+
+        for (Node node : documentCardContainer.getChildren()) {
+            node.setVisible(true);
+            node.setManaged(true);
+        }
+
+        currentFullScreenCard.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+        VBox content = (VBox) currentFullScreenCard.getChildren().get(0);
+        content.getChildren().removeIf(node ->
+                (node instanceof Label && ((Label) node).getText().equals("Détails Supplémentaires")) ||
+                        (node instanceof TextArea));
+
+        currentFullScreenCard.getStyleClass().remove("full-screen-card");
+
+        currentFullScreenDocument = null;
+        currentFullScreenCard = null;
+    }
+
     @FXML
     void retourLogin(ActionEvent event) {
         Stage dialogStage = new Stage();
@@ -601,7 +604,7 @@ public class EmployeeMunDashboardController {
         dialogVbox.setPadding(new Insets(20));
         dialogVbox.setAlignment(Pos.CENTER);
 
-        Label confirmMessage = new Label("Voulez-vous vraiment vous déconnexion ?");
+        Label confirmMessage = new Label("Voulez-vous vraiment vous déconnecter ?");
         confirmMessage.setFont(Font.font("System", 14));
 
         HBox buttonBox = new HBox(20);
@@ -636,5 +639,49 @@ public class EmployeeMunDashboardController {
         cancelButton.setOnAction(e -> dialogStage.close());
 
         dialogStage.showAndWait();
+    }
+
+    public void showProfile(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/UserProfile.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Mon Profil");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur de chargement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de charger la page de profil.");
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public void logout(ActionEvent event) {
+        SessionManager.getInstance().clearSession();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Connexion");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur de chargement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de charger l'écran de connexion.");
+        }
     }
 }

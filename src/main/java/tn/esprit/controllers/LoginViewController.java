@@ -164,6 +164,7 @@ public class LoginViewController {
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(scene);
                 stage.setTitle(title);
+                stage.setMaximized(true);
                 stage.show();
 
             } catch (IOException e) {

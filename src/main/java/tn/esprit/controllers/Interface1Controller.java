@@ -139,4 +139,7 @@ public class Interface1Controller {
                     "Impossible de charger l'interface de demande.");
         }
     }
+
+    public void handleTypeDocumentChange(ActionEvent event) {
+    }
 }

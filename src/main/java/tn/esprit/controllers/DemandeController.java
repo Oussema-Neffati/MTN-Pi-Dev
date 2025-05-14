@@ -5,7 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -21,6 +24,7 @@ import tn.esprit.services.ServiceDocument;
 import tn.esprit.services.StripePayment;
 import tn.esprit.utils.SessionManager;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -466,4 +470,48 @@ public class DemandeController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
-}
+
+    public void showProfile(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/UserProfile.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Mon Profil");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur de chargement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de charger la page de profil.");
+        }
+    }
+
+    public void logout(ActionEvent event) { SessionManager.getInstance().clearSession();
+
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/LoginView.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Connexion");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur de chargement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur",
+                    "Impossible de charger l'écran de connexion.");
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    }

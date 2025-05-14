@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,109 +15,154 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<?import java.net.URL?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="931.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.EmployeeMunDashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-Infinity" prefWidth="-Infinity" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.EmployeeMunDashboardController">
     <stylesheets>
         <URL value="@../styles/styles_employee.css" />
     </stylesheets>
     <top>
-        <AnchorPane prefHeight="71.0" prefWidth="931.0" styleClass="top-bar" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: #ffffff; -fx-border-width: 0 0 1 0; -fx-border-color: #e0e0e0;" BorderPane.alignment="CENTER">
             <children>
-                <!-- Logo et titre (à gauche) -->
-                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="10.0" spacing="10" AnchorPane.leftAnchor="20.0">
-                    <ImageView fitHeight="27.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                            <Image url="@../images/drapeau-du-gouvernement(2).png" />
-                        </image>
-                    </ImageView>
-                    <Label alignment="CENTER" prefHeight="46.0" prefWidth="82.0" text="MTE" styleClass="logo-title">
-                        <font>
-                            <Font name="Abril Fatface" size="27.0" />
-                        </font>
-                    </Label>
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="20.0" spacing="15.0">
+                    <children>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/drapeau-du-gouvernement(2).png" />
+                            </image>
+                        </ImageView>
+                    </children>
                 </HBox>
-
-                <!-- Barre de recherche (au centre) -->
-                <TextField fx:id="searchField" layoutX="315.0" layoutY="22.0" prefHeight="30.0" prefWidth="300.0"
-                           promptText="Rechercher un document..." styleClass="search-field" AnchorPane.leftAnchor="315.0" AnchorPane.rightAnchor="315.0">
+                <HBox alignment="CENTER_RIGHT" layoutX="1053.0" layoutY="20.0" spacing="10.0" AnchorPane.rightAnchor="20.0">
+                    <children>
+                        <Label fx:id="currentUserLabel" prefHeight="27.0" prefWidth="91.0" text="Citoyen" textFill="#495057">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/output-onlinepngtools(4).png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+                <Label layoutX="78.0" layoutY="16.0" text="MTE" textFill="#db4495">
                     <font>
-                        <Font size="14.0" />
+                        <Font name="System Bold" size="32.0" />
                     </font>
-                </TextField>
-
-                <!-- Informations utilisateur (à droite) -->
-                <HBox alignment="CENTER_RIGHT" layoutX="780.0" layoutY="22.0" spacing="10" AnchorPane.rightAnchor="20.0">
-                    <Label fx:id="currentUserLabel" prefHeight="27.0" prefWidth="123.0" text="Employé" styleClass="current-user-label">
-                        <font>
-                            <Font size="15.0" />
-                        </font>
-                    </Label>
-                    <ImageView fitHeight="32.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                            <Image url="@../images/output-onlinepngtools(4).png" />
-                        </image>
-                    </ImageView>
-                </HBox>
+                </Label>
             </children>
         </AnchorPane>
     </top>
     <left>
-        <AnchorPane prefHeight="607.0" prefWidth="228.0" styleClass="side-menu" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="520.0" prefWidth="280.0" styleClass="side-menu" BorderPane.alignment="CENTER">
             <children>
-                <!-- Titre dashboard -->
-                <Label layoutX="21.0" layoutY="28.0" prefHeight="40.0" prefWidth="185.0" text="Employé Dashboard" styleClass="side-menu-label">
-                    <font>
-                        <Font name="System Bold" size="18.0" />
-                    </font>
-                </Label>
-
-                <!-- Section Gestion -->
-                <Label layoutX="40.0" layoutY="85.0" text="GESTION" styleClass="section-header">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
-
-                <!-- Bouton Demandes -->
-                <Button alignment="TOP_LEFT" layoutX="35.0" layoutY="115.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" styleClass="menu-button" text="Demandes">
-                    <font>
-                        <Font name="System Bold" size="15.0" />
-                    </font>
-                </Button>
-                <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="10.0" layoutY="118.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/parametres.png" />
-                    </image>
-                </ImageView>
-
-                <!-- Section Statistiques -->
-                <Label layoutX="40.0" layoutY="180.0" text="STATISTIQUES" styleClass="section-header">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
-
-                <!-- Bouton Rapports -->
-                <Button alignment="TOP_LEFT" layoutX="35.0" layoutY="210.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" styleClass="menu-button" text="Rapports">
-                    <font>
-                        <Font name="System Bold" size="15.0" />
-                    </font>
-                </Button>
-                <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="10.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/tableau-de-reservation(3).png" />
-                    </image>
-                </ImageView>
-
-                <!-- Déconnexion -->
-                <Button fx:id="retourLoginButton" alignment="TOP_LEFT" layoutX="54.0" layoutY="522.0" mnemonicParsing="false" onAction="#retourLogin" prefHeight="30.0" prefWidth="120.0" styleClass="logout-button" text="   Déconnexion">
-                    <font>
-                        <Font name="System Bold" size="13.0" />
-                    </font>
-                </Button>
-
-                <!-- Version -->
-                <Label layoutX="77.0" layoutY="563.0" prefHeight="31.0" prefWidth="74.0" text="Version 1.0.1" styleClass="version-label" />
+                <VBox layoutX="30.0" layoutY="40.0" prefHeight="500.0" prefWidth="220.0" spacing="20.0">
+                    <children>
+                        <Label text="Menu Principal" styleClass="side-menu-label">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+                        <VBox spacing="10.0">
+                            <children>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" styleClass="menu-button" text="   Tableau de bord">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/panneau-du-tableau-de-bord.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: #315bb5; -fx-background-radius: 8; -fx-text-fill: white;" text="   Demandes">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/output-onlinepngtools(5).png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" styleClass="menu-button" text="   Réservations">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/tableau-de-reservation(3).png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" styleClass="menu-button" text="   Calendrier">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/etoile-du-calendrier.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" styleClass="menu-button" text="   Projets">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/plan.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="220.0" styleClass="menu-button" text="   Paramètres">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/parametres.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="profileButton" alignment="CENTER_LEFT" onAction="#showProfile" prefHeight="45.0" prefWidth="220.0" styleClass="menu-button" text="   Mon Profil">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/utilisateur-du-cercle.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                        <Button fx:id="logoutButton" layoutY="540.0" mnemonicParsing="false" onAction="#logout" prefHeight="50.0" prefWidth="220.0" styleClass="logout-button" text="Déconnexion">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Button>
+                        <Label text="Version 1.0.1" styleClass="version-label">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
             </children>
         </AnchorPane>
     </left>
@@ -125,18 +170,18 @@
         <AnchorPane prefHeight="607.0" prefWidth="703.0" styleClass="main-content" BorderPane.alignment="CENTER">
             <children>
                 <!-- Titre du Dashboard -->
-                <Label layoutX="20.0" layoutY="15.0" text="Tableau de Bord des Demandes" styleClass="dashboard-title">
+                <Label layoutX="20.0" layoutY="15.0" styleClass="dashboard-title" text="Tableau de Bord des Demandes">
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>
                 </Label>
 
-                <!-- Boîtes des types de demandes (Card View) with Add Button -->
+                <!-- Boîtes des types de demandes (Card View) -->
                 <ScrollPane fitToWidth="true" layoutX="20.0" layoutY="55.0" prefHeight="140.0" styleClass="scroll-pane" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" VBox.vgrow="ALWAYS">
                     <content>
                         <HBox fx:id="demandBoxContainer" prefHeight="130.0" spacing="15" style="-fx-background-color: #FFFFFF; -fx-padding: 10; -fx-background-radius: 8px;">
                             <StackPane fx:id="addButtonContainer" visible="false">
-                                <Button fx:id="addDemandButton" text="Ajouter" styleClass="action-button" prefWidth="100" prefHeight="100">
+                                <Button fx:id="addDemandButton" prefHeight="100" prefWidth="100" styleClass="action-button" text="Ajouter">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -150,7 +195,7 @@
                 <VBox layoutX="20.0" layoutY="210.0" spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="210.0">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label fx:id="selectedTypeLabel" text="(Sélectionnez un type de demande)" styleClass="selected-type-label">
+                            <Label fx:id="selectedTypeLabel" styleClass="selected-type-label" text="(Sélectionnez un type de demande)">
                                 <font>
                                     <Font name="System Bold" size="22.0" />
                                 </font>
